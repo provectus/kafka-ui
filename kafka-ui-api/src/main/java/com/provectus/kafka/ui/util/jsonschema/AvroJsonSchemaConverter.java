@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.avro.Schema;
 import reactor.util.function.Tuple2;
@@ -40,6 +41,10 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
 
   private FieldSchema convertSchema(Schema schema,
                                     Map<String, FieldSchema> definitions, boolean isRoot) {
+    Optional<FieldSchema> logicalTypeSchema = JsonAvroConversion.LogicalTypeConversion.getJsonSchema(schema);
+    if (logicalTypeSchema.isPresent()) {
+      return logicalTypeSchema.get();
+    }
     if (!schema.isUnion()) {
       JsonType type = convertType(schema);
       switch (type.getType()) {
@@ -65,7 +70,6 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
       return createUnionSchema(schema, definitions);
     }
   }
-
 
   // this method formats json-schema field in a way
   // to fit avro-> json encoding rules (https://avro.apache.org/docs/1.11.1/specification/_print/#json-encoding)

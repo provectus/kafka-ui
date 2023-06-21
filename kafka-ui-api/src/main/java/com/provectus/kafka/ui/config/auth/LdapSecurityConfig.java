@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.config.auth;
 import static com.provectus.kafka.ui.config.auth.AbstractAuthSecurityConfig.AUTH_WHITELIST;
 
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
-import com.provectus.kafka.ui.service.rbac.extractor.RbacLdapAuthoritiesExtractor;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.ldap.LdapAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -34,6 +32,8 @@ import org.springframework.security.ldap.authentication.LdapAuthenticationProvid
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import org.springframework.security.ldap.search.LdapUserSearch;
+import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
+import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsMapper;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
@@ -50,7 +50,7 @@ public class LdapSecurityConfig {
 
   @Bean
   public ReactiveAuthenticationManager authenticationManager(BaseLdapPathContextSource contextSource,
-                                                             ApplicationContext context,
+                                                             LdapAuthoritiesPopulator ldapAuthoritiesPopulator,
                                                              @Nullable AccessControlService acs) {
     var rbacEnabled = acs != null && acs.isRbacEnabled();
     BindAuthenticator ba = new BindAuthenticator(contextSource);
@@ -67,7 +67,7 @@ public class LdapSecurityConfig {
     AbstractLdapAuthenticationProvider authenticationProvider;
     if (!props.isActiveDirectory()) {
       authenticationProvider = rbacEnabled
-          ? new LdapAuthenticationProvider(ba, new RbacLdapAuthoritiesExtractor(context))
+          ? new LdapAuthenticationProvider(ba, ldapAuthoritiesPopulator)
           : new LdapAuthenticationProvider(ba);
     } else {
       authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(props.getActiveDirectoryDomain(),
@@ -93,6 +93,15 @@ public class LdapSecurityConfig {
     ctx.setPassword(props.getAdminPassword());
     ctx.afterPropertiesSet();
     return ctx;
+  }
+
+  @Bean
+  @Primary
+  public LdapAuthoritiesPopulator ldapAuthoritiesPopulator(BaseLdapPathContextSource contextSource) {
+    var authoritiesPopulator = new DefaultLdapAuthoritiesPopulator(contextSource, props.getGroupFilterSearchBase());
+    authoritiesPopulator.setRolePrefix("");
+    authoritiesPopulator.setConvertToUpperCase(false);
+    return authoritiesPopulator;
   }
 
   @Bean

@@ -23,6 +23,7 @@ import com.provectus.kafka.ui.service.AdminClientService;
 import com.provectus.kafka.ui.service.ReactiveAdminClient;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -70,7 +71,8 @@ public class AclsService {
   public Flux<AclBinding> listAcls(KafkaCluster cluster, ResourcePatternFilter filter) {
     return adminClientService.get(cluster)
         .flatMap(c -> c.listAcls(filter))
-        .flatMapIterable(acls -> acls);
+        .flatMapIterable(acls -> acls)
+        .sort(Comparator.comparing(AclBinding::toString));  //sorting to keep stable order on different calls
   }
 
   public Mono<String> getAclAsCsvString(KafkaCluster cluster) {

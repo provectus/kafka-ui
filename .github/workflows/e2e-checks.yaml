@@ -45,7 +45,7 @@ jobs:
         # use the following command until #819 will be fixed
         run: |
           docker-compose -f kafka-ui-e2e-checks/docker/selenoid-git.yaml up -d
-          docker-compose -f ./documentation/compose/e2e-tests.yaml up -d
+          docker-compose -f ./documentation/compose/e2e-tests.yaml up -d && until [ "$(docker exec  kafka-ui wget --spider  --server-response  http://localhost:8080/actuator/health 2>&1 |  grep -c 'HTTP/1.1 200 OK')" == "1" ]; do echo "Waiting for kafka-ui ..." && sleep 1; done
       - name: Run test suite
         run: |
           ./mvnw -B -ntp versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}

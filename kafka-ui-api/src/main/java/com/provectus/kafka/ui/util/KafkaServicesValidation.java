@@ -45,12 +45,10 @@ public final class KafkaServicesValidation {
    */
   public static Optional<String> validateTruststore(TruststoreConfig truststoreConfig) {
     if (truststoreConfig.getTruststoreLocation() != null && truststoreConfig.getTruststorePassword() != null) {
-      try {
+      try (FileInputStream fileInputStream = new FileInputStream(
+             (ResourceUtils.getFile(truststoreConfig.getTruststoreLocation())))) {
         KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        trustStore.load(
-            new FileInputStream((ResourceUtils.getFile(truststoreConfig.getTruststoreLocation()))),
-            truststoreConfig.getTruststorePassword().toCharArray()
-        );
+        trustStore.load(fileInputStream, truststoreConfig.getTruststorePassword().toCharArray());
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
             TrustManagerFactory.getDefaultAlgorithm()
         );
