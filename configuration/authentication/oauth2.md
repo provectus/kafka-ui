@@ -4,15 +4,15 @@ description: Examples of setups for different OAuth providers
 
 # OAuth2
 
-In general, the structure of the config looks as follows:
-
 For specific providers like Github (non-enterprise) and Google ([see the current list](https://github.com/spring-projects/spring-security/blob/main/config/src/main/java/org/springframework/security/config/oauth2/client/CommonOAuth2Provider.java#L35)), you don't have to specify URIs as they're well known.
 
 Furthermore, other providers that support [OIDC Service Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery) allow fetching URIs configuration from a `/.well-known/openid-configuration` endpoint. Depending on your setup, you may only have to set the `issuer-uri` of your provider to enable OIDC Service Discovery.
 
 ## Generic configuration
 
-```
+In general, the structure of the Oauth2 config looks as follows:
+
+```yaml
 auth:
   type: OAUTH2
   oauth2:
