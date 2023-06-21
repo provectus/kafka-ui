@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ConsumerGroupDetails,
@@ -23,6 +23,7 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { useResetConsumerGroupOffsetsMutation } from 'lib/hooks/api/consumers';
 import { FlexFieldset, StyledForm } from 'components/common/Form/Form.styled';
 import ControlledSelect from 'components/common/Select/ControlledSelect';
+import { ThemeModeContext } from 'components/contexts/ThemeModeContext';
 
 import * as S from './ResetOffsets.styled';
 
@@ -101,6 +102,7 @@ const Form: React.FC<FormProps> = ({ defaultValues, partitions, topics }) => {
     navigate('../');
   };
 
+  const { isDarkMode } = useContext(ThemeModeContext);
   return (
     <FormProvider {...methods}>
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
@@ -120,6 +122,7 @@ const Form: React.FC<FormProps> = ({ defaultValues, partitions, topics }) => {
           <div>
             <InputLabel>Partitions</InputLabel>
             <MultiSelect
+              className={isDarkMode ? 'dark' : ''}
               options={partitionOptions}
               value={partitionsValue.map((p) => ({
                 value: p,

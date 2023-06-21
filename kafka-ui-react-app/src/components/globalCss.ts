@@ -110,5 +110,25 @@ export default createGlobalStyle(
         opacity: 1;
       }
     }
+    .rmsc {
+      --rmsc-main: #4285f4;
+      --rmsc-hover: #f1f3f5;
+      --rmsc-selected: #e2e6ea;
+      --rmsc-border: #ccc;
+      --rmsc-gray: #aaa;
+      --rmsc-bg: #fff;
+      --rmsc-p: 10px; /* Spacing */
+      --rmsc-radius: 4px; /* Radius */
+      --rmsc-h: 38px; /* Height */
+    }
+    .rmsc.dark {
+      --rmsc-main: #4285f4;
+      --rmsc-hover: #0e0c0a;
+      --rmsc-selected: #1d1915;
+      --rmsc-border: #333333;
+      --rmsc-gray: #555555;
+      --rmsc-bg: #121212;
+      color: #fff;
+    }
   `
 );
