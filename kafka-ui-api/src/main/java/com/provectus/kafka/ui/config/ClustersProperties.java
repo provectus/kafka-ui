@@ -51,6 +51,7 @@ public class ClustersProperties {
     List<Masking> masking;
     Long pollingThrottleRate;
     TruststoreConfig ssl;
+    AuditProperties audit;
   }
 
   @Data
@@ -141,6 +142,17 @@ public class ClustersProperties {
     public enum Type {
       REMOVE, MASK, REPLACE
     }
+  }
+
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class AuditProperties {
+    String topic;
+    Integer auditTopicsPartitions;
+    Boolean topicAuditEnabled;
+    Boolean consoleAuditEnabled;
+    Map<String, String> auditTopicProperties;
   }
 
   @PostConstruct
