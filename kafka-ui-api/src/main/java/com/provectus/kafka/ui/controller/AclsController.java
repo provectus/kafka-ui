@@ -134,11 +134,13 @@ public class AclsController extends AbstractController implements AclsApi {
     AccessContext context = AccessContext.builder()
         .cluster(clusterName)
         .aclActions(AclAction.EDIT)
+        .operationName("createConsumerAcl")
         .build();
 
     return accessControlService.validateAccess(context)
         .then(createConsumerAclDto)
         .flatMap(req -> aclsService.createConsumerAcl(getCluster(clusterName), req))
+        .doOnEach(sig -> auditService.audit(context, sig))
         .thenReturn(ResponseEntity.ok().build());
   }
 
@@ -149,11 +151,13 @@ public class AclsController extends AbstractController implements AclsApi {
     AccessContext context = AccessContext.builder()
         .cluster(clusterName)
         .aclActions(AclAction.EDIT)
+        .operationName("createProducerAcl")
         .build();
 
     return accessControlService.validateAccess(context)
         .then(createProducerAclDto)
         .flatMap(req -> aclsService.createProducerAcl(getCluster(clusterName), req))
+        .doOnEach(sig -> auditService.audit(context, sig))
         .thenReturn(ResponseEntity.ok().build());
   }
 
@@ -164,11 +168,13 @@ public class AclsController extends AbstractController implements AclsApi {
     AccessContext context = AccessContext.builder()
         .cluster(clusterName)
         .aclActions(AclAction.EDIT)
+        .operationName("createStreamAppAcl")
         .build();
 
     return accessControlService.validateAccess(context)
         .then(createStreamAppAclDto)
         .flatMap(req -> aclsService.createStreamAppAcl(getCluster(clusterName), req))
+        .doOnEach(sig -> auditService.audit(context, sig))
         .thenReturn(ResponseEntity.ok().build());
   }
 }
