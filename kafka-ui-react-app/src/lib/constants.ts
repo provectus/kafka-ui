@@ -106,4 +106,4 @@ export const CONSUMER_GROUP_STATE_TOOLTIPS: Record<ConsumerGroupState, string> =
     COMPLETING_REBALANCE: 'Partition reassignment is in progress.',
     DEAD: 'The group is going to be removed. It might be due to the inactivity, or the group is being migrated to different group coordinator.',
     UNKNOWN: '',
-  };
+  } as const;
