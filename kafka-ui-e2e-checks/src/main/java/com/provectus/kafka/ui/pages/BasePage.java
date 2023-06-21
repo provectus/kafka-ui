@@ -28,6 +28,7 @@ public abstract class BasePage extends WebUtils {
   protected SelenideElement confirmBtn = $x("//button[contains(text(),'Confirm')]");
   protected SelenideElement cancelBtn = $x("//button[contains(text(),'Cancel')]");
   protected SelenideElement backBtn = $x("//button[contains(text(),'Back')]");
+  protected SelenideElement previousBtn = $x("//button[contains(text(),'Previous')]");
   protected SelenideElement nextBtn = $x("//button[contains(text(),'Next')]");
   protected ElementsCollection ddlOptions = $$x("//li[@value]");
   protected ElementsCollection gridItems = $$x("//tr[@class]");
@@ -65,6 +66,18 @@ public abstract class BasePage extends WebUtils {
 
   protected void clickSubmitBtn() {
     clickByJavaScript(submitBtn);
+  }
+
+  protected void clickNextBtn() {
+    clickByJavaScript(nextBtn);
+  }
+
+  protected void clickBackBtn() {
+    clickByJavaScript(backBtn);
+  }
+
+  protected void clickPreviousBtn() {
+    clickByJavaScript(previousBtn);
   }
 
   protected void setJsonInputValue(SelenideElement jsonInput, String jsonConfig) {

@@ -90,7 +90,12 @@ public class WebClientConfigurator {
     // Create webclient
     SslContext context = contextBuilder.build();
 
-    builder.clientConnector(new ReactorClientHttpConnector(HttpClient.create().secure(t -> t.sslContext(context))));
+    var httpClient = HttpClient
+        .create()
+        .secure(t -> t.sslContext(context))
+        .proxyWithSystemProperties();
+
+    builder.clientConnector(new ReactorClientHttpConnector(httpClient));
     return this;
   }
 

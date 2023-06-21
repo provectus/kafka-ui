@@ -24,7 +24,7 @@ jobs:
       - name: Clone infra repo
         run: |
           echo "Cloning repo..."
-          git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git --branch ${{ github.event.inputs.KafkaUIInfraBranch }}
+          git clone https://infra-tech:${{ secrets.INFRA_USER_ACCESS_TOKEN }}@github.com/provectus/kafka-ui-infra.git --branch ${{ github.event.inputs.KafkaUIInfraBranch }}
           echo "Cd to packer DIR..."
           cd kafka-ui-infra/ami
           echo "WORK_DIR=$(pwd)" >> $GITHUB_ENV

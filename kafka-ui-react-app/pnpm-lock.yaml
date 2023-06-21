@@ -10,7 +10,7 @@ specifiers:
   '@reduxjs/toolkit': ^1.8.3
   '@swc/core': ^1.3.36
   '@swc/jest': ^0.2.24
-  '@szhsin/react-menu': ^3.1.1
+  '@szhsin/react-menu': ^3.5.3
   '@tanstack/react-query': ^4.0.5
   '@tanstack/react-table': ^8.5.10
   '@testing-library/dom': ^9.0.0
@@ -19,6 +19,7 @@ specifiers:
   '@testing-library/user-event': ^14.4.3
   '@types/eventsource': ^1.1.8
   '@types/lodash': ^4.14.172
+  '@types/lossless-json': ^1.0.1
   '@types/node': ^16.4.13
   '@types/react': ^18.0.9
   '@types/react-datepicker': ^4.8.0
@@ -55,6 +56,7 @@ specifiers:
   json-schema-faker: ^0.5.0-rcv.44
   jsonpath-plus: ^7.2.0
   lodash: ^4.17.21
+  lossless-json: ^2.0.8
   prettier: ^2.8.4
   pretty-ms: 7.0.1
   react: ^18.1.0
@@ -89,14 +91,14 @@ dependencies:
   '@hookform/resolvers': 2.8.9_react-hook-form@7.43.1
   '@microsoft/fetch-event-source': 2.0.1
   '@reduxjs/toolkit': 1.8.3_ctm756ikdwcjcvyfxxwskzbr6q
-  '@szhsin/react-menu': 3.1.1_ef5jwxihqo6n7gxfmzogljlgcm
+  '@szhsin/react-menu': 3.5.3_ef5jwxihqo6n7gxfmzogljlgcm
   '@tanstack/react-query': 4.0.5_ef5jwxihqo6n7gxfmzogljlgcm
   '@tanstack/react-table': 8.5.10_ef5jwxihqo6n7gxfmzogljlgcm
   '@testing-library/react': 14.0.0_ef5jwxihqo6n7gxfmzogljlgcm
   '@types/testing-library__jest-dom': 5.14.5
   ace-builds: 1.7.1
   ajv: 8.8.2
-  ajv-formats: 2.1.1
+  ajv-formats: 2.1.1_ajv@8.8.2
   classnames: 2.3.1
   fetch-mock: 9.11.0
   jest: 29.5.0_6m7kcbkkzjz4ln6z66tlzx44we
@@ -104,6 +106,7 @@ dependencies:
   json-schema-faker: 0.5.0-rcv.44
   jsonpath-plus: 7.2.0
   lodash: 4.17.21
+  lossless-json: 2.0.8
   pretty-ms: 7.0.1
   react: 18.1.0
   react-ace: 10.1.0_ef5jwxihqo6n7gxfmzogljlgcm
@@ -136,6 +139,7 @@ devDependencies:
   '@testing-library/user-event': 14.4.3_@testing-library+dom@9.0.0
   '@types/eventsource': 1.1.8
   '@types/lodash': 4.14.177
+  '@types/lossless-json': 1.0.1
   '@types/node': 16.11.7
   '@types/react': 18.0.9
   '@types/react-datepicker': 4.10.0_react@18.1.0
@@ -1532,8 +1536,8 @@ packages:
       jsonc-parser: 3.2.0
     dev: true
 
-  /@szhsin/react-menu/3.1.1_ef5jwxihqo6n7gxfmzogljlgcm:
-    resolution: {integrity: sha512-IdHLyH61M+KqjTrvqglKo7JnbC0GIkg4OCtlXBxQPEjx/ecR5g0Iycqm+SG3rObEoniLZEz32iJkefve/LAHMA==}
+  /@szhsin/react-menu/3.5.3_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-jxo8oaRwxmVjUzkyOi/ZJiXaZiuFPMIxFzyJdUKfnhBLYiEOVTU9M2CiPuEkirILoareR2GJj2K3y8a81CBPlw==}
     peerDependencies:
       react: '>=16.14.0'
       react-dom: '>=16.14.0'
@@ -1541,7 +1545,7 @@ packages:
       prop-types: 15.8.1
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
-      react-transition-state: 1.1.4_ef5jwxihqo6n7gxfmzogljlgcm
+      react-transition-state: 1.1.5_ef5jwxihqo6n7gxfmzogljlgcm
     dev: false
 
   /@tanstack/query-core/4.0.5:
@@ -1768,6 +1772,10 @@ packages:
 
   /@types/lodash/4.14.177:
     resolution: {integrity: sha512-0fDwydE2clKe9MNfvXHBHF9WEahRuj+msTuQqOmAApNORFvhMYZKNGGJdCzuhheVjMps/ti0Ak/iJPACMaevvw==}
+    dev: true
+
+  /@types/lossless-json/1.0.1:
+    resolution: {integrity: sha512-zPE8kmpeL5/6L5gtTQHSOkAW/OSYYNTDRt6/2oEgLO1Zd3Rj5WVDoMloTtLJxQJhZGLGbL4pktKSh3NbzdaWdw==}
     dev: true
 
   /@types/node/16.11.7:
@@ -2050,8 +2058,10 @@ packages:
       - supports-color
     dev: true
 
-  /ajv-formats/2.1.1:
+  /ajv-formats/2.1.1_ajv@8.8.2:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependencies:
+      ajv: ^8.0.0
     peerDependenciesMeta:
       ajv:
         optional: true
@@ -2734,8 +2744,8 @@ packages:
       ms: 2.1.2
       supports-color: 5.5.0
 
-  /decimal.js/10.3.1:
-    resolution: {integrity: sha512-V0pfhfr8suzyPGOx3nmq4aHqabehUZn6Ch9kyFpV79TGDTWFmHqUqXdabR7QHqxzrYolF4+tVmJhUG4OURg5dQ==}
+  /decimal.js/10.4.3:
+    resolution: {integrity: sha512-VBBaLc1MgL5XpzgIP7ny5Z6Nx3UrRkIViUkPUdtl9aya5amy3De1gsUUSB1g3+3sExYNjCAsAznmukyxCb1GRA==}
     dev: true
 
   /dedent/0.7.0:
@@ -4649,7 +4659,7 @@ packages:
       cssom: 0.5.0
       cssstyle: 2.3.0
       data-urls: 3.0.2
-      decimal.js: 10.3.1
+      decimal.js: 10.4.3
       domexception: 4.0.0
       escodegen: 2.0.0
       form-data: 4.0.0
@@ -4840,6 +4850,10 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
+
+  /lossless-json/2.0.8:
+    resolution: {integrity: sha512-7/GaZldUc7H5oNZlSk6bF06cRbtA7oF8zWXwbfMZm8yrYC2debx0KvWTBbQIbj6fh08LsXTWg+YtHJshXgYKow==}
+    dev: false
 
   /lru-cache/6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
@@ -5562,8 +5576,8 @@ packages:
       react: 18.1.0
     dev: false
 
-  /react-transition-state/1.1.4_ef5jwxihqo6n7gxfmzogljlgcm:
-    resolution: {integrity: sha512-6nQLWWx95gYazCm6OdtD1zGbRiirvVXPrDtHAGsYb4xs9spMM7bA8Vx77KCpjL8PJ8qz1lXFGz2PTboCSvt7iw==}
+  /react-transition-state/1.1.5_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-ITY2mZqc2dWG2eitJkYNdcSFW8aKeOlkL2A/vowRrLL8GH3J6Re/SpD/BLvQzrVOTqjsP0b5S9N10vgNNzwMUQ==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'

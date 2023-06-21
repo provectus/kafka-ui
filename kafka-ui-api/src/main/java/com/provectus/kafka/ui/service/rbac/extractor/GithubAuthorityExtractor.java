@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.service.rbac.extractor;
 
+import static com.provectus.kafka.ui.model.rbac.provider.Provider.Name.GITHUB;
+
 import com.provectus.kafka.ui.model.rbac.Role;
 import com.provectus.kafka.ui.model.rbac.provider.Provider;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
@@ -26,10 +28,12 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
   private static final String ORGANIZATION_NAME = "login";
   private static final String GITHUB_ACCEPT_HEADER = "application/vnd.github+json";
   private static final String DUMMY = "dummy";
+  // The number of results (max 100) per page of list organizations for authenticated user.
+  private static final Integer ORGANIZATIONS_PER_PAGE = 100;
 
   @Override
-  public boolean isApplicable(String provider) {
-    return Provider.Name.GITHUB.equalsIgnoreCase(provider);
+  public boolean isApplicable(String provider, Map<String, String> customParams) {
+    return GITHUB.equalsIgnoreCase(provider) || GITHUB.equalsIgnoreCase(customParams.get(TYPE));
   }
 
   @Override
@@ -81,7 +85,9 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
 
     final Mono<List<Map<String, Object>>> userOrganizations = webClient
         .get()
-        .uri("/orgs")
+        .uri(uriBuilder -> uriBuilder.path("/orgs")
+            .queryParam("per_page", ORGANIZATIONS_PER_PAGE)
+            .build())
         .headers(headers -> {
           headers.set(HttpHeaders.ACCEPT, GITHUB_ACCEPT_HEADER);
           OAuth2UserRequest request = (OAuth2UserRequest) additionalParams.get("request");

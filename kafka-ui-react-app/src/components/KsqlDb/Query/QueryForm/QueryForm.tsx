@@ -9,7 +9,7 @@ import {
 } from 'react-hook-form';
 import { Button } from 'components/common/Button/Button';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
-import CloseIcon from 'components/common/Icons/CloseIcon';
+import CloseCircleIcon from 'components/common/Icons/CloseCircleIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
 import yup from 'lib/yupExtended';
 import PlusIcon from 'components/common/Icons/PlusIcon';
@@ -174,7 +174,7 @@ const QueryForm: React.FC<QueryFormProps> = ({
                     aria-label="deleteProperty"
                     onClick={removeProperty(index)}
                   >
-                    <CloseIcon aria-hidden />
+                    <CloseCircleIcon aria-hidden />
                   </IconButtonWrapper>
                 </S.InputsContainer>
               ))}
