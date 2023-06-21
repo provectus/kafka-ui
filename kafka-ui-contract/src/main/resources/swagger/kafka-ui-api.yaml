@@ -2577,7 +2577,7 @@ components:
           $ref: "#/components/schemas/ConsumerGroupState"
         coordinator:
           $ref: "#/components/schemas/Broker"
-        messagesBehind:
+        consumerLag:
           type: integer
           format: int64
           description: null if consumer group has no offsets committed
@@ -2826,7 +2826,7 @@ components:
         endOffset:
           type: integer
           format: int64
-        messagesBehind:
+        consumerLag:
           type: integer
           format: int64
           description: null if consumer group has no offsets committed
@@ -3502,6 +3502,7 @@ components:
         - MESSAGES_READ
         - MESSAGES_PRODUCE
         - MESSAGES_DELETE
+        - RESTART
 
     ResourceType:
       type: string
@@ -3514,6 +3515,7 @@ components:
         - CONNECT
         - KSQL
         - ACL
+        - AUDIT
 
     KafkaAcl:
       type: object
@@ -3874,3 +3876,18 @@ components:
                       pollingThrottleRate:
                         type: integer
                         format: int64
+                      audit:
+                        type: object
+                        properties:
+                          topic:
+                            type: string
+                          auditTopicsPartitions:
+                            type: integer
+                          topicAuditEnabled:
+                            type: boolean
+                          consoleAuditEnabled:
+                            type: boolean
+                          auditTopicProperties:
+                            type: object
+                            additionalProperties:
+                              type: string

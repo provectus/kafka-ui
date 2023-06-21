@@ -20,7 +20,13 @@ export const getJaasConfig = (
   options: Record<string, string>
 ) => {
   const optionsString = Object.entries(options)
-    .map(([key, value]) => (isUndefined(value) ? null : ` ${key}="${value}"`))
+    .map(([key, value]) => {
+      if (isUndefined(value)) return null;
+      if (value === 'true' || value === 'false') {
+        return ` ${key}=${value}`;
+      }
+      return ` ${key}="${value}"`;
+    })
     .join('');
 
   return `${JAAS_CONFIGS[method]} required${optionsString};`;

@@ -54,6 +54,8 @@ const Details: React.FC = () => {
     ? filteredPartitionsByTopic
     : Object.keys(partitionsByTopic);
 
+  const hasAssignedTopics = consumerGroup?.data?.topics !== 0;
+
   return (
     <div>
       <div>
@@ -71,6 +73,7 @@ const Details: React.FC = () => {
                   action: Action.RESET_OFFSETS,
                   value: consumerGroupID,
                 }}
+                disabled={!hasAssignedTopics}
               >
                 Reset offset
               </ActionDropdownItem>
@@ -110,7 +113,7 @@ const Details: React.FC = () => {
             {consumerGroup.data?.coordinator?.id}
           </Metrics.Indicator>
           <Metrics.Indicator label="Total lag">
-            {consumerGroup.data?.messagesBehind}
+            {consumerGroup.data?.consumerLag}
           </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>
@@ -121,7 +124,7 @@ const Details: React.FC = () => {
         <thead>
           <tr>
             <TableHeaderCell title="Topic" />
-            <TableHeaderCell title="Messages behind" />
+            <TableHeaderCell title="Consumer Lag" />
           </tr>
         </thead>
         <tbody>

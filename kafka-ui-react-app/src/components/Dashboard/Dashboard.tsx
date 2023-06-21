@@ -57,7 +57,8 @@ const Dashboard: React.FC = () => {
     return initialColumns;
   }, []);
 
-  const isApplicationConfig = useMemo(() => {
+  const hasPermissions = useMemo(() => {
+    if (!data?.rbacEnabled) return true;
     return !!data?.userInfo?.permissions.some(
       (permission) => permission.resource === ResourceType.APPLICATIONCONFIG
     );
@@ -91,7 +92,7 @@ const Dashboard: React.FC = () => {
             buttonType="primary"
             buttonSize="M"
             to={clusterNewConfigPath}
-            canDoAction={isApplicationConfig}
+            canDoAction={hasPermissions}
           >
             Configure new cluster
           </ActionCanButton>
