@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.model;
 
 import com.provectus.kafka.ui.service.ReactiveAdminClient;
-import com.provectus.kafka.ui.service.metrics.v2.scrape.inferred.ScrapedClusterState;
+import com.provectus.kafka.ui.service.metrics.v2.scrape.ScrapedClusterState;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,11 +19,12 @@ public class Statistics {
   List<ClusterFeature> features;
   ReactiveAdminClient.ClusterDescription clusterDescription;
   Metrics metrics;
+  ScrapedClusterState clusterState;
+
+  //TODO: to be removed -->>
   InternalLogDirStats logDirInfo;
   Map<String, TopicDescription> topicDescriptions;
   Map<String, List<ConfigEntry>> topicConfigs;
-
-  ScrapedClusterState clusterState;
 
   public static Statistics empty() {
     return builder()
