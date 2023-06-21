@@ -9,6 +9,7 @@ import com.provectus.kafka.ui.model.Metrics;
 import com.provectus.kafka.ui.model.ServerStatusDTO;
 import com.provectus.kafka.ui.model.Statistics;
 import com.provectus.kafka.ui.service.metrics.MetricsCollector;
+import com.provectus.kafka.ui.service.metrics.v2.scrape.ScrapedClusterState;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,7 +45,9 @@ public class StatisticsService {
                             getLogDirInfo(description, ac),
                             featureService.getAvailableFeatures(ac, cluster, description),
                             loadTopicConfigs(cluster),
-                            describeTopics(cluster)),
+                            describeTopics(cluster),
+                            loadClusterState(ac)
+                        ),
                         results ->
                             Statistics.builder()
                                 .status(ServerStatusDTO.ONLINE)
@@ -55,6 +58,7 @@ public class StatisticsService {
                                 .features((List<ClusterFeature>) results[2])
                                 .topicConfigs((Map<String, List<ConfigEntry>>) results[3])
                                 .topicDescriptions((Map<String, TopicDescription>) results[4])
+                                .clusterState((ScrapedClusterState) results[5])
                                 .build()
                     ))))
         .doOnError(e ->
@@ -74,6 +78,10 @@ public class StatisticsService {
 
   private Mono<Map<String, List<ConfigEntry>>> loadTopicConfigs(KafkaCluster c) {
     return adminClientService.get(c).flatMap(ReactiveAdminClient::getTopicsConfig);
+  }
+
+  private Mono<ScrapedClusterState> loadClusterState(ReactiveAdminClient ac){
+    return ScrapedClusterState.scrape(ac);
   }
 
 }
