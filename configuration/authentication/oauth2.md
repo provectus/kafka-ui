@@ -4,10 +4,6 @@ description: Examples of setups for different OAuth providers
 
 # OAuth2
 
-For specific providers like Github (non-enterprise) and Google ([see the current list](https://github.com/spring-projects/spring-security/blob/main/config/src/main/java/org/springframework/security/config/oauth2/client/CommonOAuth2Provider.java#L35)), you don't have to specify URIs as they're well known.
-
-Furthermore, other providers that support [OIDC Service Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery) allow fetching URIs configuration from a `/.well-known/openid-configuration` endpoint. Depending on your setup, you may only have to set the `issuer-uri` of your provider to enable OIDC Service Discovery.
-
 ## Generic configuration
 
 In general, the structure of the Oauth2 config looks as follows:
@@ -33,7 +29,15 @@ auth:
           roles-field: groups # required for RBAC, a field name in OAuth token which will contain user's roles/groups
 ```
 
-## Cognito
+## Service Discovery
+
+For specific providers like Github (non-enterprise) and Google ([see the current list](https://github.com/spring-projects/spring-security/blob/main/config/src/main/java/org/springframework/security/config/oauth2/client/CommonOAuth2Provider.java#L35)), you don't have to specify URIs as they're well known.
+
+Furthermore, other providers that support [OIDC Service Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery) allow fetching URIs configuration from a `/.well-known/openid-configuration` endpoint. Depending on your setup, you may only have to set the `issuer-uri` of your provider to enable OIDC Service Discovery.
+
+## Provider config examples
+
+### Cognito
 
 ```yaml
 kafka:
@@ -62,7 +66,7 @@ auth:
           logoutUrl: https://<XXX>>.eu-central-1.amazoncognito.com/logout #required just for cognito
 ```
 
-## Google
+### Google
 
 ```yaml
 kafka:
@@ -85,7 +89,7 @@ auth:
           allowedDomain: provectus.com # for RBAC
 ```
 
-## GitHub
+### GitHub
 
 Example of callback URL for github OAuth app settings:
 
@@ -114,7 +118,7 @@ auth:
           type: github
 ```
 
-### Self-hosted/Cloud (GitHub Enterprise Server)
+#### Self-hosted/Cloud (GitHub Enterprise Server)
 
 Replace `HOSTNAME` by your self-hosted platform FQDN.
 
@@ -142,7 +146,7 @@ auth:
           type: github      
 ```
 
-## Okta
+### Okta
 
 ```yaml
 auth:
@@ -165,7 +169,7 @@ auth:
           roles-field: groups # required for RBAC
 ```
 
-## Keycloak
+### Keycloak
 
 ```yaml
 auth:
