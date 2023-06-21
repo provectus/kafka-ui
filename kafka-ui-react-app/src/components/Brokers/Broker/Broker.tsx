@@ -44,7 +44,10 @@ const Broker: React.FC = () => {
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator label="Segment Size">
-            <BytesFormatted value={brokerDiskUsage?.segmentSize} precision={2} />
+            <BytesFormatted
+              value={brokerDiskUsage?.segmentSize}
+              precision={2}
+            />
           </Metrics.Indicator>
           <Metrics.Indicator label="Segment Count">
             {brokerDiskUsage?.segmentCount}
