@@ -37,12 +37,12 @@ class ConsumerOffsetsSerdeTest extends AbstractIntegrationTest {
 
   @BeforeAll
   static void createTopicAndCommitItsOffset() {
-    committedTopic = ConsumerOffsetsSerdeTest.class.getName() + "-" + UUID.randomUUID();
+    committedTopic = ConsumerOffsetsSerdeTest.class.getSimpleName() + "-" + UUID.randomUUID();
     consumerGroupName = committedTopic + "-group";
     createTopic(new NewTopic(committedTopic, 1, (short) 1));
 
     try (var producer = KafkaTestProducer.forKafka(kafka)) {
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; i < MSGS_TO_GENERATE; i++) {
         producer.send(committedTopic, "i=" + i);
       }
     }
