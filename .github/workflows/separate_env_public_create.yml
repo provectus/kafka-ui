@@ -76,14 +76,14 @@ jobs:
     steps:
       - name: clone
         run: |
-          git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git
+          git clone https://infra-tech:${{ secrets.INFRA_USER_ACCESS_TOKEN }}@github.com/provectus/kafka-ui-infra.git --branch envs
 
       - name: separate env create
         run: |
           cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
           bash separate_env_create.sh ${{ github.event.inputs.ENV_NAME }} ${{ secrets.FEATURE_TESTING_UI_PASSWORD }} ${{ needs.build.outputs.tag }}
-          git config --global user.email "kafka-ui-infra@provectus.com"
-          git config --global user.name "kafka-ui-infra"
+          git config --global user.email "infra-tech@provectus.com"
+          git config --global user.name "infra-tech"
           git add -A
           git commit -m "separate env added: ${{ github.event.inputs.ENV_NAME }}" && git push || true
 

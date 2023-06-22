@@ -48,8 +48,8 @@ const TopicConsumerGroups: React.FC = () => {
         enableSorting: false,
       },
       {
-        header: 'Messages Behind',
-        accessorKey: 'messagesBehind',
+        header: 'Consumer Lag',
+        accessorKey: 'consumerLag',
         enableSorting: false,
       },
       {

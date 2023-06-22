@@ -12,8 +12,11 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
@@ -23,15 +26,12 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class AccessController implements AuthorizationApi {
 
   private final AccessControlService accessControlService;
 
   public Mono<ResponseEntity<AuthenticationInfoDTO>> getUserAuthInfo(ServerWebExchange exchange) {
-    AuthenticationInfoDTO dto = new AuthenticationInfoDTO();
-    dto.setRbacEnabled(accessControlService.isRbacEnabled());
-    UserInfoDTO userInfo = new UserInfoDTO();
-
     Mono<List<UserPermissionDTO>> permissions = accessControlService.getUser()
         .map(user -> accessControlService.getRoles()
             .stream()
@@ -49,13 +49,11 @@ public class AccessController implements AuthorizationApi {
     return userName
         .zipWith(permissions)
         .map(data -> {
-          userInfo.setUsername(data.getT1());
-          userInfo.setPermissions(data.getT2());
-
-          dto.setUserInfo(userInfo);
+          var dto = new AuthenticationInfoDTO(accessControlService.isRbacEnabled());
+          dto.setUserInfo(new UserInfoDTO(data.getT1(), data.getT2()));
           return dto;
         })
-        .switchIfEmpty(Mono.just(dto))
+        .switchIfEmpty(Mono.just(new AuthenticationInfoDTO(accessControlService.isRbacEnabled())))
         .map(ResponseEntity::ok);
   }
 
@@ -70,11 +68,22 @@ public class AccessController implements AuthorizationApi {
           dto.setActions(permission.getActions()
               .stream()
               .map(String::toUpperCase)
-              .map(ActionDTO::valueOf)
+              .map(this::mapAction)
+              .filter(Objects::nonNull)
               .collect(Collectors.toList()));
           return dto;
         })
         .collect(Collectors.toList());
+  }
+
+  @Nullable
+  private ActionDTO mapAction(String name) {
+    try {
+      return ActionDTO.fromValue(name);
+    } catch (IllegalArgumentException e) {
+      log.warn("Unknown Action [{}], skipping", name);
+      return null;
+    }
   }
 
 }

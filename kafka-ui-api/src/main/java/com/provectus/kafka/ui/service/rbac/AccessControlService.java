@@ -20,6 +20,7 @@ import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import com.provectus.kafka.ui.service.rbac.extractor.CognitoAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.GithubAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.GoogleAuthorityExtractor;
+import com.provectus.kafka.ui.service.rbac.extractor.OauthAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.ProviderAuthorityExtractor;
 import jakarta.annotation.PostConstruct;
 import java.util.Collections;
@@ -76,6 +77,7 @@ public class AccessControlService {
               case OAUTH_COGNITO -> new CognitoAuthorityExtractor();
               case OAUTH_GOOGLE -> new GoogleAuthorityExtractor();
               case OAUTH_GITHUB -> new GithubAuthorityExtractor();
+              case OAUTH -> new OauthAuthorityExtractor();
               default -> null;
             })
             .filter(Objects::nonNull)
@@ -106,7 +108,9 @@ public class AccessControlService {
                   && isConnectAccessible(context, user)
                   && isConnectorAccessible(context, user) // TODO connector selectors
                   && isSchemaAccessible(context, user)
-                  && isKsqlAccessible(context, user);
+                  && isKsqlAccessible(context, user)
+                  && isAclAccessible(context, user)
+                  && isAuditAccessible(context, user);
 
           if (!accessGranted) {
             throw new AccessDeniedException("Access denied");
@@ -199,19 +203,23 @@ public class AccessControlService {
     return isAccessible(Resource.TOPIC, context.getTopic(), user, context, requiredActions);
   }
 
-  public Mono<Boolean> isTopicAccessible(InternalTopic dto, String clusterName) {
+  public Mono<List<InternalTopic>> filterViewableTopics(List<InternalTopic> topics, String clusterName) {
     if (!rbacEnabled) {
-      return Mono.just(true);
+      return Mono.just(topics);
     }
 
-    AccessContext accessContext = AccessContext
-        .builder()
-        .cluster(clusterName)
-        .topic(dto.getName())
-        .topicActions(TopicAction.VIEW)
-        .build();
-
-    return getUser().map(u -> isTopicAccessible(accessContext, u));
+    return getUser()
+        .map(user -> topics.stream()
+            .filter(topic -> {
+                  var accessContext = AccessContext
+                      .builder()
+                      .cluster(clusterName)
+                      .topic(topic.getName())
+                      .topicActions(TopicAction.VIEW)
+                      .build();
+                  return isTopicAccessible(accessContext, user);
+                }
+            ).toList());
   }
 
   private boolean isConsumerGroupAccessible(AccessContext context, AuthenticatedUser user) {
@@ -360,6 +368,40 @@ public class AccessControlService {
         .collect(Collectors.toSet());
 
     return isAccessible(Resource.KSQL, null, user, context, requiredActions);
+  }
+
+  private boolean isAclAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
+    if (context.getAclActions().isEmpty()) {
+      return true;
+    }
+
+    Set<String> requiredActions = context.getAclActions()
+        .stream()
+        .map(a -> a.toString().toUpperCase())
+        .collect(Collectors.toSet());
+
+    return isAccessible(Resource.ACL, null, user, context, requiredActions);
+  }
+
+  private boolean isAuditAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
+    if (context.getAuditAction().isEmpty()) {
+      return true;
+    }
+
+    Set<String> requiredActions = context.getAuditAction()
+        .stream()
+        .map(a -> a.toString().toUpperCase())
+        .collect(Collectors.toSet());
+
+    return isAccessible(Resource.AUDIT, null, user, context, requiredActions);
   }
 
   public Set<ProviderAuthorityExtractor> getOauthExtractors() {

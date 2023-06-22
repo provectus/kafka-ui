@@ -19,10 +19,10 @@ interface Props {
 const ListItem: React.FC<Props> = ({ clusterName, name, consumers }) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const getTotalMessagesBehind = () => {
+  const getTotalconsumerLag = () => {
     let count = 0;
     consumers.forEach((consumer) => {
-      count += consumer?.messagesBehind || 0;
+      count += consumer?.consumerLag || 0;
     });
     return count;
   };
@@ -40,7 +40,7 @@ const ListItem: React.FC<Props> = ({ clusterName, name, consumers }) => {
             </TableKeyLink>
           </FlexWrapper>
         </td>
-        <td>{getTotalMessagesBehind()}</td>
+        <td>{getTotalconsumerLag()}</td>
       </tr>
       {isOpen && <TopicContents consumers={consumers} />}
     </>

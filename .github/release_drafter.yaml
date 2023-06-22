@@ -16,18 +16,26 @@ exclude-labels:
   - 'type/refactoring'
 
 categories:
+  - title: '🚩 Breaking Changes'
+    labels:
+      - 'impact/changelog'
+
   - title: '⚙️Features'
     labels:
       - 'type/feature'
+
   - title: '🪛Enhancements'
     labels:
       - 'type/enhancement'
+
   - title: '🔨Bug Fixes'
     labels:
       - 'type/bug'
+
   - title: 'Security'
     labels:
       - 'type/security'
+
   - title: '⎈ Helm/K8S Changes'
     labels:
       - 'scope/k8s'

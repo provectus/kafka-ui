@@ -190,16 +190,19 @@ public class SchemaRegistrySerde implements BuiltInSerde {
   public Optional<SchemaDescription> getSchema(String topic, Target type) {
     String subject = schemaSubject(topic, type);
     return getSchemaBySubject(subject)
-        .map(schemaMetadata ->
-            new SchemaDescription(
-                convertSchema(schemaMetadata),
-                Map.of(
-                    "subject", subject,
-                    "schemaId", schemaMetadata.getId(),
-                    "latestVersion", schemaMetadata.getVersion(),
-                    "type", schemaMetadata.getSchemaType() // AVRO / PROTOBUF / JSON
-                )
-            ));
+        .flatMap(schemaMetadata ->
+            //schema can be not-found, when schema contexts configured improperly
+            getSchemaById(schemaMetadata.getId())
+                .map(parsedSchema ->
+                    new SchemaDescription(
+                        convertSchema(schemaMetadata),
+                        Map.of(
+                            "subject", subject,
+                            "schemaId", schemaMetadata.getId(),
+                            "latestVersion", schemaMetadata.getVersion(),
+                            "type", schemaMetadata.getSchemaType() // AVRO / PROTOBUF / JSON
+                        )
+                    )));
   }
 
   @SneakyThrows
@@ -209,21 +212,21 @@ public class SchemaRegistrySerde implements BuiltInSerde {
     ParsedSchema schemaById = schemaRegistryClient.getSchemaById(schema.getId());
     SchemaType schemaType = SchemaType.fromString(schema.getSchemaType())
         .orElseThrow(() -> new IllegalStateException("Unknown schema type: " + schema.getSchemaType()));
-    switch (schemaType) {
-      case PROTOBUF:
-        return new ProtobufSchemaConverter()
-            .convert(basePath, ((ProtobufSchema) schemaById).toDescriptor())
-            .toJson();
-      case AVRO:
-        return new AvroJsonSchemaConverter()
-            .convert(basePath, ((AvroSchema) schemaById).rawSchema())
-            .toJson();
-      case JSON:
-        //need to use confluent JsonSchema object to resolve references
-        return ((JsonSchema) schemaById).rawSchema().toString();
-      default:
-        throw new IllegalStateException();
-    }
+    return switch (schemaType) {
+      case PROTOBUF -> new ProtobufSchemaConverter()
+          .convert(basePath, ((ProtobufSchema) schemaById).toDescriptor())
+          .toJson();
+      case AVRO -> new AvroJsonSchemaConverter()
+          .convert(basePath, ((AvroSchema) schemaById).rawSchema())
+          .toJson();
+      case JSON ->
+       //need to use confluent JsonSchema object to resolve references
+       ((JsonSchema) schemaById).rawSchema().toString();
+    };
+  }
+
+  private Optional<ParsedSchema> getSchemaById(int id) {
+    return wrapWith404Handler(() -> schemaRegistryClient.getSchemaById(id));
   }
 
   private Optional<SchemaMetadata> getSchemaBySubject(String subject) {
@@ -255,16 +258,11 @@ public class SchemaRegistrySerde implements BuiltInSerde {
     boolean isKey = type == Target.KEY;
     SchemaType schemaType = SchemaType.fromString(schema.getSchemaType())
         .orElseThrow(() -> new IllegalStateException("Unknown schema type: " + schema.getSchemaType()));
-    switch (schemaType) {
-      case PROTOBUF:
-        return new ProtobufSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
-      case AVRO:
-        return new AvroSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
-      case JSON:
-        return new JsonSchemaSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
-      default:
-        throw new IllegalStateException();
-    }
+    return switch (schemaType) {
+      case PROTOBUF -> new ProtobufSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
+      case AVRO -> new AvroSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
+      case JSON -> new JsonSchemaSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
+    };
   }
 
   @Override
@@ -299,7 +297,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
   }
 
   private SchemaType getMessageFormatBySchemaId(int schemaId) {
-    return wrapWith404Handler(() -> schemaRegistryClient.getSchemaById(schemaId))
+    return getSchemaById(schemaId)
         .map(ParsedSchema::schemaType)
         .flatMap(SchemaType::fromString)
         .orElseThrow(() -> new ValidationException(String.format("Schema for id '%d' not found ", schemaId)));
