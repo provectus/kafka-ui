@@ -195,7 +195,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
             getSchemaById(schemaMetadata.getId())
                 .map(parsedSchema ->
                     new SchemaDescription(
-                        convertSchema(schemaMetadata),
+                        convertSchema(schemaMetadata, parsedSchema),
                         Map.of(
                             "subject", subject,
                             "schemaId", schemaMetadata.getId(),
@@ -206,22 +206,21 @@ public class SchemaRegistrySerde implements BuiltInSerde {
   }
 
   @SneakyThrows
-  private String convertSchema(SchemaMetadata schema) {
+  private String convertSchema(SchemaMetadata schema, ParsedSchema parsedSchema) {
     URI basePath = new URI(schemaRegistryUrls.get(0))
         .resolve(Integer.toString(schema.getId()));
-    ParsedSchema schemaById = schemaRegistryClient.getSchemaById(schema.getId());
     SchemaType schemaType = SchemaType.fromString(schema.getSchemaType())
         .orElseThrow(() -> new IllegalStateException("Unknown schema type: " + schema.getSchemaType()));
     return switch (schemaType) {
       case PROTOBUF -> new ProtobufSchemaConverter()
-          .convert(basePath, ((ProtobufSchema) schemaById).toDescriptor())
+          .convert(basePath, ((ProtobufSchema) parsedSchema).toDescriptor())
           .toJson();
       case AVRO -> new AvroJsonSchemaConverter()
-          .convert(basePath, ((AvroSchema) schemaById).rawSchema())
+          .convert(basePath, ((AvroSchema) parsedSchema).rawSchema())
           .toJson();
       case JSON ->
-       //need to use confluent JsonSchema object to resolve references
-       ((JsonSchema) schemaById).rawSchema().toString();
+        //need to use confluent JsonSchema since it includes resolved references
+        ((JsonSchema) parsedSchema).rawSchema().toString();
     };
   }
 
