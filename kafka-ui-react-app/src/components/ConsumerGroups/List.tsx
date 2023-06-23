@@ -59,8 +59,8 @@ const List = () => {
       },
       {
         id: ConsumerGroupOrdering.MESSAGES_BEHIND,
-        header: 'Messages Behind',
-        accessorKey: 'messagesBehind',
+        header: 'Consumer Lag',
+        accessorKey: 'consumerLag',
       },
       {
         header: 'Coordinator',

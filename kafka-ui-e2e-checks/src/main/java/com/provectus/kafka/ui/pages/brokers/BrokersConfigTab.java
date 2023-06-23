@@ -16,6 +16,8 @@ import java.util.stream.Stream;
 
 public class BrokersConfigTab extends BasePage {
 
+  protected SelenideElement sourceInfoIcon = $x("//div[text()='Source']/..//div/div[@class]");
+  protected SelenideElement sourceInfoTooltip = $x("//div[text()='Source']/..//div/div[@style]");
   protected ElementsCollection editBtns = $$x("//button[@aria-label='editAction']");
 
   @Step
@@ -23,6 +25,17 @@ public class BrokersConfigTab extends BasePage {
     waitUntilSpinnerDisappear();
     searchFld.shouldBe(Condition.visible);
     return this;
+  }
+
+  @Step
+  public BrokersConfigTab hoverOnSourceInfoIcon() {
+    sourceInfoIcon.shouldBe(Condition.visible).hover();
+    return this;
+  }
+
+  @Step
+  public String getSourceInfoTooltipText() {
+    return sourceInfoTooltip.shouldBe(Condition.visible).getText().trim();
   }
 
   @Step
@@ -49,6 +62,13 @@ public class BrokersConfigTab extends BasePage {
   @Step
   public BrokersConfigTab clickNextButton() {
     clickNextBtn();
+    waitUntilSpinnerDisappear(1);
+    return this;
+  }
+
+  @Step
+  public BrokersConfigTab clickPreviousButton() {
+    clickPreviousBtn();
     waitUntilSpinnerDisappear(1);
     return this;
   }
@@ -91,13 +111,58 @@ public class BrokersConfigTab extends BasePage {
     }
 
     @Step
-    public void edit() {
-      element.$x("./td[2]//button").shouldBe(Condition.enabled).click();
+    public BrokersConfigItem setValue(String value) {
+      sendKeysAfterClear(getValueFld(), value);
+      return this;
+    }
+
+    @Step
+    public SelenideElement getValueFld() {
+      return element.$x("./td[2]//input");
+    }
+
+    @Step
+    public SelenideElement getSaveBtn() {
+      return element.$x("./td[2]//button[@aria-label='confirmAction']");
+    }
+
+    @Step
+    public SelenideElement getCancelBtn() {
+      return element.$x("./td[2]//button[@aria-label='cancelAction']");
+    }
+
+    @Step
+    public SelenideElement getEditBtn() {
+      return element.$x("./td[2]//button[@aria-label='editAction']");
+    }
+
+    @Step
+    public BrokersConfigItem clickSaveBtn() {
+      getSaveBtn().shouldBe(Condition.enabled).click();
+      return this;
+    }
+
+    @Step
+    public BrokersConfigItem clickCancelBtn() {
+      getCancelBtn().shouldBe(Condition.enabled).click();
+      return this;
+    }
+
+    @Step
+    public BrokersConfigItem clickEditBtn() {
+      getEditBtn().shouldBe(Condition.enabled).click();
+      return this;
     }
 
     @Step
     public String getSource() {
       return element.$x("./td[3]").getText().trim();
+    }
+
+    @Step
+    public BrokersConfigItem clickConfirm() {
+      clickConfirmButton();
+      return this;
     }
   }
 }

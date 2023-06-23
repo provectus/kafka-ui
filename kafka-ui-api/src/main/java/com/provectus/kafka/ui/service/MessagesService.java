@@ -14,11 +14,16 @@ import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
+import com.provectus.kafka.ui.model.SmartFilterTestExecutionDTO;
+import com.provectus.kafka.ui.model.SmartFilterTestExecutionResultDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
 import com.provectus.kafka.ui.util.SslPropertiesUtil;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -81,6 +86,40 @@ public class MessagesService {
         .switchIfEmpty(Mono.error(new TopicNotFoundException()));
   }
 
+  public static SmartFilterTestExecutionResultDTO execSmartFilterTest(SmartFilterTestExecutionDTO execData) {
+    Predicate<TopicMessageDTO> predicate;
+    try {
+      predicate = MessageFilters.createMsgFilter(
+          execData.getFilterCode(),
+          MessageFilterTypeDTO.GROOVY_SCRIPT
+      );
+    } catch (Exception e) {
+      log.info("Smart filter '{}' compilation error", execData.getFilterCode(), e);
+      return new SmartFilterTestExecutionResultDTO()
+          .error("Compilation error : " + e.getMessage());
+    }
+    try {
+      var result = predicate.test(
+          new TopicMessageDTO()
+              .key(execData.getKey())
+              .content(execData.getValue())
+              .headers(execData.getHeaders())
+              .offset(execData.getOffset())
+              .partition(execData.getPartition())
+              .timestamp(
+                  Optional.ofNullable(execData.getTimestampMs())
+                      .map(ts -> OffsetDateTime.ofInstant(Instant.ofEpochMilli(ts), ZoneOffset.UTC))
+                      .orElse(null))
+      );
+      return new SmartFilterTestExecutionResultDTO()
+          .result(result);
+    } catch (Exception e) {
+      log.info("Smart filter {} execution error", execData, e);
+      return new SmartFilterTestExecutionResultDTO()
+          .error("Execution error : " + e.getMessage());
+    }
+  }
+
   public Mono<Void> deleteTopicMessages(KafkaCluster cluster, String topicName,
                                         List<Integer> partitionsToInclude) {
     return withExistingTopic(cluster, topicName)
@@ -127,13 +166,7 @@ public class MessagesService {
             msg.getValueSerde().get()
         );
 
-    Properties properties = new Properties();
-    SslPropertiesUtil.addKafkaSslProperties(cluster.getOriginalProperties().getSsl(), properties);
-    properties.putAll(cluster.getProperties());
-    properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
-    properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
-    properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
-    try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties)) {
+    try (KafkaProducer<byte[], byte[]> producer = createProducer(cluster, Map.of())) {
       ProducerRecord<byte[], byte[]> producerRecord = producerRecordCreator.create(
           topicDescription.name(),
           msg.getPartition(),
@@ -153,6 +186,18 @@ public class MessagesService {
     } catch (Throwable e) {
       return Mono.error(e);
     }
+  }
+
+  public static KafkaProducer<byte[], byte[]> createProducer(KafkaCluster cluster,
+                                                             Map<String, Object> additionalProps) {
+    Properties properties = new Properties();
+    SslPropertiesUtil.addKafkaSslProperties(cluster.getOriginalProperties().getSsl(), properties);
+    properties.putAll(cluster.getProperties());
+    properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
+    properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
+    properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
+    properties.putAll(additionalProps);
+    return new KafkaProducer<>(properties);
   }
 
   public Flux<TopicMessageEventDTO> loadMessages(KafkaCluster cluster, String topic,

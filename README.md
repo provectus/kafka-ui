@@ -99,7 +99,7 @@ services:
     ports:
       - 8080:8080
     environment:
-      DYNAMIC_CONFIG_ENABLED: true
+      DYNAMIC_CONFIG_ENABLED: 'true'
     volumes:
       - ~/kui/config.yml:/etc/kafkaui/dynamic_config.yaml
 ```
