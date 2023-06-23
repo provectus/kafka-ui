@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
-import java.util.Collections;
 import org.mockito.Mockito;
 import reactor.core.publisher.Mono;
 
