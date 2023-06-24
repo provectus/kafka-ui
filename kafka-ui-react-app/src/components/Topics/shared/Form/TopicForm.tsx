@@ -228,7 +228,7 @@ const TopicForm: React.FC<Props> = ({
             <InputLabel htmlFor="topicFormMaxMessageBytes">
               Maximum message size in bytes
             </InputLabel>
-            <Input
+            <S.MessageSizeInput
               id="topicFormMaxMessageBytes"
               type="number"
               placeholder="Maximum message size"
