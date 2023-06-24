@@ -109,12 +109,12 @@ const TopicForm: React.FC<Props> = ({
             {!isEditing && (
               <div>
                 <InputLabel htmlFor="topicFormNumberOfPartitions">
-                  Number of partitions *
+                  Number of Partitions *
                 </InputLabel>
                 <Input
                   id="topicFormNumberOfPartitions"
                   type="number"
-                  placeholder="Number of partitions"
+                  placeholder="Number of Partitions"
                   min="1"
                   name="partitions"
                   positiveOnly
