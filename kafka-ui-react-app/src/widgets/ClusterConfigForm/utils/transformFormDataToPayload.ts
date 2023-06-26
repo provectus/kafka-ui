@@ -122,7 +122,7 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
           'sasl.mechanism': 'GSSAPI',
           'sasl.kerberos.service.name': props.saslKerberosServiceName,
           'sasl.jaas.config': getJaasConfig('SASL/GSSAPI', {
-            useKeytab: props.keyTabFile ? 'true' : 'false',
+            useKeyTab: props.keyTabFile ? 'true' : 'false',
             keyTab: props.keyTabFile,
             storeKey: String(!!props.storeKey),
             principal: props.principal,

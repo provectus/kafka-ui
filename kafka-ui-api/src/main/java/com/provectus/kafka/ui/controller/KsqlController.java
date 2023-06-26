@@ -9,6 +9,7 @@ import com.provectus.kafka.ui.model.KsqlTableDescriptionDTO;
 import com.provectus.kafka.ui.model.KsqlTableResponseDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.permission.KsqlAction;
+import com.provectus.kafka.ui.service.audit.AuditService;
 import com.provectus.kafka.ui.service.ksql.KsqlServiceV2;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.List;
@@ -29,38 +30,43 @@ public class KsqlController extends AbstractController implements KsqlApi {
 
   private final KsqlServiceV2 ksqlServiceV2;
   private final AccessControlService accessControlService;
+  private final AuditService auditService;
 
   @Override
   public Mono<ResponseEntity<KsqlCommandV2ResponseDTO>> executeKsql(String clusterName,
-                                                                    Mono<KsqlCommandV2DTO>
-                                                                        ksqlCommand2Dto,
+                                                                    Mono<KsqlCommandV2DTO> ksqlCmdDo,
                                                                     ServerWebExchange exchange) {
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
-        .cluster(clusterName)
-        .ksqlActions(KsqlAction.EXECUTE)
-        .build());
-
-    return validateAccess.then(
-        ksqlCommand2Dto.map(dto -> {
-          var id = ksqlServiceV2.registerCommand(
-              getCluster(clusterName),
-              dto.getKsql(),
-              Optional.ofNullable(dto.getStreamsProperties()).orElse(Map.of()));
-          return new KsqlCommandV2ResponseDTO().pipeId(id);
-        }).map(ResponseEntity::ok)
-    );
+    return ksqlCmdDo.flatMap(
+            command -> {
+              var context = AccessContext.builder()
+                  .cluster(clusterName)
+                  .ksqlActions(KsqlAction.EXECUTE)
+                  .operationName("executeKsql")
+                  .operationParams(command)
+                  .build();
+              return accessControlService.validateAccess(context).thenReturn(
+                      new KsqlCommandV2ResponseDTO().pipeId(
+                          ksqlServiceV2.registerCommand(
+                              getCluster(clusterName),
+                              command.getKsql(),
+                              Optional.ofNullable(command.getStreamsProperties()).orElse(Map.of()))))
+                  .doOnEach(sig -> auditService.audit(context, sig));
+            }
+        )
+        .map(ResponseEntity::ok);
   }
 
   @Override
   public Mono<ResponseEntity<Flux<KsqlResponseDTO>>> openKsqlResponsePipe(String clusterName,
                                                                           String pipeId,
                                                                           ServerWebExchange exchange) {
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .ksqlActions(KsqlAction.EXECUTE)
-        .build());
+        .operationName("openKsqlResponsePipe")
+        .build();
 
-    return validateAccess.thenReturn(
+    return accessControlService.validateAccess(context).thenReturn(
         ResponseEntity.ok(ksqlServiceV2.execute(pipeId)
             .map(table -> new KsqlResponseDTO()
                 .table(
@@ -74,22 +80,28 @@ public class KsqlController extends AbstractController implements KsqlApi {
   @Override
   public Mono<ResponseEntity<Flux<KsqlStreamDescriptionDTO>>> listStreams(String clusterName,
                                                                           ServerWebExchange exchange) {
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .ksqlActions(KsqlAction.EXECUTE)
-        .build());
+        .operationName("listStreams")
+        .build();
 
-    return validateAccess.thenReturn(ResponseEntity.ok(ksqlServiceV2.listStreams(getCluster(clusterName))));
+    return accessControlService.validateAccess(context)
+        .thenReturn(ResponseEntity.ok(ksqlServiceV2.listStreams(getCluster(clusterName))))
+        .doOnEach(sig -> auditService.audit(context, sig));
   }
 
   @Override
   public Mono<ResponseEntity<Flux<KsqlTableDescriptionDTO>>> listTables(String clusterName,
                                                                         ServerWebExchange exchange) {
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .ksqlActions(KsqlAction.EXECUTE)
-        .build());
+        .operationName("listTables")
+        .build();
 
-    return validateAccess.thenReturn(ResponseEntity.ok(ksqlServiceV2.listTables(getCluster(clusterName))));
+    return accessControlService.validateAccess(context)
+        .thenReturn(ResponseEntity.ok(ksqlServiceV2.listTables(getCluster(clusterName))))
+        .doOnEach(sig -> auditService.audit(context, sig));
   }
 }

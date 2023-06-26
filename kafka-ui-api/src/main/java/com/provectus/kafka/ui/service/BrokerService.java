@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -117,7 +118,7 @@ public class BrokerService {
               .stream()
               .map(Node::id)
               .collect(Collectors.toList());
-          if (reqBrokers != null && !reqBrokers.isEmpty()) {
+          if (!reqBrokers.isEmpty()) {
             brokers.retainAll(reqBrokers);
           }
           return admin.describeLogDirs(brokers);
