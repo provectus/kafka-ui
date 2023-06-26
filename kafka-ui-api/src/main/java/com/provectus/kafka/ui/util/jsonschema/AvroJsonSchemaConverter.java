@@ -151,30 +151,16 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
   }
 
   private JsonType convertType(Schema schema) {
-    switch (schema.getType()) {
-      case INT:
-      case LONG:
-        return new SimpleJsonType(JsonType.Type.INTEGER);
-      case MAP:
-      case RECORD:
-        return new SimpleJsonType(JsonType.Type.OBJECT);
-      case ENUM:
-        return new EnumJsonType(schema.getEnumSymbols());
-      case BYTES:
-      case STRING:
-        return new SimpleJsonType(JsonType.Type.STRING);
-      case NULL:
-        return new SimpleJsonType(JsonType.Type.NULL);
-      case ARRAY:
-        return new SimpleJsonType(JsonType.Type.ARRAY);
-      case FIXED:
-      case FLOAT:
-      case DOUBLE:
-        return new SimpleJsonType(JsonType.Type.NUMBER);
-      case BOOLEAN:
-        return new SimpleJsonType(JsonType.Type.BOOLEAN);
-      default:
-        return new SimpleJsonType(JsonType.Type.STRING);
-    }
+    return switch (schema.getType()) {
+      case INT, LONG -> new SimpleJsonType(JsonType.Type.INTEGER);
+      case MAP, RECORD -> new SimpleJsonType(JsonType.Type.OBJECT);
+      case ENUM -> new EnumJsonType(schema.getEnumSymbols());
+      case BYTES, STRING -> new SimpleJsonType(JsonType.Type.STRING);
+      case NULL -> new SimpleJsonType(JsonType.Type.NULL);
+      case ARRAY -> new SimpleJsonType(JsonType.Type.ARRAY);
+      case FIXED, FLOAT, DOUBLE -> new SimpleJsonType(JsonType.Type.NUMBER);
+      case BOOLEAN -> new SimpleJsonType(JsonType.Type.BOOLEAN);
+      default -> new SimpleJsonType(JsonType.Type.STRING);
+    };
   }
 }

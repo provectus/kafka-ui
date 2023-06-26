@@ -105,6 +105,7 @@ const BrokersList: React.FC = () => {
               getValue={getValue}
               renderValue={renderValue}
               renderSegments
+              precision={2}
             />
           ),
       },

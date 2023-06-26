@@ -3,7 +3,9 @@ import AceEditor, { IAceEditorProps } from 'react-ace';
 import 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-sql';
 import 'ace-builds/src-noconflict/theme-textmate';
-import React from 'react';
+import 'ace-builds/src-noconflict/theme-dracula';
+import React, { useContext } from 'react';
+import { ThemeModeContext } from 'components/contexts/ThemeModeContext';
 
 interface SQLEditorProps extends IAceEditorProps {
   isFixedHeight?: boolean;
@@ -12,11 +14,13 @@ interface SQLEditorProps extends IAceEditorProps {
 const SQLEditor = React.forwardRef<AceEditor | null, SQLEditorProps>(
   (props, ref) => {
     const { isFixedHeight, ...rest } = props;
+    const { isDarkMode } = useContext(ThemeModeContext);
+
     return (
       <AceEditor
         ref={ref}
         mode="sql"
-        theme="textmate"
+        theme={isDarkMode ? 'dracula' : 'textmate'}
         tabSize={2}
         width="100%"
         height={

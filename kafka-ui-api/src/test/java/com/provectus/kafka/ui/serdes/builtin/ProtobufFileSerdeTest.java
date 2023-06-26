@@ -48,7 +48,6 @@ class ProtobufFileSerdeTest {
   void setUp() throws Exception {
     Map<Path, ProtobufSchema> files = ProtobufFileSerde.Configuration.loadSchemas(
         Optional.empty(),
-        Optional.empty(),
         Optional.of(protoFilesDir())
     );
 
@@ -105,15 +104,6 @@ class ProtobufFileSerdeTest {
       PropertyResolver resolver = mock(PropertyResolver.class);
       assertThat(Configuration.canBeAutoConfigured(resolver))
           .isFalse();
-    }
-
-    @Test
-    void canBeAutoConfiguredReturnsTrueIfNoProtoFileHasBeenProvided() {
-      PropertyResolver resolver = mock(PropertyResolver.class);
-      when(resolver.getProperty("protobufFile", String.class))
-          .thenReturn(Optional.of("file.proto"));
-      assertThat(Configuration.canBeAutoConfigured(resolver))
-          .isTrue();
     }
 
     @Test
@@ -193,13 +183,10 @@ class ProtobufFileSerdeTest {
     @Test
     void createConfigureFillsDescriptorMappingsWhenProtoFilesListProvided() throws Exception {
       PropertyResolver resolver = mock(PropertyResolver.class);
-      when(resolver.getProperty("protobufFile", String.class))
-          .thenReturn(Optional.of(
-              ResourceUtils.getFile("classpath:protobuf-serde/sensor.proto").getPath()));
-
       when(resolver.getListProperty("protobufFiles", String.class))
           .thenReturn(Optional.of(
               List.of(
+                  ResourceUtils.getFile("classpath:protobuf-serde/sensor.proto").getPath(),
                   ResourceUtils.getFile("classpath:protobuf-serde/address-book.proto").getPath())));
 
       when(resolver.getProperty("protobufMessageName", String.class))
