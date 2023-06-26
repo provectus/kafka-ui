@@ -5,6 +5,7 @@ import static com.provectus.kafka.ui.config.auth.AbstractAuthSecurityConfig.AUTH
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -99,7 +100,7 @@ public class LdapSecurityConfig {
   @Primary
   public LdapAuthoritiesPopulator ldapAuthoritiesPopulator(BaseLdapPathContextSource contextSource) {
     var authoritiesPopulator = new DefaultLdapAuthoritiesPopulator(contextSource, props.getGroupFilterSearchBase());
-    authoritiesPopulator.setGroupSearchFilter(props.getGroupFilterSearchFilter());
+    Optional.ofNullable(props.getGroupFilterSearchFilter()).ifPresent(authoritiesPopulator::setGroupSearchFilter);
     authoritiesPopulator.setRolePrefix("");
     authoritiesPopulator.setConvertToUpperCase(false);
     authoritiesPopulator.setSearchSubtree(true);
