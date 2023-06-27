@@ -1,4 +1,4 @@
-name: Pull Request Labels
+name: "Infra: PR block merge"
 on:
   pull_request:
     types: [opened, labeled, unlabeled, synchronize]

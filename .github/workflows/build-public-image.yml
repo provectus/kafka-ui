@@ -1,4 +1,4 @@
-name: Build Docker image and push
+name: "Infra: Image Testing: Deploy"
 on:
   workflow_dispatch:
   pull_request:
