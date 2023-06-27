@@ -56,11 +56,11 @@ describe('BrokersList Component', () => {
       });
       it('opens broker when row clicked', async () => {
         renderComponent();
-        await userEvent.click(screen.getByRole('cell', { name: '0' }));
+        await userEvent.click(screen.getByRole('cell', { name: '1' }));
 
         await waitFor(() =>
           expect(mockedUsedNavigate).toBeCalledWith(
-            clusterBrokerPath(clusterName, '0')
+            clusterBrokerPath(clusterName, '1')
           )
         );
       });
@@ -164,6 +164,25 @@ describe('BrokersList Component', () => {
             clusterBrokerPath(clusterName, '1')
           )
         );
+      });
+    });
+
+    describe('when some brokers have no diskUsage', () => {
+      beforeEach(() => {
+        (useBrokers as jest.Mock).mockImplementation(() => ({
+          data: brokersPayload,
+        }));
+        (useClusterStats as jest.Mock).mockImplementation(() => ({
+          data: {
+            ...clusterStatsPayload,
+            diskUsage: [clusterStatsPayload.diskUsage[0]],
+          },
+        }));
+      });
+      it('renders list of all brokers', async () => {
+        renderComponent();
+        expect(screen.getByRole('table')).toBeInTheDocument();
+        expect(screen.getAllByRole('row').length).toEqual(3);
       });
     });
   });
