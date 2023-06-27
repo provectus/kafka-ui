@@ -7,7 +7,6 @@ import com.provectus.kafka.ui.service.rbac.extractor.RbacLdapAuthoritiesExtracto
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -36,6 +35,7 @@ import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAu
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import org.springframework.security.ldap.search.LdapUserSearch;
 import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
+import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsMapper;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
@@ -52,9 +52,9 @@ public class LdapSecurityConfig {
 
   @Bean
   public ReactiveAuthenticationManager authenticationManager(BaseLdapPathContextSource contextSource,
-                                                             DefaultLdapAuthoritiesPopulator authoritiesExtractor,
-                                                             @Nullable AccessControlService acs) {
-    var rbacEnabled = acs != null && acs.isRbacEnabled();
+                                                             LdapAuthoritiesPopulator authoritiesExtractor,
+                                                             AccessControlService acs) {
+    var rbacEnabled = acs.isRbacEnabled();
     BindAuthenticator ba = new BindAuthenticator(contextSource);
     if (props.getBase() != null) {
       ba.setUserDnPatterns(new String[] {props.getBase()});
@@ -101,7 +101,7 @@ public class LdapSecurityConfig {
   @Primary
   public DefaultLdapAuthoritiesPopulator ldapAuthoritiesExtractor(ApplicationContext context,
                                                                   BaseLdapPathContextSource contextSource,
-                                                                  @Nullable AccessControlService acs) {
+                                                                  AccessControlService acs) {
     var rbacEnabled = acs != null && acs.isRbacEnabled();
 
     DefaultLdapAuthoritiesPopulator extractor;

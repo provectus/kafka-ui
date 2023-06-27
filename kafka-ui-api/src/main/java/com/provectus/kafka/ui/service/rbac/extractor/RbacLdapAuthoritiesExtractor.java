@@ -7,7 +7,6 @@ import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -24,9 +23,6 @@ public class RbacLdapAuthoritiesExtractor extends DefaultLdapAuthoritiesPopulato
   private final AccessControlService acs;
   private final LdapProperties props;
 
-  private final Function<Map<String, List<String>>, String> groupNameExtractor
-      = (record) -> record.get(getGroupRoleAttribute()).get(0);
-
   public RbacLdapAuthoritiesExtractor(ApplicationContext context,
                                       BaseLdapPathContextSource contextSource, String groupFilterSearchBase) {
     super(contextSource, groupFilterSearchBase);
@@ -35,7 +31,7 @@ public class RbacLdapAuthoritiesExtractor extends DefaultLdapAuthoritiesPopulato
   }
 
   @Override
-  public Set<GrantedAuthority> getAdditionalRoles(DirContextOperations user, String username) {
+  protected Set<GrantedAuthority> getAdditionalRoles(DirContextOperations user, String username) {
     var ldapGroups = getRoles(user.getNameInNamespace(), username);
 
     return acs.getRoles()
@@ -74,7 +70,7 @@ public class RbacLdapAuthoritiesExtractor extends DefaultLdapAuthoritiesPopulato
         new String[] {groupRoleAttribute});
 
     return userRoles.stream()
-        .map(groupNameExtractor)
+        .map(record -> record.get(getGroupRoleAttribute()).get(0))
         .peek(group -> log.trace("Found LDAP group [{}] for user [{}]", group, username))
         .collect(Collectors.toSet());
   }
