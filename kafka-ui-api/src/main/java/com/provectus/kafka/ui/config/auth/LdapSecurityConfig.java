@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.config.auth;
 import static com.provectus.kafka.ui.config.auth.AbstractAuthSecurityConfig.AUTH_WHITELIST;
 
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
+import com.provectus.kafka.ui.service.rbac.extractor.RbacLdapAuthoritiesExtractor;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.ldap.LdapAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -34,7 +36,6 @@ import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAu
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import org.springframework.security.ldap.search.LdapUserSearch;
 import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
-import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsMapper;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
@@ -51,7 +52,7 @@ public class LdapSecurityConfig {
 
   @Bean
   public ReactiveAuthenticationManager authenticationManager(BaseLdapPathContextSource contextSource,
-                                                             LdapAuthoritiesPopulator ldapAuthoritiesPopulator,
+                                                             DefaultLdapAuthoritiesPopulator authoritiesExtractor,
                                                              @Nullable AccessControlService acs) {
     var rbacEnabled = acs != null && acs.isRbacEnabled();
     BindAuthenticator ba = new BindAuthenticator(contextSource);
@@ -68,7 +69,7 @@ public class LdapSecurityConfig {
     AbstractLdapAuthenticationProvider authenticationProvider;
     if (!props.isActiveDirectory()) {
       authenticationProvider = rbacEnabled
-          ? new LdapAuthenticationProvider(ba, ldapAuthoritiesPopulator)
+          ? new LdapAuthenticationProvider(ba, authoritiesExtractor)
           : new LdapAuthenticationProvider(ba);
     } else {
       authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(props.getActiveDirectoryDomain(),
@@ -98,13 +99,24 @@ public class LdapSecurityConfig {
 
   @Bean
   @Primary
-  public LdapAuthoritiesPopulator ldapAuthoritiesPopulator(BaseLdapPathContextSource contextSource) {
-    var authoritiesPopulator = new DefaultLdapAuthoritiesPopulator(contextSource, props.getGroupFilterSearchBase());
-    Optional.ofNullable(props.getGroupFilterSearchFilter()).ifPresent(authoritiesPopulator::setGroupSearchFilter);
-    authoritiesPopulator.setRolePrefix("");
-    authoritiesPopulator.setConvertToUpperCase(false);
-    authoritiesPopulator.setSearchSubtree(true);
-    return authoritiesPopulator;
+  public DefaultLdapAuthoritiesPopulator ldapAuthoritiesExtractor(ApplicationContext context,
+                                                                  BaseLdapPathContextSource contextSource,
+                                                                  @Nullable AccessControlService acs) {
+    var rbacEnabled = acs != null && acs.isRbacEnabled();
+
+    DefaultLdapAuthoritiesPopulator extractor;
+
+    if (rbacEnabled) {
+      extractor = new RbacLdapAuthoritiesExtractor(context, contextSource, props.getGroupFilterSearchBase());
+    } else {
+      extractor = new DefaultLdapAuthoritiesPopulator(contextSource, props.getGroupFilterSearchBase());
+    }
+
+    Optional.ofNullable(props.getGroupFilterSearchFilter()).ifPresent(extractor::setGroupSearchFilter);
+    extractor.setRolePrefix("");
+    extractor.setConvertToUpperCase(false);
+    extractor.setSearchSubtree(true);
+    return extractor;
   }
 
   @Bean

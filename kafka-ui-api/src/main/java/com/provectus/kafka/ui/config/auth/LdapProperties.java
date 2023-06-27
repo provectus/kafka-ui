@@ -16,6 +16,7 @@ public class LdapProperties {
   private String userFilterSearchFilter;
   private String groupFilterSearchBase;
   private String groupFilterSearchFilter;
+  private String groupRoleAttribute;
 
   @Value("${oauth2.ldap.activeDirectory:false}")
   private boolean isActiveDirectory;
