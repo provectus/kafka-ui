@@ -1,4 +1,4 @@
-name: Feature testing destroy
+name: "Infra: Feature Testing: Destroy env"
 on:
   workflow_dispatch:
   pull_request:

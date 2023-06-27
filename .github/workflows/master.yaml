@@ -1,4 +1,4 @@
-name: Master branch build & deploy
+name: "Master: Build & deploy"
 on:
   workflow_dispatch:
   push:

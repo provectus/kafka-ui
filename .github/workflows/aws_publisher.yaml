@@ -1,4 +1,4 @@
-name: AWS Marketplace Publisher
+name: "Infra: Release: AWS Marketplace Publisher"
 on:
   workflow_dispatch:
     inputs:

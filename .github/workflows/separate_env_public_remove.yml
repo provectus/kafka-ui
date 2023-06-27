@@ -1,4 +1,4 @@
-name: Separate environment remove
+name: "Infra: Feature Testing Public: Destroy env"
 on:
   workflow_dispatch:
     inputs:
