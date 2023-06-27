@@ -1,5 +1,6 @@
-package com.provectus.kafka.ui.service.metrics;
+package com.provectus.kafka.ui.service.metrics.v2.scrape.prometheus;
 
+import com.provectus.kafka.ui.service.metrics.RawMetric;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Optional;

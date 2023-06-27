@@ -1,25 +1,20 @@
 package com.provectus.kafka.ui.service.metrics.v2.scrape.inferred;
 
 import com.provectus.kafka.ui.service.metrics.v2.scrape.ScrapedClusterState;
-import com.provectus.kafka.ui.service.metrics.v2.scrape.Scraper;
 import java.util.List;
-import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
-public class InferredMetricsScraper implements Scraper<InferredMetrics> {
+public class InferredMetricsScraper {
 
-  private final Supplier<ScrapedClusterState> currentStateSupplier;
   private ScrapedClusterState prevState = null;
 
-  @Override
-  public synchronized Mono<InferredMetrics> scrape() {
+  public synchronized Mono<InferredMetrics> scrape(ScrapedClusterState newState) {
     if (prevState == null) {
-      prevState = currentStateSupplier.get();
-      return Mono.empty();
+      prevState = newState;
+      return Mono.just(InferredMetrics.empty());
     }
-    var newState = currentStateSupplier.get();
     var inferred = infer(prevState, newState);
     prevState = newState;
     return Mono.just(inferred);
@@ -27,6 +22,7 @@ public class InferredMetricsScraper implements Scraper<InferredMetrics> {
 
   private static InferredMetrics infer(ScrapedClusterState prevState,
                                        ScrapedClusterState newState) {
+
     //TODO: impl
     return new InferredMetrics(List.of());
   }

@@ -1,15 +1,18 @@
-package com.provectus.kafka.ui.service.metrics;
+package com.provectus.kafka.ui.service.metrics.v2.scrape;
 
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 
 import com.provectus.kafka.ui.model.Metrics;
+import com.provectus.kafka.ui.service.metrics.RawMetric;
+import io.prometheus.client.Collector;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.kafka.common.Node;
 
-class WellKnownMetrics {
+public class WellKnownMetrics {
 
   // per broker
   final Map<Integer, BigDecimal> brokerBytesInFifteenMinuteRate = new HashMap<>();
@@ -19,33 +22,41 @@ class WellKnownMetrics {
   final Map<String, BigDecimal> bytesInFifteenMinuteRate = new HashMap<>();
   final Map<String, BigDecimal> bytesOutFifteenMinuteRate = new HashMap<>();
 
-  void populate(Node node, RawMetric rawMetric) {
-    updateBrokerIOrates(node, rawMetric);
-    updateTopicsIOrates(rawMetric);
+  public WellKnownMetrics(Map<Integer, List<Collector.MetricFamilySamples>> perBrokerMetrics) {
+    perBrokerMetrics.forEach((nodeId, metrics) -> {
+      metrics.forEach(m -> {
+        RawMetric.create(m).forEach(rawMetric -> {
+          updateBrokerIOrates(nodeId, rawMetric);
+          updateTopicsIOrates(rawMetric);
+        });
+      });
+    });
   }
 
-  void apply(Metrics.MetricsBuilder metricsBuilder) {
-    metricsBuilder.topicBytesInPerSec(bytesInFifteenMinuteRate);
-    metricsBuilder.topicBytesOutPerSec(bytesOutFifteenMinuteRate);
-    metricsBuilder.brokerBytesInPerSec(brokerBytesInFifteenMinuteRate);
-    metricsBuilder.brokerBytesOutPerSec(brokerBytesOutFifteenMinuteRate);
+  public Metrics.IoRates ioRates() {
+    return Metrics.IoRates.builder()
+        .topicBytesInPerSec(bytesInFifteenMinuteRate)
+        .topicBytesOutPerSec(bytesOutFifteenMinuteRate)
+        .brokerBytesInPerSec(brokerBytesInFifteenMinuteRate)
+        .brokerBytesOutPerSec(brokerBytesOutFifteenMinuteRate)
+        .build();
   }
 
-  private void updateBrokerIOrates(Node node, RawMetric rawMetric) {
+  private void updateBrokerIOrates(int nodeId, RawMetric rawMetric) {
     String name = rawMetric.name();
-    if (!brokerBytesInFifteenMinuteRate.containsKey(node.id())
+    if (!brokerBytesInFifteenMinuteRate.containsKey(nodeId)
         && rawMetric.labels().size() == 1
         && "BytesInPerSec".equalsIgnoreCase(rawMetric.labels().get("name"))
         && containsIgnoreCase(name, "BrokerTopicMetrics")
         && endsWithIgnoreCase(name, "FifteenMinuteRate")) {
-      brokerBytesInFifteenMinuteRate.put(node.id(),  rawMetric.value());
+      brokerBytesInFifteenMinuteRate.put(nodeId, rawMetric.value());
     }
-    if (!brokerBytesOutFifteenMinuteRate.containsKey(node.id())
+    if (!brokerBytesOutFifteenMinuteRate.containsKey(nodeId)
         && rawMetric.labels().size() == 1
         && "BytesOutPerSec".equalsIgnoreCase(rawMetric.labels().get("name"))
         && containsIgnoreCase(name, "BrokerTopicMetrics")
         && endsWithIgnoreCase(name, "FifteenMinuteRate")) {
-      brokerBytesOutFifteenMinuteRate.put(node.id(), rawMetric.value());
+      brokerBytesOutFifteenMinuteRate.put(nodeId, rawMetric.value());
     }
   }
 

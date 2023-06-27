@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.config;
 
-import com.provectus.kafka.ui.model.MetricsConfig;
+import com.provectus.kafka.ui.model.MetricsScrapeProperties;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +63,7 @@ public class ClustersProperties {
   }
 
   @Data
-  @ToString(exclude = "password")
+  @ToString(exclude = {"password", "keystorePassword"})
   public static class MetricsConfigData {
     String type;
     Integer port;
@@ -72,6 +72,31 @@ public class ClustersProperties {
     String password;
     String keystoreLocation;
     String keystorePassword;
+
+//    JmxScraper jmxScraper;
+//    PrometheusScraper prometheusScraper;
+//
+//    @Data
+//    @ToString(exclude = "password")
+//    public static class JmxScraper {
+//      Integer port;
+//      Boolean ssl;
+//      String username;
+//      String password;
+//      String keystoreLocation;
+//      String keystorePassword;
+//    }
+//
+//    @Data
+//    @ToString(exclude = "password")
+//    public static class PrometheusScraper {
+//      Integer port;
+//      Boolean ssl;
+//      String username;
+//      String password;
+//      String keystoreLocation;
+//      String keystorePassword;
+//    }
   }
 
   @Data
@@ -155,7 +180,7 @@ public class ClustersProperties {
   private void setMetricsDefaults() {
     for (Cluster cluster : clusters) {
       if (cluster.getMetrics() != null && !StringUtils.hasText(cluster.getMetrics().getType())) {
-        cluster.getMetrics().setType(MetricsConfig.JMX_METRICS_TYPE);
+        cluster.getMetrics().setType(MetricsScrapeProperties.JMX_METRICS_TYPE);
       }
     }
   }

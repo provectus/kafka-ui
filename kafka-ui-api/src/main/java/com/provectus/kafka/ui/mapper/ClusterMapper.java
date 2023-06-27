@@ -52,6 +52,7 @@ public interface ClusterMapper {
 
   ClusterStatsDTO toClusterStats(InternalClusterState clusterState);
 
+  @Deprecated
   default ClusterMetricsDTO toClusterMetrics(Metrics metrics) {
     return new ClusterMetricsDTO()
         .items(metrics.getSummarizedMetrics().map(this::convert).collect(Collectors.toList()));

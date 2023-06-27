@@ -1,12 +1,14 @@
-package com.provectus.kafka.ui.service.metrics;
+package com.provectus.kafka.ui.service.metrics.v2.scrape.prometheus;
+
+import static io.prometheus.client.Collector.*;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
-import com.provectus.kafka.ui.config.ClustersProperties;
-import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.MetricsConfig;
+import com.provectus.kafka.ui.model.MetricsScrapeProperties;
+import com.provectus.kafka.ui.service.metrics.RawMetric;
 import com.provectus.kafka.ui.util.WebClientConfigurator;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.Node;
@@ -19,33 +21,29 @@ import reactor.core.publisher.Mono;
 
 @Service
 @Slf4j
-class PrometheusMetricsRetriever implements MetricsRetriever {
+class PrometheusMetricsRetriever {
 
   private static final String METRICS_ENDPOINT_PATH = "/metrics";
   private static final int DEFAULT_EXPORTER_PORT = 11001;
 
-  @Override
-  public Flux<RawMetric> retrieve(KafkaCluster c, Node node) {
-    log.debug("Retrieving metrics from prometheus exporter: {}:{}", node.host(), c.getMetricsConfig().getPort());
+  public Mono<List<MetricFamilySamples>> retrieve(MetricsScrapeProperties metricsConfig, Node node) {
+    log.debug("Retrieving metrics from prometheus exporter: {}:{}", node.host(), metricsConfig.getPort());
 
-    MetricsConfig metricsConfig = c.getMetricsConfig();
     var webClient = new WebClientConfigurator()
         .configureBufferSize(DataSize.ofMegabytes(20))
         .configureBasicAuth(metricsConfig.getUsername(), metricsConfig.getPassword())
-        .configureSsl(
-            c.getOriginalProperties().getSsl(),
-            new ClustersProperties.KeystoreConfig(
-                metricsConfig.getKeystoreLocation(),
-                metricsConfig.getKeystorePassword()))
+        .configureSsl(metricsConfig.getTruststoreConfig(), metricsConfig.getKeystoreConfig())
         .build();
 
-    return retrieve(webClient, node.host(), c.getMetricsConfig());
+    return retrieve(webClient, node.host(), metricsConfig)
+        .collectList()
+        .map(metrics -> RawMetric.groupIntoMFS(metrics).toList());
   }
 
   @VisibleForTesting
-  Flux<RawMetric> retrieve(WebClient webClient, String host, MetricsConfig metricsConfig) {
+  Flux<RawMetric> retrieve(WebClient webClient, String host, MetricsScrapeProperties metricsConfig) {
     int port = Optional.ofNullable(metricsConfig.getPort()).orElse(DEFAULT_EXPORTER_PORT);
-    boolean sslEnabled = metricsConfig.isSsl() || metricsConfig.getKeystoreLocation() != null;
+    boolean sslEnabled = metricsConfig.isSsl() || metricsConfig.getKeystoreConfig() != null;
     var request = webClient.get()
         .uri(UriComponentsBuilder.newInstance()
             .scheme(sslEnabled ? "https" : "http")

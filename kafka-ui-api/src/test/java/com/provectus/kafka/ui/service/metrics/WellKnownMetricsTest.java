@@ -3,6 +3,8 @@ package com.provectus.kafka.ui.service.metrics;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.model.Metrics;
+import com.provectus.kafka.ui.service.metrics.v2.scrape.WellKnownMetrics;
+import com.provectus.kafka.ui.service.metrics.v2.scrape.prometheus.PrometheusEndpointMetricsParser;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Map;
@@ -68,7 +70,7 @@ class WellKnownMetricsTest {
     wellKnownMetrics.brokerBytesOutFifteenMinuteRate.put(2, new BigDecimal(20));
 
     Metrics.MetricsBuilder builder = Metrics.builder();
-    wellKnownMetrics.apply(builder);
+    wellKnownMetrics.ioRates(builder);
     var metrics = builder.build();
 
     // checking per topic io rates

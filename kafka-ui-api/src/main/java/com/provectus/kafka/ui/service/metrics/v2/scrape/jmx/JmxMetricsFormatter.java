@@ -1,5 +1,7 @@
-package com.provectus.kafka.ui.service.metrics;
+package com.provectus.kafka.ui.service.metrics.v2.scrape.jmx;
 
+import com.provectus.kafka.ui.service.metrics.RawMetric;
+import io.prometheus.client.Collector;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

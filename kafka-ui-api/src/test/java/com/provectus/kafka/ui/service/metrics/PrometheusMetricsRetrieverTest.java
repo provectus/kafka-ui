@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service.metrics;
 
-import com.provectus.kafka.ui.model.MetricsConfig;
+import com.provectus.kafka.ui.model.MetricsScrapeProperties;
+import com.provectus.kafka.ui.service.metrics.v2.scrape.prometheus.PrometheusMetricsRetriever;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -34,7 +35,7 @@ class PrometheusMetricsRetrieverTest {
     var url = mockWebServer.url("/metrics");
     mockWebServer.enqueue(prepareResponse());
 
-    MetricsConfig metricsConfig = prepareMetricsConfig(url.port(), null, null);
+    MetricsScrapeProperties metricsConfig = prepareMetricsConfig(url.port(), null, null);
 
     StepVerifier.create(retriever.retrieve(WebClient.create(), url.host(), metricsConfig))
         .expectNextSequence(expectedRawMetrics())
@@ -48,7 +49,7 @@ class PrometheusMetricsRetrieverTest {
     mockWebServer.enqueue(prepareResponse());
 
 
-    MetricsConfig metricsConfig = prepareMetricsConfig(url.port(), "username", "password");
+    MetricsScrapeProperties metricsConfig = prepareMetricsConfig(url.port(), "username", "password");
 
     StepVerifier.create(retriever.retrieve(WebClient.create(), url.host(), metricsConfig))
         .expectNextSequence(expectedRawMetrics())
@@ -69,11 +70,11 @@ class PrometheusMetricsRetrieverTest {
     );
   }
 
-  MetricsConfig prepareMetricsConfig(Integer port, String username, String password) {
-    return MetricsConfig.builder()
+  MetricsScrapeProperties prepareMetricsConfig(Integer port, String username, String password) {
+    return MetricsScrapeProperties.builder()
         .ssl(false)
         .port(port)
-        .type(MetricsConfig.PROMETHEUS_METRICS_TYPE)
+        .type(MetricsScrapeProperties.PROMETHEUS_METRICS_TYPE)
         .username(username)
         .password(password)
         .build();

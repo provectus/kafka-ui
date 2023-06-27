@@ -8,9 +8,10 @@ import com.provectus.kafka.ui.emitter.PollingSettings;
 import com.provectus.kafka.ui.model.ApplicationPropertyValidationDTO;
 import com.provectus.kafka.ui.model.ClusterConfigValidationDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.MetricsConfig;
 import com.provectus.kafka.ui.service.ksql.KsqlApiClient;
 import com.provectus.kafka.ui.service.masking.DataMasking;
+import com.provectus.kafka.ui.service.metrics.v2.scrape.jmx.JmxMetricsRetriever;
+import com.provectus.kafka.ui.service.metrics.v2.scrape.MetricsScrapping;
 import com.provectus.kafka.ui.sr.ApiClient;
 import com.provectus.kafka.ui.sr.api.KafkaSrClientApi;
 import com.provectus.kafka.ui.util.KafkaServicesValidation;
@@ -22,7 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.unit.DataSize;
@@ -39,11 +39,13 @@ public class KafkaClusterFactory {
   private static final DataSize DEFAULT_WEBCLIENT_BUFFER = DataSize.parse("20MB");
 
   private final DataSize webClientMaxBuffSize;
+  private final JmxMetricsRetriever jmxMetricsRetriever;
 
-  public KafkaClusterFactory(WebclientProperties webclientProperties) {
+  public KafkaClusterFactory(WebclientProperties webclientProperties, JmxMetricsRetriever jmxMetricsRetriever) {
     this.webClientMaxBuffSize = Optional.ofNullable(webclientProperties.getMaxInMemoryBufferSize())
         .map(DataSize::parse)
         .orElse(DEFAULT_WEBCLIENT_BUFFER);
+    this.jmxMetricsRetriever = jmxMetricsRetriever;
   }
 
   public KafkaCluster create(ClustersProperties properties,
@@ -56,6 +58,7 @@ public class KafkaClusterFactory {
     builder.readOnly(clusterProperties.isReadOnly());
     builder.masking(DataMasking.create(clusterProperties.getMasking()));
     builder.pollingSettings(PollingSettings.create(clusterProperties, properties));
+    builder.metricsScrapping(MetricsScrapping.create(clusterProperties, jmxMetricsRetriever));
 
     if (schemaRegistryConfigured(clusterProperties)) {
       builder.schemaRegistryClient(schemaRegistryClient(clusterProperties));
@@ -65,9 +68,6 @@ public class KafkaClusterFactory {
     }
     if (ksqlConfigured(clusterProperties)) {
       builder.ksqlClient(ksqlClient(clusterProperties));
-    }
-    if (metricsConfigured(clusterProperties)) {
-      builder.metricsConfig(metricsConfigDataToMetricsConfig(clusterProperties.getMetrics()));
     }
     builder.originalProperties(clusterProperties);
     return builder.build();
@@ -200,22 +200,6 @@ public class KafkaClusterFactory {
 
   private boolean metricsConfigured(ClustersProperties.Cluster clusterProperties) {
     return clusterProperties.getMetrics() != null;
-  }
-
-  @Nullable
-  private MetricsConfig metricsConfigDataToMetricsConfig(ClustersProperties.MetricsConfigData metricsConfigData) {
-    if (metricsConfigData == null) {
-      return null;
-    }
-    MetricsConfig.MetricsConfigBuilder builder = MetricsConfig.builder();
-    builder.type(metricsConfigData.getType());
-    builder.port(metricsConfigData.getPort());
-    builder.ssl(Optional.ofNullable(metricsConfigData.getSsl()).orElse(false));
-    builder.username(metricsConfigData.getUsername());
-    builder.password(metricsConfigData.getPassword());
-    builder.keystoreLocation(metricsConfigData.getKeystoreLocation());
-    builder.keystorePassword(metricsConfigData.getKeystorePassword());
-    return builder.build();
   }
 
 }
