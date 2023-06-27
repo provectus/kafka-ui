@@ -3,14 +3,16 @@ package com.provectus.kafka.ui.config.auth;
 import static com.provectus.kafka.ui.config.auth.AbstractAuthSecurityConfig.AUTH_WHITELIST;
 
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
+import com.provectus.kafka.ui.service.rbac.extractor.RbacLdapAuthoritiesExtractor;
 import java.util.Collection;
 import java.util.List;
-import javax.annotation.Nullable;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.ldap.LdapAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -50,9 +52,9 @@ public class LdapSecurityConfig {
 
   @Bean
   public ReactiveAuthenticationManager authenticationManager(BaseLdapPathContextSource contextSource,
-                                                             LdapAuthoritiesPopulator ldapAuthoritiesPopulator,
-                                                             @Nullable AccessControlService acs) {
-    var rbacEnabled = acs != null && acs.isRbacEnabled();
+                                                             LdapAuthoritiesPopulator authoritiesExtractor,
+                                                             AccessControlService acs) {
+    var rbacEnabled = acs.isRbacEnabled();
     BindAuthenticator ba = new BindAuthenticator(contextSource);
     if (props.getBase() != null) {
       ba.setUserDnPatterns(new String[] {props.getBase()});
@@ -67,7 +69,7 @@ public class LdapSecurityConfig {
     AbstractLdapAuthenticationProvider authenticationProvider;
     if (!props.isActiveDirectory()) {
       authenticationProvider = rbacEnabled
-          ? new LdapAuthenticationProvider(ba, ldapAuthoritiesPopulator)
+          ? new LdapAuthenticationProvider(ba, authoritiesExtractor)
           : new LdapAuthenticationProvider(ba);
     } else {
       authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(props.getActiveDirectoryDomain(),
@@ -97,11 +99,24 @@ public class LdapSecurityConfig {
 
   @Bean
   @Primary
-  public LdapAuthoritiesPopulator ldapAuthoritiesPopulator(BaseLdapPathContextSource contextSource) {
-    var authoritiesPopulator = new DefaultLdapAuthoritiesPopulator(contextSource, props.getGroupFilterSearchBase());
-    authoritiesPopulator.setRolePrefix("");
-    authoritiesPopulator.setConvertToUpperCase(false);
-    return authoritiesPopulator;
+  public DefaultLdapAuthoritiesPopulator ldapAuthoritiesExtractor(ApplicationContext context,
+                                                                  BaseLdapPathContextSource contextSource,
+                                                                  AccessControlService acs) {
+    var rbacEnabled = acs != null && acs.isRbacEnabled();
+
+    DefaultLdapAuthoritiesPopulator extractor;
+
+    if (rbacEnabled) {
+      extractor = new RbacLdapAuthoritiesExtractor(context, contextSource, props.getGroupFilterSearchBase());
+    } else {
+      extractor = new DefaultLdapAuthoritiesPopulator(contextSource, props.getGroupFilterSearchBase());
+    }
+
+    Optional.ofNullable(props.getGroupFilterSearchFilter()).ifPresent(extractor::setGroupSearchFilter);
+    extractor.setRolePrefix("");
+    extractor.setConvertToUpperCase(false);
+    extractor.setSearchSubtree(true);
+    return extractor;
   }
 
   @Bean
