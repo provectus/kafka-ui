@@ -17,7 +17,7 @@ import { BrokerDiskUsage } from 'generated-sources';
 import SkewHeader from './SkewHeader/SkewHeader';
 import * as S from './BrokersList.styled';
 
-const NA = 'N/A' as unknown;
+const NA = 'N/A' as unknown as number;
 
 const BrokersList: React.FC = () => {
   const navigate = useNavigate();
@@ -44,8 +44,8 @@ const BrokersList: React.FC = () => {
         brokers?.map((broker) => {
           return {
             brokerId: broker.id,
-            segmentSize: NA as number,
-            segmentCount: NA as number,
+            segmentSize: NA,
+            segmentCount: NA,
           };
         }) || [];
     } else {
