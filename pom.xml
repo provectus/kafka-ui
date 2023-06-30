@@ -33,7 +33,7 @@
         <kafka-clients.version>3.3.1</kafka-clients.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.24</org.projectlombok.version>
-        <protobuf-java.version>3.21.9</protobuf-java.version>
+        <protobuf-java.version>3.23.3</protobuf-java.version>
         <scala-lang.library.version>2.13.9</scala-lang.library.version>
         <snakeyaml.version>2.0</snakeyaml.version>
         <spring-boot.version>3.0.6</spring-boot.version>
