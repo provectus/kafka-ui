@@ -25,8 +25,6 @@ import org.opendatadiscovery.client.model.DataEntity;
 import org.opendatadiscovery.client.model.DataEntityType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -94,7 +92,7 @@ class TopicsExporterTest {
                 .schemaType(SchemaType.AVRO)
         ));
 
-    when(schemaRegistryClientMock.getSubjectVersion("testTopic-key", "latest", false))
+    when(schemaRegistryClientMock.getSubjectVersion("testTopic-key", "latest"))
         .thenReturn(Mono.just(
             new SchemaSubject()
                 .schema("\"int\"")
