@@ -1,8 +1,8 @@
-package com.provectus.kafka.ui.service.metrics;
+package com.provectus.kafka.ui.service.metrics.scrape.prometheus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.provectus.kafka.ui.service.metrics.v2.scrape.prometheus.PrometheusEndpointMetricsParser;
+import com.provectus.kafka.ui.service.metrics.RawMetric;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;

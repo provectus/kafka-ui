@@ -1,6 +1,5 @@
-package com.provectus.kafka.ui.service.metrics.v2.scrape.jmx;
+package com.provectus.kafka.ui.service.metrics.scrape.jmx;
 
-import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MetricsScrapeProperties;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
 import java.io.Closeable;

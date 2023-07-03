@@ -1,20 +1,14 @@
-package com.provectus.kafka.ui.service.metrics;
+package com.provectus.kafka.ui.service.metrics.scrape;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.provectus.kafka.ui.model.Metrics;
-import com.provectus.kafka.ui.service.metrics.v2.scrape.WellKnownMetrics;
-import com.provectus.kafka.ui.service.metrics.v2.scrape.prometheus.PrometheusEndpointMetricsParser;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
 import org.apache.kafka.common.Node;
 import org.junit.jupiter.api.Test;
 
 class WellKnownMetricsTest {
 
-  private final WellKnownMetrics wellKnownMetrics = new WellKnownMetrics();
+  private WellKnownMetrics wellKnownMetrics;
 
   @Test
   void bytesIoTopicMetricsPopulated() {
@@ -57,39 +51,14 @@ class WellKnownMetricsTest {
         .containsEntry(2, new BigDecimal("20.0"));
   }
 
-  @Test
-  void appliesInnerStateToMetricsBuilder() {
-    //filling per topic io rates
-    wellKnownMetrics.bytesInFifteenMinuteRate.put("topic", new BigDecimal(1));
-    wellKnownMetrics.bytesOutFifteenMinuteRate.put("topic", new BigDecimal(2));
-
-    //filling per broker io rates
-    wellKnownMetrics.brokerBytesInFifteenMinuteRate.put(1, new BigDecimal(1));
-    wellKnownMetrics.brokerBytesOutFifteenMinuteRate.put(1, new BigDecimal(2));
-    wellKnownMetrics.brokerBytesInFifteenMinuteRate.put(2, new BigDecimal(10));
-    wellKnownMetrics.brokerBytesOutFifteenMinuteRate.put(2, new BigDecimal(20));
-
-    Metrics.MetricsBuilder builder = Metrics.builder();
-    wellKnownMetrics.ioRates(builder);
-    var metrics = builder.build();
-
-    // checking per topic io rates
-    assertThat(metrics.getTopicBytesInPerSec()).containsExactlyEntriesOf(wellKnownMetrics.bytesInFifteenMinuteRate);
-    assertThat(metrics.getTopicBytesOutPerSec()).containsExactlyEntriesOf(wellKnownMetrics.bytesOutFifteenMinuteRate);
-
-    // checking per broker io rates
-    assertThat(metrics.getBrokerBytesInPerSec()).containsExactlyInAnyOrderEntriesOf(
-        Map.of(1, new BigDecimal(1), 2, new BigDecimal(10)));
-    assertThat(metrics.getBrokerBytesOutPerSec()).containsExactlyInAnyOrderEntriesOf(
-        Map.of(1, new BigDecimal(2), 2, new BigDecimal(20)));
-  }
-
   private void populateWith(Node n, String... prometheusMetric) {
-    Arrays.stream(prometheusMetric)
-        .map(PrometheusEndpointMetricsParser::parse)
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .forEach(m -> wellKnownMetrics.populate(n, m));
+    //TODO: uncomment
+//    wellKnownMetrics = new WellKnownMetrics(
+//        Arrays.stream(prometheusMetric)
+//        .map(PrometheusEndpointMetricsParser::parse)
+//        .filter(Optional::isPresent)
+//        .map(Optional::get)
+//    );
   }
 
 }

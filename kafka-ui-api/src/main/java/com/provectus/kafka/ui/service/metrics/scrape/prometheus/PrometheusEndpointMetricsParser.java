@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.service.metrics.v2.scrape.prometheus;
+package com.provectus.kafka.ui.service.metrics.scrape.prometheus;
 
 import com.provectus.kafka.ui.service.metrics.RawMetric;
 import java.math.BigDecimal;
@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 
 @Slf4j
-class PrometheusEndpointMetricsParser {
+public class PrometheusEndpointMetricsParser {
 
   /**
    * Matches openmetrics format. For example, string:

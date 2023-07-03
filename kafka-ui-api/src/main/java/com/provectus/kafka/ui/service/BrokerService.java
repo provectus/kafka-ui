@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.service;
 
+import static io.prometheus.client.Collector.*;
+
 import com.provectus.kafka.ui.exception.InvalidRequestApiException;
 import com.provectus.kafka.ui.exception.LogDirNotFoundApiException;
 import com.provectus.kafka.ui.exception.NotFoundException;
@@ -11,7 +13,6 @@ import com.provectus.kafka.ui.model.InternalBroker;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.PartitionDistributionStats;
-import com.provectus.kafka.ui.service.metrics.RawMetric;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -20,13 +21,13 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.ConfigEntry;
+import org.apache.kafka.clients.admin.LogDirDescription;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartitionReplica;
 import org.apache.kafka.common.errors.InvalidRequestException;
 import org.apache.kafka.common.errors.LogDirNotFoundException;
 import org.apache.kafka.common.errors.TimeoutException;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
-import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -109,7 +110,7 @@ public class BrokerService {
         .doOnError(e -> log.error("Unexpected error", e));
   }
 
-  private Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> getClusterLogDirs(
+  private Mono<Map<Integer, Map<String, LogDirDescription>>> getClusterLogDirs(
       KafkaCluster cluster, List<Integer> reqBrokers) {
     return adminClientService.get(cluster)
         .flatMap(admin -> {
@@ -138,8 +139,8 @@ public class BrokerService {
     return getBrokersConfig(cluster, brokerId);
   }
 
-  public Mono<List<RawMetric>> getBrokerMetrics(KafkaCluster cluster, Integer brokerId) {
-    return Mono.justOrEmpty(statisticsCache.get(cluster).getMetrics().getPerBrokerMetrics().get(brokerId));
+  public Mono<List<MetricFamilySamples>> getBrokerMetrics(KafkaCluster cluster, Integer brokerId) {
+    return Mono.justOrEmpty(statisticsCache.get(cluster).getMetrics().getPerBrokerScrapedMetrics().get(brokerId));
   }
 
 }

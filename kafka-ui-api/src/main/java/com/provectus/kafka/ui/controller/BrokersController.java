@@ -12,6 +12,7 @@ import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
 import com.provectus.kafka.ui.service.BrokerService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
+import io.prometheus.client.Collector;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +51,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
 
     return validateAccess.then(
         brokerService.getBrokerMetrics(getCluster(clusterName), id)
-            .map(clusterMapper::toBrokerMetrics)
+            .map(metrics -> clusterMapper.toBrokerMetrics(metrics.stream()))
             .map(ResponseEntity::ok)
             .onErrorReturn(ResponseEntity.notFound().build())
     );

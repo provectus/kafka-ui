@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.service.metrics.v2.scrape.jmx;
+package com.provectus.kafka.ui.service.metrics.scrape.jmx;
 
 import com.google.common.base.Preconditions;
 import java.io.FileInputStream;

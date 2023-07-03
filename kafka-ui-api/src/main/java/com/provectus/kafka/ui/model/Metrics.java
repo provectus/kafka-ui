@@ -3,9 +3,9 @@ package com.provectus.kafka.ui.model;
 import static io.prometheus.client.Collector.*;
 import static java.util.stream.Collectors.toMap;
 
-import com.provectus.kafka.ui.service.metrics.RawMetric;
-import com.provectus.kafka.ui.service.metrics.v2.scrape.inferred.InferredMetrics;
-import io.prometheus.client.Collector;
+import com.google.common.collect.Streams;
+import com.provectus.kafka.ui.service.metrics.scrape.inferred.InferredMetrics;
+import groovy.lang.Tuple;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
@@ -19,9 +19,13 @@ import lombok.Value;
 @Value
 public class Metrics {
 
+  IoRates ioRates;
+  InferredMetrics inferredMetrics;
+  Map<Integer, List<MetricFamilySamples>> perBrokerScrapedMetrics;
+
   public static Metrics empty() {
     return Metrics.builder()
-        .ioRates(null) //TODO: empty
+        .ioRates(IoRates.empty())
         .perBrokerScrapedMetrics(Map.of())
         .inferredMetrics(InferredMetrics.empty())
         .build();
@@ -32,22 +36,52 @@ public class Metrics {
                         Map<Integer, BigDecimal> brokerBytesOutPerSec,
                         Map<String, BigDecimal> topicBytesInPerSec,
                         Map<String, BigDecimal> topicBytesOutPerSec) {
+
+    public static IoRates empty() {
+      return IoRates.builder()
+          .brokerBytesOutPerSec(Map.of())
+          .brokerBytesInPerSec(Map.of())
+          .topicBytesOutPerSec(Map.of())
+          .topicBytesInPerSec(Map.of())
+          .build();
+    }
   }
 
-  IoRates ioRates;
-  InferredMetrics inferredMetrics;
-  Map<Integer, List<MetricFamilySamples>> perBrokerScrapedMetrics;
+  public Stream<MetricFamilySamples> getSummarizedBrokersMetrics() {
+    return Streams.concat(
+        inferredMetrics.asList().stream(),
+        perBrokerScrapedMetrics
+            .values()
+            .stream()
+            .flatMap(Collection::stream)
+            .collect(toMap(mfs -> mfs.name, mfs -> mfs, Metrics::summarizeMfs))
+            .values()
+            .stream()
+    );
+  }
 
-  @Deprecated
-  public Stream<RawMetric> getSummarizedMetrics() {
-    return perBrokerScrapedMetrics
-        .values()
-        .stream()
-        .flatMap(Collection::stream)
-        .flatMap(RawMetric::create)
-        .collect(toMap(RawMetric::identityKey, m -> m, (m1, m2) -> m1.copyWithValue(m1.value().add(m2.value()))))
-        .values()
-        .stream();
+  private static MetricFamilySamples summarizeMfs(MetricFamilySamples mfs1, MetricFamilySamples mfs2) {
+    return new MetricFamilySamples(
+        mfs1.name,
+        mfs1.type,
+        mfs1.help,
+        Stream.concat(mfs1.samples.stream(), mfs2.samples.stream())
+            .collect(
+                toMap(
+                    s -> Tuple.tuple(s.labelNames, s.labelValues),
+                    s -> s,
+                    (s1, s2) -> new MetricFamilySamples.Sample(
+                        s1.name,
+                        s1.labelNames,
+                        s1.labelValues,
+                        s1.value + s2.value
+                    )
+                )
+            )
+            .values()
+            .stream()
+            .toList()
+    );
   }
 
 }

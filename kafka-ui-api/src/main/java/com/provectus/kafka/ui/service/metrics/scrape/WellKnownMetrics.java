@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.service.metrics.v2.scrape;
+package com.provectus.kafka.ui.service.metrics.scrape;
 
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;

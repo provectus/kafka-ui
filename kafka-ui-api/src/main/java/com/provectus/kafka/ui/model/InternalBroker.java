@@ -25,8 +25,8 @@ public class InternalBroker {
     this.id = node.id();
     this.host = node.host();
     this.port = node.port();
-    this.bytesInPerSec = statistics.getMetrics().getBrokerBytesInPerSec().get(node.id());
-    this.bytesOutPerSec = statistics.getMetrics().getBrokerBytesOutPerSec().get(node.id());
+    this.bytesInPerSec = null; //statistics.getMetrics().getBrokerBytesInPerSec().get(node.id());
+    this.bytesOutPerSec = null;//statistics.getMetrics().getBrokerBytesOutPerSec().get(node.id());
     this.partitionsLeader = partitionDistribution.getPartitionLeaders().get(node);
     this.partitions = partitionDistribution.getPartitionsCount().get(node);
     this.inSyncPartitions = partitionDistribution.getInSyncPartitions().get(node);

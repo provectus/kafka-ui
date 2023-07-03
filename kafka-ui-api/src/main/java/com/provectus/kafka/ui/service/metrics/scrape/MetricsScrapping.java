@@ -1,17 +1,18 @@
-package com.provectus.kafka.ui.service.metrics.v2.scrape;
+package com.provectus.kafka.ui.service.metrics.scrape;
 
 import static com.provectus.kafka.ui.config.ClustersProperties.*;
 import static com.provectus.kafka.ui.model.MetricsScrapeProperties.*;
 
 import com.provectus.kafka.ui.model.Metrics;
 import com.provectus.kafka.ui.model.MetricsScrapeProperties;
-import com.provectus.kafka.ui.service.metrics.v2.scrape.inferred.InferredMetrics;
-import com.provectus.kafka.ui.service.metrics.v2.scrape.inferred.InferredMetricsScraper;
-import com.provectus.kafka.ui.service.metrics.v2.scrape.jmx.JmxMetricsRetriever;
-import com.provectus.kafka.ui.service.metrics.v2.scrape.jmx.JmxMetricsScraper;
-import com.provectus.kafka.ui.service.metrics.v2.scrape.prometheus.PrometheusScraper;
+import com.provectus.kafka.ui.service.metrics.scrape.inferred.InferredMetrics;
+import com.provectus.kafka.ui.service.metrics.scrape.inferred.InferredMetricsScraper;
+import com.provectus.kafka.ui.service.metrics.scrape.jmx.JmxMetricsRetriever;
+import com.provectus.kafka.ui.service.metrics.scrape.jmx.JmxMetricsScraper;
+import com.provectus.kafka.ui.service.metrics.scrape.prometheus.PrometheusScraper;
 import jakarta.annotation.Nullable;
 import java.util.Collection;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.Node;
 import reactor.core.publisher.Mono;
@@ -29,7 +30,6 @@ public class MetricsScrapping {
 
   public static MetricsScrapping create(Cluster cluster,
                                         JmxMetricsRetriever jmxMetricsRetriever) {
-    InferredMetricsScraper inferredMetricsScraper = new InferredMetricsScraper();
     JmxMetricsScraper jmxMetricsScraper = null;
     PrometheusScraper prometheusScraper = null;
 
@@ -42,14 +42,14 @@ public class MetricsScrapping {
         prometheusScraper = new PrometheusScraper(scrapeProperties);
       }
     }
-    return new MetricsScrapping(inferredMetricsScraper, jmxMetricsScraper, prometheusScraper);
+    return new MetricsScrapping(new InferredMetricsScraper(), jmxMetricsScraper, prometheusScraper);
   }
 
   private static MetricsScrapeProperties createScrapeProps(Cluster cluster) {
     var metrics = cluster.getMetrics();
     return MetricsScrapeProperties.builder()
         .port(metrics.getPort())
-        .ssl(metrics.getSsl())
+        .ssl(Optional.ofNullable(metrics.getSsl()).orElse(false))
         .username(metrics.getUsername())
         .password(metrics.getPassword())
         .truststoreConfig(cluster.getSsl())

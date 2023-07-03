@@ -1,8 +1,8 @@
-package com.provectus.kafka.ui.service.metrics;
+package com.provectus.kafka.ui.service.metrics.scrape.jmx;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.provectus.kafka.ui.service.metrics.v2.scrape.jmx.JmxMetricsFormatter;
+import com.provectus.kafka.ui.service.metrics.RawMetric;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;

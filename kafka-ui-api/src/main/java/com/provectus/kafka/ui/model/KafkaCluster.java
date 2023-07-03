@@ -5,7 +5,7 @@ import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
 import com.provectus.kafka.ui.emitter.PollingSettings;
 import com.provectus.kafka.ui.service.ksql.KsqlApiClient;
 import com.provectus.kafka.ui.service.masking.DataMasking;
-import com.provectus.kafka.ui.service.metrics.v2.scrape.MetricsScrapping;
+import com.provectus.kafka.ui.service.metrics.scrape.MetricsScrapping;
 import com.provectus.kafka.ui.sr.api.KafkaSrClientApi;
 import com.provectus.kafka.ui.util.ReactiveFailover;
 import java.util.Map;

@@ -56,15 +56,19 @@ public class InternalClusterState {
 
     bytesInPerSec = statistics
         .getMetrics()
-        .getBrokerBytesInPerSec()
-        .values().stream()
+        .getIoRates()
+        .brokerBytesInPerSec()
+        .values()
+        .stream()
         .reduce(BigDecimal::add)
         .orElse(null);
 
     bytesOutPerSec = statistics
         .getMetrics()
-        .getBrokerBytesOutPerSec()
-        .values().stream()
+        .getIoRates()
+        .brokerBytesOutPerSec()
+        .values()
+        .stream()
         .reduce(BigDecimal::add)
         .orElse(null);
 

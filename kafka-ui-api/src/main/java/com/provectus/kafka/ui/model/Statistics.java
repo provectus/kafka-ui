@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.model;
 
 import com.provectus.kafka.ui.service.ReactiveAdminClient;
-import com.provectus.kafka.ui.service.metrics.v2.scrape.ScrapedClusterState;
+import com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

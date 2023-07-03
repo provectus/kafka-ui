@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.mapper;
 
+import static io.prometheus.client.Collector.*;
+
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.BrokerConfigDTO;
 import com.provectus.kafka.ui.model.BrokerDTO;
@@ -31,9 +33,14 @@ import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
+import io.prometheus.client.Collector;
+import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.common.acl.AccessControlEntry;
 import org.apache.kafka.common.acl.AclBinding;
@@ -55,19 +62,25 @@ public interface ClusterMapper {
   @Deprecated
   default ClusterMetricsDTO toClusterMetrics(Metrics metrics) {
     return new ClusterMetricsDTO()
-        .items(metrics.getSummarizedMetrics().map(this::convert).collect(Collectors.toList()));
+        .items(convert(metrics.getSummarizedBrokersMetrics()).toList());
   }
 
-  private MetricDTO convert(RawMetric rawMetric) {
-    return new MetricDTO()
-        .name(rawMetric.name())
-        .labels(rawMetric.labels())
-        .value(rawMetric.value());
+  private Stream<MetricDTO> convert(Stream<MetricFamilySamples> metrics) {
+    return metrics
+        .flatMap(m -> m.samples.stream())
+        .map(s ->
+            new MetricDTO()
+                .name(s.name)
+                .labels(IntStream.range(0, s.labelNames.size())
+                    .boxed()
+                    .collect(Collectors.toMap(s.labelNames::get, s.labelValues::get)))
+                .value(BigDecimal.valueOf(s.value))
+        );
   }
 
-  default BrokerMetricsDTO toBrokerMetrics(List<RawMetric> metrics) {
-    return new BrokerMetricsDTO()
-        .metrics(metrics.stream().map(this::convert).collect(Collectors.toList()));
+  @Deprecated
+  default BrokerMetricsDTO toBrokerMetrics(Stream<MetricFamilySamples> metrics) {
+    return new BrokerMetricsDTO().metrics(convert(metrics).toList());
   }
 
   @Mapping(target = "isSensitive", source = "sensitive")

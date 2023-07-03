@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.model;
 
-import com.provectus.kafka.ui.config.ClustersProperties;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +14,6 @@ import org.apache.kafka.common.TopicPartition;
 @Data
 @Builder(toBuilder = true)
 public class InternalTopic {
-
-  ClustersProperties clustersProperties;
 
   // from TopicDescription
   private final String name;
@@ -114,8 +111,8 @@ public class InternalTopic {
       topic.segmentSize(segmentStats.getSegmentSize());
     }
 
-    topic.bytesInPerSec(metrics.getTopicBytesInPerSec().get(topicDescription.name()));
-    topic.bytesOutPerSec(metrics.getTopicBytesOutPerSec().get(topicDescription.name()));
+//    topic.bytesInPerSec(metrics.getTopicBytesInPerSec().get(topicDescription.name()));
+//    topic.bytesOutPerSec(metrics.getTopicBytesOutPerSec().get(topicDescription.name()));
 
     topic.topicConfigs(
         configs.stream().map(InternalTopicConfig::from).collect(Collectors.toList()));

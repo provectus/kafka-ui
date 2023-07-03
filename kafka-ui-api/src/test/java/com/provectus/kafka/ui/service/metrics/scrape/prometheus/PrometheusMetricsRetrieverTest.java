@@ -1,7 +1,7 @@
-package com.provectus.kafka.ui.service.metrics;
+package com.provectus.kafka.ui.service.metrics.scrape.prometheus;
 
 import com.provectus.kafka.ui.model.MetricsScrapeProperties;
-import com.provectus.kafka.ui.service.metrics.v2.scrape.prometheus.PrometheusMetricsRetriever;
+import com.provectus.kafka.ui.service.metrics.RawMetric;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -74,7 +74,7 @@ class PrometheusMetricsRetrieverTest {
     return MetricsScrapeProperties.builder()
         .ssl(false)
         .port(port)
-        .type(MetricsScrapeProperties.PROMETHEUS_METRICS_TYPE)
+        //.type(MetricsScrapeProperties.PROMETHEUS_METRICS_TYPE)
         .username(username)
         .password(password)
         .build();

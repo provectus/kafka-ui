@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.service.metrics.v2.scrape.prometheus;
+package com.provectus.kafka.ui.service.metrics.scrape.prometheus;
 
 import static io.prometheus.client.Collector.*;
 
@@ -26,7 +26,7 @@ class PrometheusMetricsRetriever {
   private static final String METRICS_ENDPOINT_PATH = "/metrics";
   private static final int DEFAULT_EXPORTER_PORT = 11001;
 
-  public Mono<List<MetricFamilySamples>> retrieve(MetricsScrapeProperties metricsConfig, Node node) {
+  Mono<List<MetricFamilySamples>> retrieve(MetricsScrapeProperties metricsConfig, Node node) {
     log.debug("Retrieving metrics from prometheus exporter: {}:{}", node.host(), metricsConfig.getPort());
 
     var webClient = new WebClientConfigurator()

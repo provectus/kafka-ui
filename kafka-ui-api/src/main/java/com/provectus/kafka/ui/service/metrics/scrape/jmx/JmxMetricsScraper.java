@@ -1,10 +1,10 @@
-package com.provectus.kafka.ui.service.metrics.v2.scrape.jmx;
+package com.provectus.kafka.ui.service.metrics.scrape.jmx;
 
 import static io.prometheus.client.Collector.*;
 
 import com.provectus.kafka.ui.model.MetricsScrapeProperties;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
-import com.provectus.kafka.ui.service.metrics.v2.scrape.PerBrokerScrapedMetrics;
+import com.provectus.kafka.ui.service.metrics.scrape.PerBrokerScrapedMetrics;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

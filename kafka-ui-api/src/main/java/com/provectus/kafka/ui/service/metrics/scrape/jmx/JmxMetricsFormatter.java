@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.service.metrics.v2.scrape.jmx;
+package com.provectus.kafka.ui.service.metrics.scrape.jmx;
 
 import com.provectus.kafka.ui.service.metrics.RawMetric;
 import io.prometheus.client.Collector;

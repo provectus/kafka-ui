@@ -2,24 +2,18 @@ package com.provectus.kafka.ui.service;
 
 import static com.provectus.kafka.ui.service.ReactiveAdminClient.ClusterDescription;
 
-import com.provectus.kafka.ui.model.ClusterFeature;
 import com.provectus.kafka.ui.model.InternalLogDirStats;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Metrics;
 import com.provectus.kafka.ui.model.ServerStatusDTO;
 import com.provectus.kafka.ui.model.Statistics;
-import com.provectus.kafka.ui.service.metrics.v2.scrape.ScrapedClusterState;
-import java.util.List;
+import com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.admin.ConfigEntry;
-import org.apache.kafka.clients.admin.TopicDescription;
-import org.apache.kafka.common.Node;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
 
 @Service
 @RequiredArgsConstructor
@@ -53,24 +47,21 @@ public class StatisticsService {
                                             .metrics(metrics)
                                             .features(featuresAndState.getT1())
                                             .clusterState(featuresAndState.getT2())
+                                            //TODO: RM ->>>
+                                            .topicDescriptions(
+                                                featuresAndState.getT2().getTopicStates().entrySet().stream()
+                                                    .collect(Collectors.toMap(
+                                                        Map.Entry::getKey, e -> e.getValue().description())))
+                                            .topicConfigs(
+                                                featuresAndState.getT2().getTopicStates().entrySet().stream()
+                                                    .collect(Collectors.toMap(
+                                                        Map.Entry::getKey, e -> e.getValue().configs())))
+                                            .logDirInfo(InternalLogDirStats.empty())
                                             .build())))))
         .doOnError(e ->
             log.error("Failed to collect cluster {} info", cluster.getName(), e))
         .onErrorResume(
             e -> Mono.just(Statistics.empty().toBuilder().lastKafkaException(e).build()));
-  }
-
-  private Mono<InternalLogDirStats> getLogDirInfo(ClusterDescription desc, ReactiveAdminClient ac) {
-    var brokerIds = desc.getNodes().stream().map(Node::id).collect(Collectors.toSet());
-    return ac.describeLogDirs(brokerIds).map(InternalLogDirStats::new);
-  }
-
-  private Mono<Map<String, TopicDescription>> describeTopics(KafkaCluster c) {
-    return adminClientService.get(c).flatMap(ReactiveAdminClient::describeTopics);
-  }
-
-  private Mono<Map<String, List<ConfigEntry>>> loadTopicConfigs(KafkaCluster c) {
-    return adminClientService.get(c).flatMap(ReactiveAdminClient::getTopicsConfig);
   }
 
   private Mono<ScrapedClusterState> loadClusterState(ClusterDescription clusterDescription,

@@ -1,9 +1,10 @@
-package com.provectus.kafka.ui.service.metrics.v2.scrape.inferred;
+package com.provectus.kafka.ui.service.metrics.scrape.inferred;
 
 import static io.prometheus.client.Collector.MetricFamilySamples;
 
 import java.util.List;
 
+//TODO: maybe rename to state-based metrics?
 public class InferredMetrics {
 
   private final List<MetricFamilySamples> metrics;
