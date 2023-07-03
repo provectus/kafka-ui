@@ -23,6 +23,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.client.model.DataEntity;
 import org.opendatadiscovery.client.model.DataEntityType;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -54,8 +58,7 @@ class TopicsExporterTest {
   @Test
   void doesNotExportTopicsWhichDontFitFiltrationRule() {
     when(schemaRegistryClientMock.getSubjectVersion(anyString(), anyString(), anyBoolean()))
-        .thenReturn(Mono.error(new RuntimeException("Not found")));
-
+        .thenReturn(Mono.error(WebClientResponseException.create(404, "NF", new HttpHeaders(), null, null, null)));
     stats = Statistics.empty()
         .toBuilder()
         .topicDescriptions(

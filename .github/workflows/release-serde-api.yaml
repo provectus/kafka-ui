@@ -1,4 +1,4 @@
-name: Release serde api
+name: "Infra: Release: Serde API"
 on: workflow_dispatch
 
 jobs:

@@ -1,4 +1,4 @@
-name: Frontend build and test
+name: "Frontend: PR/master build & test"
 on:
   push:
     branches:

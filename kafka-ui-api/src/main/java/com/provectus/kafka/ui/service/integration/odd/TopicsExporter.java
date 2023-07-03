@@ -41,6 +41,8 @@ class TopicsExporter {
     return Flux.fromIterable(stats.getTopicDescriptions().keySet())
         .filter(topicFilter)
         .flatMap(topic -> createTopicDataEntity(cluster, topic, stats))
+        .onErrorContinue(
+            (th, topic) -> log.warn("Error exporting data for topic {}, cluster {}", topic, cluster.getName(), th))
         .buffer(100)
         .map(topicsEntities ->
             new DataEntityList()
@@ -92,10 +94,10 @@ class TopicsExporter {
         .build();
   }
 
+  //returns empty list if schemaRegistry is not configured or assumed subject not found
   private Mono<List<DataSetField>> getTopicSchema(KafkaCluster cluster,
                                                   String topic,
                                                   KafkaPath topicOddrn,
-                                                  //currently we only retrieve value schema
                                                   boolean isKey) {
     if (cluster.getSchemaRegistryClient() == null) {
       return Mono.just(List.of());
@@ -104,10 +106,8 @@ class TopicsExporter {
     return getSubjWithResolvedRefs(cluster, subject)
         .map(t -> DataSetFieldsExtractors.extract(t.getT1(), t.getT2(), topicOddrn, isKey))
         .onErrorResume(WebClientResponseException.NotFound.class, th -> Mono.just(List.of()))
-        .onErrorResume(th -> true, th -> {
-          log.warn("Error retrieving subject {} for cluster {}", subject, cluster.getName(), th);
-          return Mono.just(List.of());
-        });
+        .onErrorMap(WebClientResponseException.class, err ->
+            new IllegalStateException("Error retrieving subject %s".formatted(subject), err));
   }
 
   private Mono<Tuple2<SchemaSubject, Map<String, String>>> getSubjWithResolvedRefs(KafkaCluster cluster,

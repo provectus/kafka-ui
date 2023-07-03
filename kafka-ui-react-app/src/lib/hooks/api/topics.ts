@@ -304,6 +304,11 @@ export function useTopicAnalysis(
       useErrorBoundary: true,
       retry: false,
       suspense: false,
+      onError: (error: Response) => {
+        if (error.status !== 404) {
+          showServerError(error as Response);
+        }
+      },
     }
   );
 }
