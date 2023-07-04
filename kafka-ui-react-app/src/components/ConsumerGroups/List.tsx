@@ -61,6 +61,9 @@ const List = () => {
         id: ConsumerGroupOrdering.MESSAGES_BEHIND,
         header: 'Consumer Lag',
         accessorKey: 'consumerLag',
+        cell: (args) => {
+          return args.getValue() || 'N/A';
+        },
       },
       {
         header: 'Coordinator',
