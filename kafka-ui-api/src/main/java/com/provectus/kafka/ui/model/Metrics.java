@@ -47,7 +47,7 @@ public class Metrics {
     }
   }
 
-  public Stream<MetricFamilySamples> getSummarizedBrokersMetrics() {
+  public Stream<MetricFamilySamples> getSummarizedMetrics() {
     return Streams.concat(
         inferredMetrics.asList().stream(),
         perBrokerScrapedMetrics

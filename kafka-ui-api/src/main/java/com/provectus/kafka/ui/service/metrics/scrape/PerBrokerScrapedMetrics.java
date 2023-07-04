@@ -18,8 +18,7 @@ public class PerBrokerScrapedMetrics {
   }
 
   Metrics.IoRates ioRates() {
-    //TODO: rename WKMetrics
-    return new WellKnownMetrics(perBrokerMetrics).ioRates();
+    return new IoRatesMetricsScanner(perBrokerMetrics).get();
   }
 
 }

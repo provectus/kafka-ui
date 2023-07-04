@@ -101,7 +101,7 @@ public class InferredMetricsScraper {
               state.logDirSpaceStats().totalBytes()
           );
         }
-        //TODO: maybe add per-directory stats also
+        //TODO: maybe add per-directory stats also?
       }
     });
   }

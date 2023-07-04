@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractController {
 
-  private ClustersStorage clustersStorage;
+  protected ClustersStorage clustersStorage;
 
   protected KafkaCluster getCluster(String name) {
     return clustersStorage.getClusterByName(name)

@@ -7,7 +7,7 @@ import com.provectus.kafka.ui.api.PrometheusExposeApi;
 import com.provectus.kafka.ui.service.StatisticsCache;
 import io.prometheus.client.exporter.common.TextFormat;
 import java.io.StringWriter;
-import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +25,16 @@ public class PrometheusExposeController extends AbstractController implements Pr
   private final StatisticsCache statisticsCache;
 
   @Override
-  public Mono<ResponseEntity<String>> getAllMetrics(String clusterName, ServerWebExchange exchange) {
+  public Mono<ResponseEntity<String>> getAllMetrics(ServerWebExchange exchange) {
+    return constructResponse(getSummarizedMetricsWithClusterLbl());
+  }
+
+  @Override
+  public Mono<ResponseEntity<String>> getAllClusterMetrics(String clusterName, ServerWebExchange exchange) {
     return constructResponse(
         statisticsCache.get(getCluster(clusterName))
             .getMetrics()
-            .getSummarizedBrokersMetrics()
+            .getSummarizedMetrics()
     );
   }
 
@@ -37,6 +42,7 @@ public class PrometheusExposeController extends AbstractController implements Pr
   public Mono<ResponseEntity<String>> getBrokerMetrics(String clusterName,
                                                        Long brokerId,
                                                        ServerWebExchange exchange) {
+    //TODO: discuss - do we need to append broker_id lbl ?
     return constructResponse(
         statisticsCache.get(getCluster(clusterName))
             .getMetrics()
@@ -46,9 +52,42 @@ public class PrometheusExposeController extends AbstractController implements Pr
     );
   }
 
+  private Stream<MetricFamilySamples> getSummarizedMetricsWithClusterLbl() {
+    return clustersStorage.getKafkaClusters()
+        .stream()
+        .flatMap(c -> statisticsCache.get(c)
+            .getMetrics()
+            .getSummarizedMetrics()
+            .map(mfs -> appendClusterLbl(mfs, c.getName())));
+  }
+
+  private static MetricFamilySamples appendClusterLbl(MetricFamilySamples mfs, String clusterName) {
+    return new MetricFamilySamples(
+        mfs.name,
+        mfs.unit,
+        mfs.type,
+        mfs.help,
+        mfs.samples.stream()
+            .map(sample ->
+                new MetricFamilySamples.Sample(
+                    sample.name,
+                    prependToList(sample.labelNames, "cluster"),
+                    prependToList(sample.labelValues, clusterName),
+                    sample.value
+                )).toList()
+    );
+  }
+
+  private static <T> List<T> prependToList(List<T> lst, T toPrepend) {
+    var result = new ArrayList<T>(lst.size() + 1);
+    result.add(toPrepend);
+    result.addAll(lst);
+    return result;
+  }
+
   @SneakyThrows
-  private Mono<ResponseEntity<String>> constructResponse(Stream<MetricFamilySamples> metrics) {
-    Writer writer = new StringWriter();
+  private static Mono<ResponseEntity<String>> constructResponse(Stream<MetricFamilySamples> metrics) {
+    StringWriter writer = new StringWriter();
     TextFormat.writeOpenMetrics100(writer, Iterators.asEnumeration(metrics.iterator()));
 
     HttpHeaders responseHeaders = new HttpHeaders();

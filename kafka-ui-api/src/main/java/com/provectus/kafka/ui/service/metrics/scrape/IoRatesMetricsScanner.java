@@ -10,9 +10,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.kafka.common.Node;
 
-public class WellKnownMetrics {
+public class IoRatesMetricsScanner {
 
   // per broker
   final Map<Integer, BigDecimal> brokerBytesInFifteenMinuteRate = new HashMap<>();
@@ -22,7 +21,7 @@ public class WellKnownMetrics {
   final Map<String, BigDecimal> bytesInFifteenMinuteRate = new HashMap<>();
   final Map<String, BigDecimal> bytesOutFifteenMinuteRate = new HashMap<>();
 
-  public WellKnownMetrics(Map<Integer, List<Collector.MetricFamilySamples>> perBrokerMetrics) {
+  public IoRatesMetricsScanner(Map<Integer, List<Collector.MetricFamilySamples>> perBrokerMetrics) {
     perBrokerMetrics.forEach((nodeId, metrics) -> {
       metrics.forEach(m -> {
         RawMetric.create(m).forEach(rawMetric -> {
@@ -33,7 +32,7 @@ public class WellKnownMetrics {
     });
   }
 
-  public Metrics.IoRates ioRates() {
+  public Metrics.IoRates get() {
     return Metrics.IoRates.builder()
         .topicBytesInPerSec(bytesInFifteenMinuteRate)
         .topicBytesOutPerSec(bytesOutFifteenMinuteRate)

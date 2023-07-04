@@ -32,10 +32,7 @@ import com.provectus.kafka.ui.model.ReplicaDTO;
 import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
-import com.provectus.kafka.ui.service.metrics.RawMetric;
-import io.prometheus.client.Collector;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,7 +59,7 @@ public interface ClusterMapper {
   @Deprecated
   default ClusterMetricsDTO toClusterMetrics(Metrics metrics) {
     return new ClusterMetricsDTO()
-        .items(convert(metrics.getSummarizedBrokersMetrics()).toList());
+        .items(convert(metrics.getSummarizedMetrics()).toList());
   }
 
   private Stream<MetricDTO> convert(Stream<MetricFamilySamples> metrics) {

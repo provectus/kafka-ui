@@ -6,9 +6,9 @@ import java.math.BigDecimal;
 import org.apache.kafka.common.Node;
 import org.junit.jupiter.api.Test;
 
-class WellKnownMetricsTest {
+class IoRatesMetricsScannerTest {
 
-  private WellKnownMetrics wellKnownMetrics;
+  private IoRatesMetricsScanner ioRatesMetricsScanner;
 
   @Test
   void bytesIoTopicMetricsPopulated() {
@@ -21,9 +21,9 @@ class WellKnownMetricsTest {
         "some_unknown_prefix_brokertopicmetrics_fifteenminuterate{name=\"bytesinpersec\",topic=\"test-topic\",} 1.0",
         "some_unknown_prefix_brokertopicmetrics_fifteenminuterate{name=\"bytesoutpersec\",topic=\"test-topic\",} 2.0"
     );
-    assertThat(wellKnownMetrics.bytesInFifteenMinuteRate)
+    assertThat(ioRatesMetricsScanner.bytesInFifteenMinuteRate)
         .containsEntry("test-topic", new BigDecimal("3.0"));
-    assertThat(wellKnownMetrics.bytesOutFifteenMinuteRate)
+    assertThat(ioRatesMetricsScanner.bytesOutFifteenMinuteRate)
         .containsEntry("test-topic", new BigDecimal("6.0"));
   }
 
@@ -40,12 +40,12 @@ class WellKnownMetricsTest {
         "some_unknown_prefix_brokertopicmetrics_fifteenminuterate{name=\"bytesoutpersec\",} 20.0"
     );
 
-    assertThat(wellKnownMetrics.brokerBytesInFifteenMinuteRate)
+    assertThat(ioRatesMetricsScanner.brokerBytesInFifteenMinuteRate)
         .hasSize(2)
         .containsEntry(1, new BigDecimal("1.0"))
         .containsEntry(2, new BigDecimal("10.0"));
 
-    assertThat(wellKnownMetrics.brokerBytesOutFifteenMinuteRate)
+    assertThat(ioRatesMetricsScanner.brokerBytesOutFifteenMinuteRate)
         .hasSize(2)
         .containsEntry(1, new BigDecimal("2.0"))
         .containsEntry(2, new BigDecimal("20.0"));
