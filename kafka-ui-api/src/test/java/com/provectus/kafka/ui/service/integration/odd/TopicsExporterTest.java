@@ -92,7 +92,7 @@ class TopicsExporterTest {
                 .schemaType(SchemaType.AVRO)
         ));
 
-    when(schemaRegistryClientMock.getSubjectVersion("testTopic-key", "latest"))
+    when(schemaRegistryClientMock.getSubjectVersion("testTopic-key", "latest", false))
         .thenReturn(Mono.just(
             new SchemaSubject()
                 .schema("\"int\"")
