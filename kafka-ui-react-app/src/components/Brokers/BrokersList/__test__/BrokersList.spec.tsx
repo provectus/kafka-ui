@@ -52,7 +52,9 @@ describe('BrokersList Component', () => {
       it('renders', async () => {
         renderComponent();
         expect(screen.getByRole('table')).toBeInTheDocument();
-        expect(screen.getAllByRole('row').length).toEqual(3);
+        expect(screen.getAllByRole('row').length).toEqual(
+          brokersPayload.length + 1
+        );
       });
       it('opens broker when row clicked', async () => {
         renderComponent();
@@ -153,7 +155,9 @@ describe('BrokersList Component', () => {
       it('renders list of all brokers', async () => {
         renderComponent();
         expect(screen.getByRole('table')).toBeInTheDocument();
-        expect(screen.getAllByRole('row').length).toEqual(3);
+        expect(screen.getAllByRole('row').length).toEqual(
+          brokersPayload.length + 1
+        );
       });
       it('opens broker when row clicked', async () => {
         renderComponent();
@@ -182,7 +186,9 @@ describe('BrokersList Component', () => {
       it('renders list of all brokers', async () => {
         renderComponent();
         expect(screen.getByRole('table')).toBeInTheDocument();
-        expect(screen.getAllByRole('row').length).toEqual(3);
+        expect(screen.getAllByRole('row').length).toEqual(
+          brokersPayload.length + 1
+        );
       });
     });
   });
