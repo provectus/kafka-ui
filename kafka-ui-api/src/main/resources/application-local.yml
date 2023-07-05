@@ -97,6 +97,9 @@ rbac:
           type: organization
           value: "provectus"
         - provider: oauth_github
+          type: team
+          value: "provectus/memelords" #{organization}/{team}
+        - provider: oauth_github
           type: user
           value: "memelord"
 
