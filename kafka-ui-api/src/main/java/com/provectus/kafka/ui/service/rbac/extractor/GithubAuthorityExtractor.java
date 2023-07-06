@@ -3,8 +3,8 @@ package com.provectus.kafka.ui.service.rbac.extractor;
 import static com.provectus.kafka.ui.model.rbac.provider.Provider.Name.GITHUB;
 
 import com.nimbusds.jose.util.Pair;
+import com.provectus.kafka.ui.config.auth.OAuthProperties;
 import com.provectus.kafka.ui.model.rbac.Role;
-import com.provectus.kafka.ui.model.rbac.Subject;
 import com.provectus.kafka.ui.model.rbac.provider.Provider;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
   private static final String USERNAME_ATTRIBUTE_NAME = "login";
   private static final String ORGANIZATION_NAME = "login";
   private static final String GITHUB_ACCEPT_HEADER = "application/vnd.github+json";
-  private static final String GITHUB_TEAMS_URL = "https://api.github.com/orgs/%s/teams/%s/memberships/%s";
+  private static final String GITHUB_TEAMS_URI = "/orgs/%s/teams/%s/memberships/%s";
   private static final String DUMMY = "dummy";
   // The number of results (max 100) per page of list organizations for authenticated user.
   private static final Integer ORGANIZATIONS_PER_PAGE = 100;
@@ -103,12 +103,9 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
         .bodyToMono(new ParameterizedTypeReference<>() {});
     //@formatter:on
 
-    Map<Role, List<Subject>> teamsMap = new HashMap<>();
-    acs.getRoles().forEach(r -> {
-      List<Subject> subjects = r.getSubjects().stream()
-          .filter(s -> s.getProvider().equals(Provider.OAUTH_GITHUB) && s.getType().equals("team")).toList();
-      teamsMap.put(r, subjects);
-    });
+    OAuthProperties.OAuth2Provider authProvider = (OAuthProperties.OAuth2Provider) additionalParams.get("provider");
+    WebClient teamsWebClient = WebClient.create(authProvider.getGitHubApiUri() == null
+        ? "https://api.github.com" : authProvider.getGitHubApiUri());
 
     Flux<Pair<Role, Object>> teams = Flux.fromIterable(acs.getRoles())
         .flatMap(role -> Flux.fromIterable(role.getSubjects())
@@ -119,10 +116,10 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
                 String[] organizationAndTeam = orgTeam.split("/");
                 String org = organizationAndTeam[0];
                 String team = organizationAndTeam[1];
-                WebClient wc = WebClient.create(
-                    String.format(GITHUB_TEAMS_URL, org, team, username));
 
-                return wc.get()
+                return teamsWebClient
+                    .get()
+                    .uri(String.format(GITHUB_TEAMS_URI, org, team, username))
                     .headers(headers -> {
                       headers.set(HttpHeaders.ACCEPT, GITHUB_ACCEPT_HEADER);
                       OAuth2UserRequest request = (OAuth2UserRequest) additionalParams.get("request");
@@ -130,7 +127,11 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
                     })
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<>() {})
-                    .onErrorResume(Exception.class, ex -> Mono.just(new HashMap<String, String>()))
+                    .onErrorResume(Exception.class, ex -> {
+                      log.error(
+                          String.format("Can't load team membership for team %s and user %s", team, username), ex);
+                      return Mono.just(new HashMap<String, String>());
+                    })
                     .map(m -> Pair.of(role, m))
                     .flux();
               }

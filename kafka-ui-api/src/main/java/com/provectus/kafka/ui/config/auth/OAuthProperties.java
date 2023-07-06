@@ -46,6 +46,7 @@ public class OAuthProperties {
     private String authorizationUri;
     private String tokenUri;
     private String userInfoUri;
+    private String gitHubApiUri;
     private String jwkSetUri;
     private String userNameAttribute;
     private Map<String, String> customParams;
