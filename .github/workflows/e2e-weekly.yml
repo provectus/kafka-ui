@@ -1,4 +1,4 @@
-name: E2E Weekly suite
+name: "E2E: Weekly suite"
 on:
   schedule:
     - cron: '0 1 * * 1'

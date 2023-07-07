@@ -1,4 +1,4 @@
-name: Release Drafter
+name: "Infra: Release Drafter run"
 
 on:
   push:

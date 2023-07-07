@@ -1,4 +1,4 @@
-name: E2E Automation suite
+name: "E2E: Automation suite"
 on:
   workflow_dispatch:
     inputs:

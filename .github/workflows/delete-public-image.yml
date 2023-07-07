@@ -1,4 +1,4 @@
-name: Delete Public ECR Image
+name: "Infra: Image Testing: Delete"
 on:
   workflow_dispatch:
   pull_request:
