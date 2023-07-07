@@ -25,7 +25,7 @@ public class InternalLogDirStats {
     Long segmentSize;
     Integer segmentsCount;
 
-    public SegmentStats(LongSummaryStatistics s) {
+    private SegmentStats(LongSummaryStatistics s) {
       segmentSize = s.getSum();
       segmentsCount = (int) s.getCount();
     }

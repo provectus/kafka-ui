@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.service.metrics.scrape.inferred;
 import static io.prometheus.client.Collector.MetricFamilySamples;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 //TODO: maybe rename to state-based metrics?
 public class InferredMetrics {
@@ -17,8 +18,8 @@ public class InferredMetrics {
     this.metrics = metrics;
   }
 
-  public List<MetricFamilySamples> asList() {
-    return metrics;
+  public Stream<MetricFamilySamples> asStream() {
+    return metrics.stream();
   }
 
 }

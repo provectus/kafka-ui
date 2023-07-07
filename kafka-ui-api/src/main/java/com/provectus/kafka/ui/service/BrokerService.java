@@ -72,7 +72,7 @@ public class BrokerService {
         .get(cluster)
         .flatMap(ReactiveAdminClient::describeCluster)
         .map(description -> description.getNodes().stream()
-            .map(node -> new InternalBroker(node, partitionsDistribution, stats))
+            .map(node -> new InternalBroker(node, partitionsDistribution, stats.getMetrics()))
             .collect(Collectors.toList()))
         .flatMapMany(Flux::fromIterable);
   }

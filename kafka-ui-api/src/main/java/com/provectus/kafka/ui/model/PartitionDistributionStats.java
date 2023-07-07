@@ -1,14 +1,17 @@
 package com.provectus.kafka.ui.model;
 
+import com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartitionInfo;
@@ -29,15 +32,18 @@ public class PartitionDistributionStats {
   private final boolean skewCanBeCalculated;
 
   public static PartitionDistributionStats create(Statistics stats) {
-    return create(stats, MIN_PARTITIONS_FOR_SKEW_CALCULATION);
+    return create(
+        stats.topicDescriptions().toList(),
+        MIN_PARTITIONS_FOR_SKEW_CALCULATION
+    );
   }
 
-  static PartitionDistributionStats create(Statistics stats, int minPartitionsForSkewCalculation) {
+  static PartitionDistributionStats create(List<TopicDescription> topicDescriptions, int minPartitionsForSkewCalculation) {
     var partitionLeaders = new HashMap<Node, Integer>();
     var partitionsReplicated = new HashMap<Node, Integer>();
     var isr = new HashMap<Node, Integer>();
     int partitionsCnt = 0;
-    for (TopicDescription td : stats.getTopicDescriptions().values()) {
+    for (TopicDescription td : topicDescriptions) {
       for (TopicPartitionInfo tp : td.partitions()) {
         partitionsCnt++;
         tp.replicas().forEach(r -> incr(partitionsReplicated, r));

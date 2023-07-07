@@ -1,8 +1,9 @@
 package com.provectus.kafka.ui.service.integration.odd;
 
+import static com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState.TopicState;
+
 import com.google.common.collect.ImmutableMap;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.Statistics;
 import com.provectus.kafka.ui.service.StatisticsCache;
 import com.provectus.kafka.ui.service.integration.odd.schema.DataSetFieldsExtractors;
 import java.net.URI;
@@ -34,10 +35,10 @@ class TopicsExporter {
 
   Flux<DataEntityList> export(KafkaCluster cluster) {
     String clusterOddrn = Oddrn.clusterOddrn(cluster);
-    Statistics stats = statisticsCache.get(cluster);
-    return Flux.fromIterable(stats.getTopicDescriptions().keySet())
+    var clusterState = statisticsCache.get(cluster).getClusterState();
+    return Flux.fromIterable(clusterState.getTopicStates().keySet())
         .filter(topicFilter)
-        .flatMap(topic -> createTopicDataEntity(cluster, topic, stats))
+        .flatMap(topic -> createTopicDataEntity(cluster, topic, clusterState.getTopicStates().get(topic)))
         .buffer(100)
         .map(topicsEntities ->
             new DataEntityList()
@@ -45,7 +46,7 @@ class TopicsExporter {
                 .items(topicsEntities));
   }
 
-  private Mono<DataEntity> createTopicDataEntity(KafkaCluster cluster, String topic, Statistics stats) {
+  private Mono<DataEntity> createTopicDataEntity(KafkaCluster cluster, String topic, TopicState topicState) {
     KafkaPath topicOddrnPath = Oddrn.topicOddrnPath(cluster, topic);
     return
         Mono.zip(
@@ -65,13 +66,13 @@ class TopicsExporter {
                       .addMetadataItem(
                           new MetadataExtension()
                               .schemaUrl(URI.create("wontbeused.oops"))
-                              .metadata(getTopicMetadata(topic, stats)));
+                              .metadata(getTopicMetadata(topicState)));
                 }
             );
   }
 
-  private Map<String, Object> getNonDefaultConfigs(String topic, Statistics stats) {
-    List<ConfigEntry> config = stats.getTopicConfigs().get(topic);
+  private Map<String, Object> getNonDefaultConfigs(TopicState topicState) {
+    List<ConfigEntry> config = topicState.configs();
     if (config == null) {
       return Map.of();
     }
@@ -80,12 +81,12 @@ class TopicsExporter {
         .collect(Collectors.toMap(ConfigEntry::name, ConfigEntry::value));
   }
 
-  private Map<String, Object> getTopicMetadata(String topic, Statistics stats) {
-    TopicDescription topicDescription = stats.getTopicDescriptions().get(topic);
+  private Map<String, Object> getTopicMetadata(TopicState topicState) {
+    TopicDescription topicDescription = topicState.description();
     return ImmutableMap.<String, Object>builder()
         .put("partitions", topicDescription.partitions().size())
         .put("replication_factor", topicDescription.partitions().get(0).replicas().size())
-        .putAll(getNonDefaultConfigs(topic, stats))
+        .putAll(getNonDefaultConfigs(topicState))
         .build();
   }
 

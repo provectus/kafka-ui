@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service;
 
+import static com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -25,6 +26,7 @@ import com.provectus.kafka.ui.model.ReplicationFactorChangeResponseDTO;
 import com.provectus.kafka.ui.model.Statistics;
 import com.provectus.kafka.ui.model.TopicCreationDTO;
 import com.provectus.kafka.ui.model.TopicUpdateDTO;
+import com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
@@ -71,20 +73,19 @@ public class TopicsService {
     return adminClientService.get(c)
         .flatMap(ac ->
             ac.describeTopics(topics).zipWith(ac.getTopicsConfig(topics, false),
-                (descriptions, configs) -> {
-                  statisticsCache.update(c, descriptions, configs);
-                  return getPartitionOffsets(descriptions, ac).map(offsets -> {
-                    var metrics = statisticsCache.get(c);
-                    return createList(
-                        topics,
-                        descriptions,
-                        configs,
-                        offsets,
-                        metrics.getMetrics(),
-                        metrics.getLogDirInfo()
-                    );
-                  });
-                })).flatMap(Function.identity());
+                (descriptions, configs) ->
+                    getPartitionOffsets(descriptions, ac).map(offsets -> {
+                      statisticsCache.update(c, descriptions, configs, offsets);
+                      var stats = statisticsCache.get(c);
+                      return createList(
+                          topics,
+                          descriptions,
+                          configs,
+                          offsets,
+                          stats.getMetrics(),
+                          stats.getClusterState()
+                      );
+                    }))).flatMap(Function.identity());
   }
 
   private Mono<InternalTopic> loadTopic(KafkaCluster c, String topicName) {
@@ -95,8 +96,8 @@ public class TopicsService {
   }
 
   /**
-   *  After creation topic can be invisible via API for some time.
-   *  To workaround this, we retyring topic loading until it becomes visible.
+   * After creation topic can be invisible via API for some time.
+   * To workaround this, we retyring topic loading until it becomes visible.
    */
   private Mono<InternalTopic> loadTopicAfterCreation(KafkaCluster c, String topicName) {
     return loadTopic(c, topicName)
@@ -122,7 +123,7 @@ public class TopicsService {
                                          Map<String, List<ConfigEntry>> configs,
                                          InternalPartitionsOffsets partitionsOffsets,
                                          Metrics metrics,
-                                         InternalLogDirStats logDirInfo) {
+                                         ScrapedClusterState clusterState) {
     return orderedNames.stream()
         .filter(descriptions::containsKey)
         .map(t -> InternalTopic.from(
@@ -130,7 +131,8 @@ public class TopicsService {
             configs.getOrDefault(t, List.of()),
             partitionsOffsets,
             metrics,
-            logDirInfo,
+            Optional.ofNullable(clusterState.getTopicStates().get(t)).map(s -> s.segmentStats()).orElse(null),
+            Optional.ofNullable(clusterState.getTopicStates().get(t)).map(s -> s.partitionsSegmentStats()).orElse(null),
             clustersProperties.getInternalTopicPrefix()
         ))
         .collect(toList());
@@ -228,7 +230,7 @@ public class TopicsService {
   }
 
   public Mono<InternalTopic> updateTopic(KafkaCluster cl, String topicName,
-                                    Mono<TopicUpdateDTO> topicUpdate) {
+                                         Mono<TopicUpdateDTO> topicUpdate) {
     return topicUpdate
         .flatMap(t -> updateTopic(cl, topicName, t));
   }
@@ -447,17 +449,21 @@ public class TopicsService {
 
   public Mono<List<InternalTopic>> getTopicsForPagination(KafkaCluster cluster) {
     Statistics stats = statisticsCache.get(cluster);
-    return filterExisting(cluster, stats.getTopicDescriptions().keySet())
+    Map<String, TopicState> topicStates = stats.getClusterState().getTopicStates();
+    return filterExisting(cluster, topicStates.keySet())
         .map(lst -> lst.stream()
             .map(topicName ->
                 InternalTopic.from(
-                    stats.getTopicDescriptions().get(topicName),
-                    stats.getTopicConfigs().getOrDefault(topicName, List.of()),
+                    topicStates.get(topicName).description(),
+                    topicStates.get(topicName).configs(),
                     InternalPartitionsOffsets.empty(),
                     stats.getMetrics(),
-                    stats.getLogDirInfo(),
+                    Optional.ofNullable(topicStates.get(topicName))
+                        .map(TopicState::segmentStats).orElse(null),
+                    Optional.ofNullable(topicStates.get(topicName))
+                        .map(TopicState::partitionsSegmentStats).orElse(null),
                     clustersProperties.getInternalTopicPrefix()
-                    ))
+                ))
             .collect(toList())
         );
   }

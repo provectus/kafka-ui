@@ -5,6 +5,7 @@ import com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.Value;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -21,11 +22,6 @@ public class Statistics {
   Metrics metrics;
   ScrapedClusterState clusterState;
 
-  //TODO: to be removed -->>
-  InternalLogDirStats logDirInfo;
-  Map<String, TopicDescription> topicDescriptions;
-  Map<String, List<ConfigEntry>> topicConfigs;
-
   public static Statistics empty() {
     return builder()
         .status(ServerStatusDTO.OFFLINE)
@@ -34,10 +30,12 @@ public class Statistics {
         .clusterDescription(
             new ReactiveAdminClient.ClusterDescription(null, null, List.of(), Set.of()))
         .metrics(Metrics.empty())
-        .logDirInfo(InternalLogDirStats.empty())
-        .topicDescriptions(Map.of())
-        .topicConfigs(Map.of())
         .clusterState(ScrapedClusterState.empty())
         .build();
   }
+
+  public Stream<TopicDescription> topicDescriptions(){
+    return clusterState.getTopicStates().values().stream().map(ScrapedClusterState.TopicState::description);
+  }
+
 }

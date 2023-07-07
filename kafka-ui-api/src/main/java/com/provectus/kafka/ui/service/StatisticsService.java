@@ -47,16 +47,6 @@ public class StatisticsService {
                                             .metrics(metrics)
                                             .features(featuresAndState.getT1())
                                             .clusterState(featuresAndState.getT2())
-                                            //TODO: RM ->>>
-                                            .topicDescriptions(
-                                                featuresAndState.getT2().getTopicStates().entrySet().stream()
-                                                    .collect(Collectors.toMap(
-                                                        Map.Entry::getKey, e -> e.getValue().description())))
-                                            .topicConfigs(
-                                                featuresAndState.getT2().getTopicStates().entrySet().stream()
-                                                    .collect(Collectors.toMap(
-                                                        Map.Entry::getKey, e -> e.getValue().configs())))
-                                            .logDirInfo(InternalLogDirStats.empty())
                                             .build())))))
         .doOnError(e ->
             log.error("Failed to collect cluster {} info", cluster.getName(), e))

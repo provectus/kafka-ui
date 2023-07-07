@@ -9,6 +9,7 @@ import io.prometheus.client.exporter.common.TextFormat;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -58,21 +59,29 @@ public class PrometheusExposeController extends AbstractController implements Pr
         .flatMap(c -> statisticsCache.get(c)
             .getMetrics()
             .getSummarizedMetrics()
-            .map(mfs -> appendClusterLbl(mfs, c.getName())));
+            .map(mfs -> appendLbl(mfs, "cluster", c.getName())))
+        // merging MFS with same name
+        .collect(Collectors.toMap(mfs -> mfs.name, mfs -> mfs, PrometheusExposeController::merge))
+        .values()
+        .stream();
   }
 
-  private static MetricFamilySamples appendClusterLbl(MetricFamilySamples mfs, String clusterName) {
+  private static MetricFamilySamples merge(MetricFamilySamples mfs1, MetricFamilySamples mfs2) {
     return new MetricFamilySamples(
-        mfs.name,
-        mfs.unit,
-        mfs.type,
-        mfs.help,
+        mfs1.name, mfs1.unit, mfs1.type, mfs1.help,
+        Stream.concat(mfs1.samples.stream(), mfs2.samples.stream()).toList()
+    );
+  }
+
+  private static MetricFamilySamples appendLbl(MetricFamilySamples mfs, String lblName, String lblVal) {
+    return new MetricFamilySamples(
+        mfs.name, mfs.unit, mfs.type, mfs.help,
         mfs.samples.stream()
             .map(sample ->
                 new MetricFamilySamples.Sample(
                     sample.name,
-                    prependToList(sample.labelNames, "cluster"),
-                    prependToList(sample.labelValues, clusterName),
+                    prependToList(sample.labelNames, lblName),
+                    prependToList(sample.labelValues, lblVal),
                     sample.value
                 )).toList()
     );

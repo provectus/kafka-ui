@@ -22,9 +22,9 @@ public class ClustersStatisticsScheduler {
         .parallel()
         .runOn(Schedulers.parallel())
         .flatMap(cluster -> {
-          log.debug("Start getting metrics for kafkaCluster: {}", cluster.getName());
+          log.debug("Start collection statistics for cluster: {}", cluster.getName());
           return statisticsService.updateCache(cluster)
-              .doOnSuccess(m -> log.debug("Metrics updated for cluster: {}", cluster.getName()));
+              .doOnSuccess(m -> log.debug("Statistics updated for cluster: {}", cluster.getName()));
         })
         .then()
         .block();

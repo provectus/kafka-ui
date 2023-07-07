@@ -24,7 +24,7 @@ public class PrometheusEndpointMetricsParser {
   private static final Pattern PATTERN = Pattern.compile(
       "(?<metricName>^\\w+)([ \t]*\\{*(?<properties>.*)}*)[ \\t]+(?<value>[\\d]+\\.?[\\d]+)?");
 
-  static Optional<RawMetric> parse(String s) {
+  public static Optional<RawMetric> parse(String s) {
     Matcher matcher = PATTERN.matcher(s);
     if (matcher.matches()) {
       String value = matcher.group("value");

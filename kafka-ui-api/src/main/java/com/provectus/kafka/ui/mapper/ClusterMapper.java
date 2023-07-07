@@ -16,7 +16,6 @@ import com.provectus.kafka.ui.model.ConfigSynonymDTO;
 import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.InternalBroker;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
-import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
 import com.provectus.kafka.ui.model.InternalClusterState;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
@@ -119,14 +118,6 @@ public interface ClusterMapper {
 
   default List<PartitionDTO> map(Map<Integer, InternalPartition> map) {
     return map.values().stream().map(this::toPartition).collect(Collectors.toList());
-  }
-
-  default BrokerDiskUsageDTO map(Integer id, InternalBrokerDiskUsage internalBrokerDiskUsage) {
-    final BrokerDiskUsageDTO brokerDiskUsage = new BrokerDiskUsageDTO();
-    brokerDiskUsage.setBrokerId(id);
-    brokerDiskUsage.segmentCount((int) internalBrokerDiskUsage.getSegmentCount());
-    brokerDiskUsage.segmentSize(internalBrokerDiskUsage.getSegmentSize());
-    return brokerDiskUsage;
   }
 
   static KafkaAclDTO.OperationEnum mapAclOperation(AclOperation operation) {

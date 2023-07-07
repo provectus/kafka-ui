@@ -3,8 +3,10 @@ package com.provectus.kafka.ui.service.metrics.scrape;
 import static com.provectus.kafka.ui.model.InternalLogDirStats.*;
 import static com.provectus.kafka.ui.service.ReactiveAdminClient.*;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Table;
 import com.provectus.kafka.ui.model.InternalLogDirStats;
+import com.provectus.kafka.ui.model.InternalPartitionsOffsets;
 import com.provectus.kafka.ui.service.ReactiveAdminClient;
 import jakarta.annotation.Nullable;
 import java.time.Instant;
@@ -24,7 +26,7 @@ import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import reactor.core.publisher.Mono;
 
-@Builder
+@Builder(toBuilder = true)
 @Value
 public class ScrapedClusterState {
 
@@ -61,6 +63,44 @@ public class ScrapedClusterState {
         .nodesStates(Map.of())
         .topicStates(Map.of())
         .consumerGroupsStates(Map.of())
+        .build();
+  }
+
+
+  public ScrapedClusterState updateTopics(Map<String, TopicDescription> descriptions,
+                                          Map<String, List<ConfigEntry>> configs,
+                                          InternalPartitionsOffsets partitionsOffsets) {
+    var updatedTopicStates = new HashMap<>(topicStates);
+    descriptions.forEach((topic, description) -> {
+      SegmentStats segmentStats = null;
+      Map<Integer, SegmentStats> partitionsSegmentStats = null;
+      if (topicStates.containsKey(topic)) {
+        segmentStats = topicStates.get(topic).segmentStats();
+        partitionsSegmentStats = topicStates.get(topic).partitionsSegmentStats();
+      }
+      updatedTopicStates.put(
+          topic,
+          new TopicState(
+              topic,
+              description,
+              configs.getOrDefault(topic, List.of()),
+              partitionsOffsets.topicOffsets(topic, true),
+              partitionsOffsets.topicOffsets(topic, false),
+              segmentStats,
+              partitionsSegmentStats
+          )
+      );
+    });
+    return toBuilder()
+        .topicStates(ImmutableMap.copyOf(updatedTopicStates))
+        .build();
+  }
+
+  public ScrapedClusterState topicDeleted(String topic) {
+    var newTopicStates = new HashMap<>(topicStates);
+    newTopicStates.remove(topic);
+    return toBuilder()
+        .topicStates(ImmutableMap.copyOf(newTopicStates))
         .build();
   }
 
@@ -109,11 +149,11 @@ public class ScrapedClusterState {
                 name,
                 desc,
                 topicConfigs.getOrDefault(name, List.of()),
-                cutTopic(name, earliestOffsets),
-                cutTopic(name, latestOffsets),
+                filterTopic(name, earliestOffsets),
+                filterTopic(name, latestOffsets),
                 segmentStats.getTopicStats().get(name),
                 Optional.ofNullable(segmentStats.getPartitionsStats())
-                    .map(topicForFilter -> cutTopic(name, topicForFilter))
+                    .map(topicForFilter -> filterTopic(name, topicForFilter))
                     .orElse(null)
             )));
 
@@ -146,7 +186,7 @@ public class ScrapedClusterState {
     );
   }
 
-  private static <T> Map<Integer, T> cutTopic(String topicForFilter, Map<TopicPartition, T> tpMap) {
+  private static <T> Map<Integer, T> filterTopic(String topicForFilter, Map<TopicPartition, T> tpMap) {
     return tpMap.entrySet()
         .stream()
         .filter(tp -> tp.getKey().topic().equals(topicForFilter))

@@ -49,7 +49,7 @@ public class Metrics {
 
   public Stream<MetricFamilySamples> getSummarizedMetrics() {
     return Streams.concat(
-        inferredMetrics.asList().stream(),
+        inferredMetrics.asStream(),
         perBrokerScrapedMetrics
             .values()
             .stream()
