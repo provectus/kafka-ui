@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service.integration.odd;
 
-import static com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState.*;
+import static com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState.TopicState;
+import static com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;

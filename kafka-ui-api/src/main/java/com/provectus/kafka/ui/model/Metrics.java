@@ -1,18 +1,16 @@
 package com.provectus.kafka.ui.model;
 
-import static io.prometheus.client.Collector.*;
+import static io.prometheus.client.Collector.MetricFamilySamples;
 import static java.util.stream.Collectors.toMap;
 
 import com.google.common.collect.Streams;
 import com.provectus.kafka.ui.service.metrics.scrape.inferred.InferredMetrics;
 import groovy.lang.Tuple;
-import jakarta.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.Builder;

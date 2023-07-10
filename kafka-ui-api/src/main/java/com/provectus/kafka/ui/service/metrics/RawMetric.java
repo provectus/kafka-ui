@@ -25,7 +25,7 @@ public interface RawMetric {
     return new SimpleMetric(name, labels, value);
   }
 
-  static Stream<MetricFamilySamples> groupIntoMFS(Collection<RawMetric> rawMetrics) {
+  static Stream<MetricFamilySamples> groupIntoMfs(Collection<RawMetric> rawMetrics) {
     Map<String, MetricFamilySamples> map = new LinkedHashMap<>();
     for (RawMetric m : rawMetrics) {
       var mfs = map.get(m.name());

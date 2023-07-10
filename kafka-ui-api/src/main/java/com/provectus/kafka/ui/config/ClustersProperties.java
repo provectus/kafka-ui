@@ -73,31 +73,6 @@ public class ClustersProperties {
     String password;
     String keystoreLocation;
     String keystorePassword;
-
-//    JmxScraper jmxScraper;
-//    PrometheusScraper prometheusScraper;
-//
-//    @Data
-//    @ToString(exclude = "password")
-//    public static class JmxScraper {
-//      Integer port;
-//      Boolean ssl;
-//      String username;
-//      String password;
-//      String keystoreLocation;
-//      String keystorePassword;
-//    }
-//
-//    @Data
-//    @ToString(exclude = "password")
-//    public static class PrometheusScraper {
-//      Integer port;
-//      Boolean ssl;
-//      String username;
-//      String password;
-//      String keystoreLocation;
-//      String keystorePassword;
-//    }
   }
 
   @Data

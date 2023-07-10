@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.service.metrics.scrape.prometheus;
 
-import static io.prometheus.client.Collector.MetricFamilySamples.*;
+import static io.prometheus.client.Collector.MetricFamilySamples.Sample;
 
 import com.google.common.base.Enums;
 import io.prometheus.client.Collector.MetricFamilySamples;
@@ -31,7 +31,8 @@ public class PrometheusEndpointParser {
 
     void registerAndReset() {
       if (!samples.isEmpty()) {
-        registered.add(new MetricFamilySamples(name, type, Optional.ofNullable(help).orElse(name), List.copyOf(samples)));
+        registered.add(
+            new MetricFamilySamples(name, type, Optional.ofNullable(help).orElse(name), List.copyOf(samples)));
       }
       //resetting state:
       name = null;
@@ -40,8 +41,14 @@ public class PrometheusEndpointParser {
       allowedNames.clear();
       samples.clear();
     }
+
+    List<MetricFamilySamples> getRegistered() {
+      registerAndReset(); // last in progress metric should be registered
+      return registered;
+    }
   }
 
+  // general logic taken from https://github.com/prometheus/client_python/blob/master/prometheus_client/parser.py
   public static List<MetricFamilySamples> parse(Stream<String> lines) {
     ParserContext context = new ParserContext();
     lines.map(String::trim)
@@ -60,8 +67,7 @@ public class PrometheusEndpointParser {
             processSample(context, line);
           }
         });
-    context.registerAndReset();
-    return context.registered;
+    return context.getRegistered();
   }
 
   private static void processHelp(ParserContext context, String[] parts) {

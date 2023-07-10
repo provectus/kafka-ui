@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.service;
 
-import static com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState.*;
+import static com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState.TopicState;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 

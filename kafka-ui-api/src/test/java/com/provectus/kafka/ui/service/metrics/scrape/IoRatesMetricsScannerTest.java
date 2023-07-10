@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service.metrics.scrape;
 
 import static io.prometheus.client.Collector.MetricFamilySamples;
 import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.service.metrics.scrape.prometheus.PrometheusEndpointParser;
@@ -21,18 +21,18 @@ class IoRatesMetricsScannerTest {
     populateWith(
         nodeMetrics(
             new Node(0, "host", 123),
-            "kafka_server_BrokerTopicMetrics_FifteenMinuteRate{name=\"BytesInPerSec\",topic=\"test-topic\",} 1.0",
-            "kafka_server_BrokerTopicMetrics_FifteenMinuteRate{name=\"BytesOutPerSec\",topic=\"test-topic\",} 2.0",
-            "kafka_server_brokertopicmetrics_fifteenminuterate{name=\"bytesinpersec\",topic=\"test-topic\",} 1.0",
-            "kafka_server_brokertopicmetrics_fifteenminuterate{name=\"bytesoutpersec\",topic=\"test-topic\",} 2.0",
-            "some_unknown_prefix_brokertopicmetrics_fifteenminuterate{name=\"bytesinpersec\",topic=\"test-topic\",} 1.0",
-            "some_unknown_prefix_brokertopicmetrics_fifteenminuterate{name=\"bytesoutpersec\",topic=\"test-topic\",} 2.0"
+            "kafka_server_BrokerTopicMetrics_FifteenMinuteRate{name=\"BytesInPerSec\",topic=\"test\",} 1.0",
+            "kafka_server_BrokerTopicMetrics_FifteenMinuteRate{name=\"BytesOutPerSec\",topic=\"test\",} 2.0",
+            "kafka_server_brokertopicmetrics_fifteenminuterate{name=\"bytesinpersec\",topic=\"test\",} 1.0",
+            "kafka_server_brokertopicmetrics_fifteenminuterate{name=\"bytesoutpersec\",topic=\"test\",} 2.0",
+            "some_unknown_prefix_brokertopicmetrics_fifteenminuterate{name=\"bytesinpersec\",topic=\"test\",} 1.0",
+            "some_unknown_prefix_brokertopicmetrics_fifteenminuterate{name=\"bytesoutpersec\",topic=\"test\",} 2.0"
         )
     );
     assertThat(ioRatesMetricsScanner.bytesInFifteenMinuteRate)
-        .containsEntry("test-topic", new BigDecimal("3.0"));
+        .containsEntry("test", new BigDecimal("3.0"));
     assertThat(ioRatesMetricsScanner.bytesOutFifteenMinuteRate)
-        .containsEntry("test-topic", new BigDecimal("6.0"));
+        .containsEntry("test", new BigDecimal("6.0"));
   }
 
   @Test

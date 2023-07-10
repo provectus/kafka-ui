@@ -1,7 +1,8 @@
 package com.provectus.kafka.ui.service.metrics.scrape;
 
-import static com.provectus.kafka.ui.model.InternalLogDirStats.*;
-import static com.provectus.kafka.ui.service.ReactiveAdminClient.*;
+import static com.provectus.kafka.ui.model.InternalLogDirStats.LogDirSpaceStats;
+import static com.provectus.kafka.ui.model.InternalLogDirStats.SegmentStats;
+import static com.provectus.kafka.ui.service.ReactiveAdminClient.ClusterDescription;
 
 import com.google.common.collect.Table;
 import com.provectus.kafka.ui.model.InternalLogDirStats;

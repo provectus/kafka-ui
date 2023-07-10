@@ -34,7 +34,7 @@ public class Statistics {
         .build();
   }
 
-  public Stream<TopicDescription> topicDescriptions(){
+  public Stream<TopicDescription> topicDescriptions() {
     return clusterState.getTopicStates().values().stream().map(ScrapedClusterState.TopicState::description);
   }
 

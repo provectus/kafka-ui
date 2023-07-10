@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.util;
 
-import static io.prometheus.client.Collector.*;
+import static io.prometheus.client.Collector.MetricFamilySamples;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Iterators;
@@ -47,7 +47,8 @@ public final class PrometheusEndpointUtil {
             .getSummarizedMetrics()
             .map(mfs -> addLbl(mfs, "cluster", e.getKey())))
         // merging MFS with same name, keeping order
-        .collect(Collectors.toMap(mfs -> mfs.name, mfs -> mfs, PrometheusEndpointUtil::concatSamples, LinkedHashMap::new))
+        .collect(Collectors.toMap(mfs -> mfs.name, mfs -> mfs,
+            PrometheusEndpointUtil::concatSamples, LinkedHashMap::new))
         .values()
         .stream();
   }

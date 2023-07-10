@@ -38,7 +38,8 @@ public class PartitionDistributionStats {
     );
   }
 
-  static PartitionDistributionStats create(List<TopicDescription> topicDescriptions, int minPartitionsForSkewCalculation) {
+  static PartitionDistributionStats create(List<TopicDescription> topicDescriptions,
+                                           int minPartitionsForSkewCalculation) {
     var partitionLeaders = new HashMap<Node, Integer>();
     var partitionsReplicated = new HashMap<Node, Integer>();
     var isr = new HashMap<Node, Integer>();

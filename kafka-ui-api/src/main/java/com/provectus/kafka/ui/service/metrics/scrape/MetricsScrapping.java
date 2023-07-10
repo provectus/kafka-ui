@@ -1,7 +1,9 @@
 package com.provectus.kafka.ui.service.metrics.scrape;
 
-import static com.provectus.kafka.ui.config.ClustersProperties.*;
-import static com.provectus.kafka.ui.model.MetricsScrapeProperties.*;
+import static com.provectus.kafka.ui.config.ClustersProperties.Cluster;
+import static com.provectus.kafka.ui.config.ClustersProperties.KeystoreConfig;
+import static com.provectus.kafka.ui.model.MetricsScrapeProperties.JMX_METRICS_TYPE;
+import static com.provectus.kafka.ui.model.MetricsScrapeProperties.PROMETHEUS_METRICS_TYPE;
 
 import com.provectus.kafka.ui.model.Metrics;
 import com.provectus.kafka.ui.model.MetricsScrapeProperties;

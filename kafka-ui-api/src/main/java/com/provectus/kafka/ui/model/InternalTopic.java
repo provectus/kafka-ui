@@ -1,8 +1,7 @@
 package com.provectus.kafka.ui.model;
 
-import static com.provectus.kafka.ui.model.InternalLogDirStats.*;
+import static com.provectus.kafka.ui.model.InternalLogDirStats.SegmentStats;
 
-import com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import lombok.Builder;
 import lombok.Data;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.TopicDescription;
-import org.apache.kafka.common.TopicPartition;
 
 @Data
 @Builder(toBuilder = true)

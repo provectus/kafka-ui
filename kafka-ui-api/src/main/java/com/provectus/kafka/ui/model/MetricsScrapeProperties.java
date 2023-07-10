@@ -1,11 +1,10 @@
 package com.provectus.kafka.ui.model;
 
-import static com.provectus.kafka.ui.config.ClustersProperties.*;
+import static com.provectus.kafka.ui.config.ClustersProperties.KeystoreConfig;
+import static com.provectus.kafka.ui.config.ClustersProperties.TruststoreConfig;
 
-import com.provectus.kafka.ui.config.ClustersProperties;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Value;
 
 @Value

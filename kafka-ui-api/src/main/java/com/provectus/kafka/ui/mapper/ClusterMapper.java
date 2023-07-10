@@ -1,11 +1,10 @@
 package com.provectus.kafka.ui.mapper;
 
-import static io.prometheus.client.Collector.*;
+import static io.prometheus.client.Collector.MetricFamilySamples;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.BrokerConfigDTO;
 import com.provectus.kafka.ui.model.BrokerDTO;
-import com.provectus.kafka.ui.model.BrokerDiskUsageDTO;
 import com.provectus.kafka.ui.model.BrokerMetricsDTO;
 import com.provectus.kafka.ui.model.ClusterDTO;
 import com.provectus.kafka.ui.model.ClusterFeature;
@@ -58,11 +57,11 @@ public interface ClusterMapper {
   @Deprecated
   default ClusterMetricsDTO toClusterMetrics(Metrics metrics) {
     return new ClusterMetricsDTO()
-        .items(convert(metrics.getSummarizedMetrics()).toList());
+        .items(convert(metrics.getSummarizedMetrics().toList()));
   }
 
-  private Stream<MetricDTO> convert(Stream<MetricFamilySamples> metrics) {
-    return metrics
+  private List<MetricDTO> convert(List<MetricFamilySamples> metrics) {
+    return metrics.stream()
         .flatMap(m -> m.samples.stream())
         .map(s ->
             new MetricDTO()
@@ -71,12 +70,11 @@ public interface ClusterMapper {
                     .boxed()
                     .collect(Collectors.toMap(s.labelNames::get, s.labelValues::get)))
                 .value(BigDecimal.valueOf(s.value))
-        );
+        ).toList();
   }
 
-  @Deprecated
-  default BrokerMetricsDTO toBrokerMetrics(Stream<MetricFamilySamples> metrics) {
-    return new BrokerMetricsDTO().metrics(convert(metrics).toList());
+  default BrokerMetricsDTO toBrokerMetrics(List<MetricFamilySamples> metrics) {
+    return new BrokerMetricsDTO().metrics(convert(metrics));
   }
 
   @Mapping(target = "isSensitive", source = "sensitive")

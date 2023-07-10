@@ -1,12 +1,10 @@
 package com.provectus.kafka.ui.service.metrics.scrape;
 
-import static io.prometheus.client.Collector.*;
+import static io.prometheus.client.Collector.MetricFamilySamples;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 
 import com.provectus.kafka.ui.model.Metrics;
-import com.provectus.kafka.ui.service.metrics.RawMetric;
-import io.prometheus.client.Collector;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;

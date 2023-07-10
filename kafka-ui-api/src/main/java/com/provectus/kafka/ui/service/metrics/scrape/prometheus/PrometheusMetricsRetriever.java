@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.service.metrics.scrape.prometheus;
 
-import static io.prometheus.client.Collector.*;
+import static io.prometheus.client.Collector.MetricFamilySamples;
 
 import com.provectus.kafka.ui.model.MetricsScrapeProperties;
 import com.provectus.kafka.ui.util.WebClientConfigurator;

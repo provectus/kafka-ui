@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.service.metrics.scrape.jmx;
 
-import static io.prometheus.client.Collector.*;
+import static io.prometheus.client.Collector.MetricFamilySamples;
 
 import com.provectus.kafka.ui.model.MetricsScrapeProperties;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
@@ -29,7 +29,7 @@ public class JmxMetricsScraper  {
         .flatMap(n -> jmxMetricsRetriever.retrieveFromNode(scrapeProperties, n).map(metrics -> Tuples.of(n, metrics)))
         .collectMap(
             t -> t.getT1().id(),
-            t -> RawMetric.groupIntoMFS(t.getT2()).toList()
+            t -> RawMetric.groupIntoMfs(t.getT2()).toList()
         );
     return collected.map(PerBrokerScrapedMetrics::new);
   }
