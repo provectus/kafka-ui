@@ -1,6 +1,8 @@
 package com.provectus.kafka.ui.mapper;
 
 import static io.prometheus.client.Collector.MetricFamilySamples;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.BrokerConfigDTO;
@@ -31,6 +33,7 @@ import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -68,7 +71,8 @@ public interface ClusterMapper {
                 .name(s.name)
                 .labels(IntStream.range(0, s.labelNames.size())
                     .boxed()
-                    .collect(Collectors.toMap(s.labelNames::get, s.labelValues::get)))
+                    //collecting to map, keeping order
+                    .collect(toMap(s.labelNames::get, s.labelValues::get, (m1, m2) -> null, LinkedHashMap::new)))
                 .value(BigDecimal.valueOf(s.value))
         ).toList();
   }
@@ -115,7 +119,7 @@ public interface ClusterMapper {
   List<ClusterDTO.FeaturesEnum> toFeaturesEnum(List<ClusterFeature> features);
 
   default List<PartitionDTO> map(Map<Integer, InternalPartition> map) {
-    return map.values().stream().map(this::toPartition).collect(Collectors.toList());
+    return map.values().stream().map(this::toPartition).collect(toList());
   }
 
   static KafkaAclDTO.OperationEnum mapAclOperation(AclOperation operation) {
