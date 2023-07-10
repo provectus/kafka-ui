@@ -1,11 +1,13 @@
 package com.provectus.kafka.ui.service.metrics.scrape.prometheus;
 
+import static io.prometheus.client.Collector.MetricFamilySamples;
+import static io.prometheus.client.Collector.Type;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.provectus.kafka.ui.model.MetricsScrapeProperties;
-import com.provectus.kafka.ui.service.metrics.RawMetric;
+import io.prometheus.client.Collector.MetricFamilySamples.Sample;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterEach;
@@ -15,8 +17,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
 
 class PrometheusMetricsRetrieverTest {
-
-  private final PrometheusMetricsRetriever retriever = new PrometheusMetricsRetriever();
 
   private final MockWebServer mockWebServer = new MockWebServer();
 
@@ -35,11 +35,11 @@ class PrometheusMetricsRetrieverTest {
     var url = mockWebServer.url("/metrics");
     mockWebServer.enqueue(prepareResponse());
 
-    MetricsScrapeProperties metricsConfig = prepareMetricsConfig(url.port(), null, null);
+    MetricsScrapeProperties scrapeProperties = prepareMetricsConfig(url.port(), null, null);
+    var retriever = new PrometheusMetricsRetriever(scrapeProperties);
 
-    StepVerifier.create(retriever.retrieve(WebClient.create(), url.host(), metricsConfig))
-        .expectNextSequence(expectedRawMetrics())
-        // third metric should not be present, since it has "NaN" value
+    StepVerifier.create(retriever.retrieve(url.host()))
+        .assertNext(metrics -> assertThat(metrics).containsExactlyElementsOf(expectedMetrics()))
         .verifyComplete();
   }
 
@@ -48,51 +48,72 @@ class PrometheusMetricsRetrieverTest {
     var url = mockWebServer.url("/metrics");
     mockWebServer.enqueue(prepareResponse());
 
+    MetricsScrapeProperties scrapeProperties = prepareMetricsConfig(url.port(), "username", "password");
+    var retriever = new PrometheusMetricsRetriever(scrapeProperties);
 
-    MetricsScrapeProperties metricsConfig = prepareMetricsConfig(url.port(), "username", "password");
-
-    StepVerifier.create(retriever.retrieve(WebClient.create(), url.host(), metricsConfig))
-        .expectNextSequence(expectedRawMetrics())
-        // third metric should not be present, since it has "NaN" value
+    StepVerifier.create(retriever.retrieve(url.host()))
+        .assertNext(metrics -> assertThat(metrics).containsExactlyElementsOf(expectedMetrics()))
         .verifyComplete();
   }
 
-  MockResponse prepareResponse() {
-    // body copied from real jmx exporter
+  private MockResponse prepareResponse() {
+    // body copied from jmx exporter output
     return new MockResponse().setBody(
-        "# HELP kafka_server_KafkaRequestHandlerPool_FifteenMinuteRate Attribute exposed for management \n"
-            + "# TYPE kafka_server_KafkaRequestHandlerPool_FifteenMinuteRate untyped\n"
-            + "kafka_server_KafkaRequestHandlerPool_FifteenMinuteRate{name=\"RequestHandlerAvgIdlePercent\",} 0.898\n"
-            + "# HELP kafka_server_socket_server_metrics_request_size_avg The average size of requests sent. \n"
-            + "# TYPE kafka_server_socket_server_metrics_request_size_avg untyped\n"
-            + "kafka_server_socket_server_metrics_request_size_avg{listener=\"PLAIN\",networkProcessor=\"1\",} 101.1\n"
-            + "kafka_server_socket_server_metrics_request_size_avg{listener=\"PLAIN2\",networkProcessor=\"5\",} NaN"
+        """
+            # HELP kafka_server_KafkaRequestHandlerPool_FifteenMinuteRate Attribute exposed for management
+            # TYPE kafka_server_KafkaRequestHandlerPool_FifteenMinuteRate untyped
+            kafka_server_KafkaRequestHandlerPool_FifteenMinuteRate{name="RequestHandlerAvgIdlePercent",} 0.898
+            # HELP kafka_server_socket_server_metrics_request_size_avg The average size of requests sent.
+            # TYPE kafka_server_socket_server_metrics_request_size_avg untyped
+            kafka_server_socket_server_metrics_request_size_avg{listener="PLAIN",networkProcessor="1",} 101.1
+            kafka_server_socket_server_metrics_request_size_avg{listener="PLAIN2",networkProcessor="5",} 202.2
+            """
     );
   }
 
-  MetricsScrapeProperties prepareMetricsConfig(Integer port, String username, String password) {
+  private MetricsScrapeProperties prepareMetricsConfig(Integer port, String username, String password) {
     return MetricsScrapeProperties.builder()
         .ssl(false)
         .port(port)
-        //.type(MetricsScrapeProperties.PROMETHEUS_METRICS_TYPE)
         .username(username)
         .password(password)
         .build();
   }
 
-  List<RawMetric> expectedRawMetrics() {
-
-    var firstMetric = RawMetric.create(
-        "kafka_server_KafkaRequestHandlerPool_FifteenMinuteRate",
-        Map.of("name", "RequestHandlerAvgIdlePercent"),
-        new BigDecimal("0.898")
+  private List<MetricFamilySamples> expectedMetrics() {
+    return List.of(
+        new MetricFamilySamples(
+            "kafka_server_KafkaRequestHandlerPool_FifteenMinuteRate",
+            Type.GAUGE,
+            "Attribute exposed for management",
+            List.of(
+                new Sample(
+                    "kafka_server_KafkaRequestHandlerPool_FifteenMinuteRate",
+                    List.of("name"),
+                    List.of("RequestHandlerAvgIdlePercent"),
+                    0.898
+                )
+            )
+        ),
+        new MetricFamilySamples(
+            "kafka_server_socket_server_metrics_request_size_avg",
+            Type.GAUGE,
+            "The average size of requests sent.",
+            List.of(
+                new Sample(
+                    "kafka_server_socket_server_metrics_request_size_avg",
+                    List.of("listener", "networkProcessor"),
+                    List.of("PLAIN", "1"),
+                    101.1
+                ),
+                new Sample(
+                    "kafka_server_socket_server_metrics_request_size_avg",
+                    List.of("listener", "networkProcessor"),
+                    List.of("PLAIN2", "5"),
+                    202.2
+                )
+            )
+        )
     );
-
-    var secondMetric = RawMetric.create(
-        "kafka_server_socket_server_metrics_request_size_avg",
-        Map.of("listener", "PLAIN", "networkProcessor", "1"),
-        new BigDecimal("101.1")
-    );
-    return List.of(firstMetric, secondMetric);
   }
 }

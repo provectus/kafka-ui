@@ -63,18 +63,18 @@ public class MetricsScrapping {
 
   public Mono<Metrics> scrape(ScrapedClusterState clusterState, Collection<Node> nodes) {
     Mono<InferredMetrics> inferred = inferredMetricsScraper.scrape(clusterState);
-    Mono<? extends PerBrokerScrapedMetrics> external = scrapeExternal(nodes);
+    Mono<PerBrokerScrapedMetrics> external = scrapeExternal(nodes);
     return inferred.zipWith(
         external,
         (inf, ext) -> Metrics.builder()
-            .ioRates(ext.ioRates())
-            .perBrokerScrapedMetrics(ext.getPerBrokerMetrics())
             .inferredMetrics(inf)
+            .ioRates(ext.ioRates())
+            .perBrokerScrapedMetrics(ext.perBrokerMetrics())
             .build()
     );
   }
 
-  private Mono<? extends PerBrokerScrapedMetrics> scrapeExternal(Collection<Node> nodes) {
+  private Mono<PerBrokerScrapedMetrics> scrapeExternal(Collection<Node> nodes) {
     if (jmxMetricsScraper != null) {
       return jmxMetricsScraper.scrape(nodes);
     }

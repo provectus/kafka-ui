@@ -18,12 +18,13 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.common.Node;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 
-@Service
+@Component //need to be a component, since
 @Slf4j
 public class JmxMetricsRetriever implements Closeable {
 
@@ -52,25 +53,25 @@ public class JmxMetricsRetriever implements Closeable {
         .subscribeOn(Schedulers.boundedElastic());
   }
 
-  private boolean isSslJmxEndpoint(MetricsScrapeProperties metricsScrapeProperties) {
-    return metricsScrapeProperties.getKeystoreConfig() != null
-        && metricsScrapeProperties.getKeystoreConfig().getKeystoreLocation() != null;
+  private boolean isSslJmxEndpoint(MetricsScrapeProperties scrapeProperties) {
+    return scrapeProperties.getKeystoreConfig() != null
+        && scrapeProperties.getKeystoreConfig().getKeystoreLocation() != null;
   }
 
   @SneakyThrows
-  private List<RawMetric> retrieveSync(MetricsScrapeProperties metricsConfig, Node node) {
-    String jmxUrl = JMX_URL + node.host() + ":" + metricsConfig.getPort() + "/" + JMX_SERVICE_TYPE;
+  private List<RawMetric> retrieveSync(MetricsScrapeProperties scrapeProperties, Node node) {
+    String jmxUrl = JMX_URL + node.host() + ":" + scrapeProperties.getPort() + "/" + JMX_SERVICE_TYPE;
     log.debug("Collection JMX metrics for {}", jmxUrl);
     List<RawMetric> result = new ArrayList<>();
-    withJmxConnector(jmxUrl, metricsConfig, jmxConnector -> getMetricsFromJmx(jmxConnector, result));
+    withJmxConnector(jmxUrl, scrapeProperties, jmxConnector -> getMetricsFromJmx(jmxConnector, result));
     log.debug("{} metrics collected for {}", result.size(), jmxUrl);
     return result;
   }
 
   private void withJmxConnector(String jmxUrl,
-                                MetricsScrapeProperties metricsConfig,
+                                MetricsScrapeProperties scrapeProperties,
                                 Consumer<JMXConnector> consumer) {
-    var env = prepareJmxEnvAndSetThreadLocal(metricsConfig);
+    var env = prepareJmxEnvAndSetThreadLocal(scrapeProperties);
     try (JMXConnector connector = JMXConnectorFactory.newJMXConnector(new JMXServiceURL(jmxUrl), env)) {
       try {
         connector.connect(env);
@@ -86,11 +87,11 @@ public class JmxMetricsRetriever implements Closeable {
     }
   }
 
-  private Map<String, Object> prepareJmxEnvAndSetThreadLocal(MetricsScrapeProperties metricsConfig) {
+  private Map<String, Object> prepareJmxEnvAndSetThreadLocal(MetricsScrapeProperties scrapeProperties) {
     Map<String, Object> env = new HashMap<>();
-    if (isSslJmxEndpoint(metricsConfig)) {
-      var truststoreConfig = metricsConfig.getTruststoreConfig();
-      var keystoreConfig = metricsConfig.getKeystoreConfig();
+    if (isSslJmxEndpoint(scrapeProperties)) {
+      var truststoreConfig = scrapeProperties.getTruststoreConfig();
+      var keystoreConfig = scrapeProperties.getKeystoreConfig();
       JmxSslSocketFactory.setSslContextThreadLocal(
           truststoreConfig != null ? truststoreConfig.getTruststoreLocation() : null,
           truststoreConfig != null ? truststoreConfig.getTruststorePassword() : null,
@@ -100,11 +101,11 @@ public class JmxMetricsRetriever implements Closeable {
       JmxSslSocketFactory.editJmxConnectorEnv(env);
     }
 
-    if (StringUtils.isNotEmpty(metricsConfig.getUsername())
-        && StringUtils.isNotEmpty(metricsConfig.getPassword())) {
+    if (StringUtils.isNotEmpty(scrapeProperties.getUsername())
+        && StringUtils.isNotEmpty(scrapeProperties.getPassword())) {
       env.put(
           JMXConnector.CREDENTIALS,
-          new String[] {metricsConfig.getUsername(), metricsConfig.getPassword()}
+          new String[] {scrapeProperties.getUsername(), scrapeProperties.getPassword()}
       );
     }
     return env;

@@ -61,9 +61,8 @@ class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
     } catch (Exception e) {
       log.error("----------------------------------");
       log.error("SSL can't be enabled for JMX retrieval. "
-              + "Make sure your java app run with '--add-opens java.rmi/javax.rmi.ssl=ALL-UNNAMED' arg. Err: {}",
+              + "Make sure your java app is running with '--add-opens java.rmi/javax.rmi.ssl=ALL-UNNAMED' arg. Err: {}",
           e.getMessage());
-      log.trace("SSL can't be enabled for JMX retrieval", e);
       log.error("----------------------------------");
     }
     SSL_JMX_SUPPORTED = sslJmxSupported;
@@ -75,7 +74,7 @@ class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
 
   private static final ThreadLocal<Ssl> SSL_CONTEXT_THREAD_LOCAL = new ThreadLocal<>();
 
-  private static final Map<HostAndPort, javax.net.ssl.SSLSocketFactory> CACHED_FACTORIES = new ConcurrentHashMap<>();
+  private static final Map<HostAndPort, javax.net.ssl.SSLSocketFactory> CACHED_SSL_FACTORIES = new ConcurrentHashMap<>();
 
   private record HostAndPort(String host, int port) {
   }
@@ -96,7 +95,7 @@ class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
 
   // should be called when (host:port) -> factory cache should be invalidated (ex. on app config reload)
   public static void clearFactoriesCache() {
-    CACHED_FACTORIES.clear();
+    CACHED_SSL_FACTORIES.clear();
   }
 
   public static void clearThreadLocalContext() {
@@ -156,11 +155,11 @@ class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
   @Override
   public Socket createSocket(String host, int port) throws IOException {
     var hostAndPort = new HostAndPort(host, port);
-    if (CACHED_FACTORIES.containsKey(hostAndPort)) {
-      return CACHED_FACTORIES.get(hostAndPort).createSocket(host, port);
+    if (CACHED_SSL_FACTORIES.containsKey(hostAndPort)) {
+      return CACHED_SSL_FACTORIES.get(hostAndPort).createSocket(host, port);
     } else if (threadLocalContextSet()) {
       var factory = createFactoryFromThreadLocalCtx();
-      CACHED_FACTORIES.put(hostAndPort, factory);
+      CACHED_SSL_FACTORIES.put(hostAndPort, factory);
       return factory.createSocket(host, port);
     }
     return defaultSocketFactory.createSocket(host, port);

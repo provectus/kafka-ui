@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.service.metrics.scrape;
 import static com.provectus.kafka.ui.model.InternalLogDirStats.*;
 import static com.provectus.kafka.ui.service.ReactiveAdminClient.*;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Table;
 import com.provectus.kafka.ui.model.InternalLogDirStats;
 import com.provectus.kafka.ui.model.InternalPartitionsOffsets;
@@ -30,6 +29,11 @@ import reactor.core.publisher.Mono;
 @Value
 public class ScrapedClusterState {
 
+  Instant scrapeFinishedAt;
+  Map<Integer, NodeState> nodesStates;
+  Map<String, TopicState> topicStates;
+  Map<String, ConsumerGroupState> consumerGroupsStates;
+
   public record NodeState(int id,
                           Node node,
                           @Nullable SegmentStats segmentStats,
@@ -52,20 +56,14 @@ public class ScrapedClusterState {
       Map<TopicPartition, Long> committedOffsets) {
   }
 
-  Instant scrapeStartTime;
-  Map<Integer, NodeState> nodesStates;
-  Map<String, TopicState> topicStates;
-  Map<String, ConsumerGroupState> consumerGroupsStates;
-
   public static ScrapedClusterState empty() {
     return ScrapedClusterState.builder()
-        .scrapeStartTime(Instant.now())
+        .scrapeFinishedAt(Instant.now())
         .nodesStates(Map.of())
         .topicStates(Map.of())
         .consumerGroupsStates(Map.of())
         .build();
   }
-
 
   public ScrapedClusterState updateTopics(Map<String, TopicDescription> descriptions,
                                           Map<String, List<ConfigEntry>> configs,
@@ -92,7 +90,7 @@ public class ScrapedClusterState {
       );
     });
     return toBuilder()
-        .topicStates(ImmutableMap.copyOf(updatedTopicStates))
+        .topicStates(updatedTopicStates)
         .build();
   }
 
@@ -100,7 +98,7 @@ public class ScrapedClusterState {
     var newTopicStates = new HashMap<>(topicStates);
     newTopicStates.remove(topic);
     return toBuilder()
-        .topicStates(ImmutableMap.copyOf(newTopicStates))
+        .topicStates(newTopicStates)
         .build();
   }
 
@@ -180,9 +178,9 @@ public class ScrapedClusterState {
 
     return new ScrapedClusterState(
         Instant.now(),
-        Map.copyOf(nodesStates),
-        Map.copyOf(topicStates),
-        Map.copyOf(consumerGroupsStates)
+        nodesStates,
+        topicStates,
+        consumerGroupsStates
     );
   }
 

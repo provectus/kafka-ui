@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service.metrics.scrape.inferred;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState;
 import io.prometheus.client.Collector.MetricFamilySamples;
 import io.prometheus.client.GaugeMetricFamily;
@@ -7,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.MemberDescription;
@@ -20,19 +22,13 @@ public class InferredMetricsScraper {
   private ScrapedClusterState prevState = null;
 
   public synchronized Mono<InferredMetrics> scrape(ScrapedClusterState newState) {
-    if (prevState == null) {
-      prevState = newState;
-      return Mono.just(InferredMetrics.empty());
-    }
     var inferred = infer(prevState, newState);
     prevState = newState;
     return Mono.just(inferred);
   }
 
-  private static InferredMetrics infer(ScrapedClusterState prevState,
-                                       ScrapedClusterState newState) {
-
-    log.debug("Scraped cluster state: {}", newState); //TODO: rm
+  @VisibleForTesting
+  static InferredMetrics infer(@Nullable ScrapedClusterState prevState, ScrapedClusterState newState) {
     var registry = new MetricsRegistry();
     fillNodesMetrics(registry, newState);
     fillTopicMetrics(registry, newState);
@@ -51,11 +47,8 @@ public class InferredMetricsScraper {
                List<String> lbls,
                List<String> lblVals,
                Number value) {
-      var found = metrics.get(name);
       GaugeMetricFamily gauge;
-      if (found != null) {
-        gauge = (GaugeMetricFamily) found;
-      } else {
+      if ((gauge = (GaugeMetricFamily) metrics.get(name)) == null) {
         gauge = new GaugeMetricFamily(name, help, lbls);
         metrics.put(name, gauge);
       }

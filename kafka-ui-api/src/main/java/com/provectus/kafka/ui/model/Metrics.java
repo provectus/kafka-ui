@@ -6,10 +6,14 @@ import static java.util.stream.Collectors.toMap;
 import com.google.common.collect.Streams;
 import com.provectus.kafka.ui.service.metrics.scrape.inferred.InferredMetrics;
 import groovy.lang.Tuple;
+import jakarta.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.Value;
@@ -37,7 +41,7 @@ public class Metrics {
                         Map<String, BigDecimal> topicBytesInPerSec,
                         Map<String, BigDecimal> topicBytesOutPerSec) {
 
-    public static IoRates empty() {
+    static IoRates empty() {
       return IoRates.builder()
           .brokerBytesOutPerSec(Map.of())
           .brokerBytesInPerSec(Map.of())
@@ -54,34 +58,48 @@ public class Metrics {
             .values()
             .stream()
             .flatMap(Collection::stream)
-            .collect(toMap(mfs -> mfs.name, mfs -> mfs, Metrics::summarizeMfs))
+            .collect(toMap(mfs -> mfs.name, Optional::of, Metrics::summarizeMfs, LinkedHashMap::new))
             .values()
             .stream()
+            .filter(Optional::isPresent)
+            .map(Optional::get)
     );
   }
 
-  private static MetricFamilySamples summarizeMfs(MetricFamilySamples mfs1, MetricFamilySamples mfs2) {
-    return new MetricFamilySamples(
-        mfs1.name,
-        mfs1.type,
-        mfs1.help,
-        Stream.concat(mfs1.samples.stream(), mfs2.samples.stream())
-            .collect(
-                toMap(
-                    s -> Tuple.tuple(s.labelNames, s.labelValues),
-                    s -> s,
-                    (s1, s2) -> new MetricFamilySamples.Sample(
-                        s1.name,
-                        s1.labelNames,
-                        s1.labelValues,
-                        s1.value + s2.value
-                    )
-                )
-            )
-            .values()
-            .stream()
-            .toList()
-    );
+  //returns Optional.empty if merging not supported for metric type
+  private static Optional<MetricFamilySamples> summarizeMfs(Optional<MetricFamilySamples> mfs1opt,
+                                                            Optional<MetricFamilySamples> mfs2opt) {
+    if ((mfs1opt.isEmpty() || mfs2opt.isEmpty()) || (mfs1opt.get().type != mfs2opt.get().type)) {
+      return Optional.empty();
+    }
+    var mfs1 = mfs1opt.get();
+    return switch (mfs1.type) {
+      case GAUGE, COUNTER -> Optional.of(
+          new MetricFamilySamples(
+              mfs1.name,
+              mfs1.type,
+              mfs1.help,
+              Stream.concat(mfs1.samples.stream(), mfs2opt.get().samples.stream())
+                  .collect(
+                      toMap(
+                          // merging samples with same labels
+                          s -> Tuple.tuple(s.name, s.labelNames, s.labelValues),
+                          s -> s,
+                          (s1, s2) -> new MetricFamilySamples.Sample(
+                              s1.name,
+                              s1.labelNames,
+                              s1.labelValues,
+                              s1.value + s2.value
+                          )
+                      )
+                  )
+                  .values()
+                  .stream()
+                  .toList()
+          )
+      );
+      default -> Optional.empty();
+    };
   }
 
 }

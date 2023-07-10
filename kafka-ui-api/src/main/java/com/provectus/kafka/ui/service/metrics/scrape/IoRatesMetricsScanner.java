@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service.metrics.scrape;
 
+import static io.prometheus.client.Collector.*;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 
@@ -11,7 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class IoRatesMetricsScanner {
+// Scans external jmx/prometheus metric and tries to infer io rates
+class IoRatesMetricsScanner {
 
   // per broker
   final Map<Integer, BigDecimal> brokerBytesInFifteenMinuteRate = new HashMap<>();
@@ -21,12 +23,12 @@ public class IoRatesMetricsScanner {
   final Map<String, BigDecimal> bytesInFifteenMinuteRate = new HashMap<>();
   final Map<String, BigDecimal> bytesOutFifteenMinuteRate = new HashMap<>();
 
-  public IoRatesMetricsScanner(Map<Integer, List<Collector.MetricFamilySamples>> perBrokerMetrics) {
+  IoRatesMetricsScanner(Map<Integer, List<MetricFamilySamples>> perBrokerMetrics) {
     perBrokerMetrics.forEach((nodeId, metrics) -> {
       metrics.forEach(m -> {
-        RawMetric.create(m).forEach(rawMetric -> {
-          updateBrokerIOrates(nodeId, rawMetric);
-          updateTopicsIOrates(rawMetric);
+        m.samples.forEach(metricSample -> {
+          updateBrokerIOrates(nodeId, metricSample);
+          updateTopicsIOrates(metricSample);
         });
       });
     });
@@ -41,35 +43,41 @@ public class IoRatesMetricsScanner {
         .build();
   }
 
-  private void updateBrokerIOrates(int nodeId, RawMetric rawMetric) {
-    String name = rawMetric.name();
+  private void updateBrokerIOrates(int nodeId, MetricFamilySamples.Sample metric) {
+    String name = metric.name;
     if (!brokerBytesInFifteenMinuteRate.containsKey(nodeId)
-        && rawMetric.labels().size() == 1
-        && "BytesInPerSec".equalsIgnoreCase(rawMetric.labels().get("name"))
+        && metric.labelValues.size() == 1
+        && "BytesInPerSec".equalsIgnoreCase(metric.labelValues.get(0))
         && containsIgnoreCase(name, "BrokerTopicMetrics")
         && endsWithIgnoreCase(name, "FifteenMinuteRate")) {
-      brokerBytesInFifteenMinuteRate.put(nodeId, rawMetric.value());
+      brokerBytesInFifteenMinuteRate.put(nodeId, BigDecimal.valueOf(metric.value));
     }
     if (!brokerBytesOutFifteenMinuteRate.containsKey(nodeId)
-        && rawMetric.labels().size() == 1
-        && "BytesOutPerSec".equalsIgnoreCase(rawMetric.labels().get("name"))
+        && metric.labelValues.size() == 1
+        && "BytesOutPerSec".equalsIgnoreCase(metric.labelValues.get(0))
         && containsIgnoreCase(name, "BrokerTopicMetrics")
         && endsWithIgnoreCase(name, "FifteenMinuteRate")) {
-      brokerBytesOutFifteenMinuteRate.put(nodeId, rawMetric.value());
+      brokerBytesOutFifteenMinuteRate.put(nodeId, BigDecimal.valueOf(metric.value));
     }
   }
 
-  private void updateTopicsIOrates(RawMetric rawMetric) {
-    String name = rawMetric.name();
-    String topic = rawMetric.labels().get("topic");
-    if (topic != null
+  private void updateTopicsIOrates(MetricFamilySamples.Sample metric) {
+    String name = metric.name;
+    int topicLblIdx = metric.labelNames.indexOf("topic");
+    if (topicLblIdx >= 0
         && containsIgnoreCase(name, "BrokerTopicMetrics")
         && endsWithIgnoreCase(name, "FifteenMinuteRate")) {
-      String nameProperty = rawMetric.labels().get("name");
-      if ("BytesInPerSec".equalsIgnoreCase(nameProperty)) {
-        bytesInFifteenMinuteRate.compute(topic, (k, v) -> v == null ? rawMetric.value() : v.add(rawMetric.value()));
-      } else if ("BytesOutPerSec".equalsIgnoreCase(nameProperty)) {
-        bytesOutFifteenMinuteRate.compute(topic, (k, v) -> v == null ? rawMetric.value() : v.add(rawMetric.value()));
+      String topic = metric.labelValues.get(topicLblIdx);
+      int nameLblIdx = metric.labelNames.indexOf("name");
+      if (nameLblIdx >= 0) {
+        var nameLblVal = metric.labelValues.get(nameLblIdx);
+        if ("BytesInPerSec".equalsIgnoreCase(nameLblVal)) {
+          BigDecimal val = BigDecimal.valueOf(metric.value);
+          bytesInFifteenMinuteRate.merge(topic, val, BigDecimal::add);
+        } else if ("BytesOutPerSec".equalsIgnoreCase(nameLblVal)) {
+          BigDecimal val = BigDecimal.valueOf(metric.value);
+          bytesOutFifteenMinuteRate.merge(topic, val, BigDecimal::add);
+        }
       }
     }
   }

@@ -54,15 +54,14 @@ public class StatisticsService {
             e -> Mono.just(Statistics.empty().toBuilder().lastKafkaException(e).build()));
   }
 
-  private Mono<ScrapedClusterState> loadClusterState(ClusterDescription clusterDescription,
-                                                     ReactiveAdminClient ac) {
+  private Mono<ScrapedClusterState> loadClusterState(ClusterDescription clusterDescription, ReactiveAdminClient ac) {
     return ScrapedClusterState.scrape(clusterDescription, ac);
   }
 
-  private Mono<Metrics> scrapeMetrics(KafkaCluster c,
+  private Mono<Metrics> scrapeMetrics(KafkaCluster cluster,
                                       ScrapedClusterState clusterState,
                                       ClusterDescription clusterDescription) {
-    return c.getMetricsScrapping().scrape(clusterState, clusterDescription.getNodes());
+    return cluster.getMetricsScrapping().scrape(clusterState, clusterDescription.getNodes());
   }
 
 }

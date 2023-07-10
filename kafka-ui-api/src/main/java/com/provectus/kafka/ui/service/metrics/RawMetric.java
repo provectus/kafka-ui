@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service.metrics;
 
-import static io.prometheus.client.Collector.*;
+import static io.prometheus.client.Collector.MetricFamilySamples;
+import static io.prometheus.client.Collector.Type;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -8,8 +9,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public interface RawMetric {
@@ -26,9 +25,9 @@ public interface RawMetric {
     return new SimpleMetric(name, labels, value);
   }
 
-  static Stream<MetricFamilySamples> groupIntoMFS(Collection<RawMetric> lst) {
+  static Stream<MetricFamilySamples> groupIntoMFS(Collection<RawMetric> rawMetrics) {
     Map<String, MetricFamilySamples> map = new LinkedHashMap<>();
-    for (RawMetric m : lst) {
+    for (RawMetric m : rawMetrics) {
       var mfs = map.get(m.name());
       if (mfs == null) {
         mfs = new MetricFamilySamples(m.name(), Type.GAUGE, m.name(), new ArrayList<>());
@@ -41,19 +40,6 @@ public interface RawMetric {
     return map.values().stream();
   }
 
-  static Stream<RawMetric> create(MetricFamilySamples samples) {
-    return samples.samples.stream()
-        .map(s -> create(
-                s.name,
-                IntStream.range(0, s.labelNames.size())
-                    .boxed()
-                    .collect(Collectors.<Integer, String, String>toMap(s.labelNames::get, s.labelValues::get)),
-                BigDecimal.valueOf(s.value)
-            )
-        );
-  }
-
-  record SimpleMetric(String name, Map<String, String> labels, BigDecimal value) implements RawMetric {
-  }
+  record SimpleMetric(String name, Map<String, String> labels, BigDecimal value) implements RawMetric { }
 
 }

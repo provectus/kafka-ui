@@ -5,7 +5,6 @@ import static io.prometheus.client.Collector.MetricFamilySamples;
 import java.util.List;
 import java.util.stream.Stream;
 
-//TODO: maybe rename to state-based metrics?
 public class InferredMetrics {
 
   private final List<MetricFamilySamples> metrics;

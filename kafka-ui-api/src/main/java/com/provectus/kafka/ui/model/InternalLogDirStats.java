@@ -46,9 +46,9 @@ public class InternalLogDirStats {
     return new InternalLogDirStats(Map.of());
   }
 
-  public InternalLogDirStats(Map<Integer, Map<String, LogDirDescription>> log) {
+  public InternalLogDirStats(Map<Integer, Map<String, LogDirDescription>> logsInfo) {
     final List<Tuple3<Integer, TopicPartition, Long>> topicPartitions =
-        log.entrySet().stream().flatMap(b ->
+        logsInfo.entrySet().stream().flatMap(b ->
             b.getValue().entrySet().stream().flatMap(topicMap ->
                 topicMap.getValue().replicaInfos().entrySet().stream()
                     .map(e -> Tuples.of(b.getKey(), e.getKey(), e.getValue().size()))
@@ -74,12 +74,14 @@ public class InternalLogDirStats {
             collectingAndThen(
                 summarizingLong(Tuple3::getT3), SegmentStats::new)));
 
-    brokerDirsStats = calculateSpaceStats(log);
+    brokerDirsStats = calculateSpaceStats(logsInfo);
   }
 
-  private static Map<Integer, LogDirSpaceStats> calculateSpaceStats(Map<Integer, Map<String, LogDirDescription>> log) {
+  private static Map<Integer, LogDirSpaceStats> calculateSpaceStats(
+      Map<Integer, Map<String, LogDirDescription>> logsInfo) {
+
     var stats = new HashMap<Integer, LogDirSpaceStats>();
-    log.forEach((brokerId, logDirStats) -> {
+    logsInfo.forEach((brokerId, logDirStats) -> {
       Map<String, Long> totalBytes = new HashMap<>();
       Map<String, Long> usableBytes = new HashMap<>();
       logDirStats.forEach((logDir, descr) -> {

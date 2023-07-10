@@ -1,16 +1,14 @@
 package com.provectus.kafka.ui.service.metrics.scrape;
 
 import static io.prometheus.client.Collector.MetricFamilySamples;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.provectus.kafka.ui.service.metrics.RawMetric;
-import com.provectus.kafka.ui.service.metrics.scrape.prometheus.PrometheusEndpointMetricsParser;
+import com.provectus.kafka.ui.service.metrics.scrape.prometheus.PrometheusEndpointParser;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.apache.kafka.common.Node;
 import org.junit.jupiter.api.Test;
 
@@ -63,23 +61,15 @@ class IoRatesMetricsScannerTest {
         .containsEntry(2, new BigDecimal("20.0"));
   }
 
+  @SafeVarargs
   private void populateWith(Map.Entry<Integer, List<MetricFamilySamples>>... entries) {
     ioRatesMetricsScanner = new IoRatesMetricsScanner(
-        Arrays.stream(entries).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
+        stream(entries).collect(toMap(Map.Entry::getKey, Map.Entry::getValue))
     );
   }
 
   private Map.Entry<Integer, List<MetricFamilySamples>> nodeMetrics(Node n, String... prometheusMetrics) {
-    return Map.entry(
-        n.id(),
-        RawMetric.groupIntoMFS(
-            Arrays.stream(prometheusMetrics)
-                .map(PrometheusEndpointMetricsParser::parse)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .toList()
-        ).toList()
-    );
+    return Map.entry(n.id(), PrometheusEndpointParser.parse(stream(prometheusMetrics)));
   }
 
 }

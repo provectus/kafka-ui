@@ -1,19 +1,14 @@
 package com.provectus.kafka.ui.service.metrics.scrape;
 
+import static io.prometheus.client.Collector.MetricFamilySamples;
+
 import com.provectus.kafka.ui.model.Metrics;
-import io.prometheus.client.Collector;
 import java.util.List;
 import java.util.Map;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-public class PerBrokerScrapedMetrics {
+public record PerBrokerScrapedMetrics(Map<Integer, List<MetricFamilySamples>> perBrokerMetrics) {
 
-  @Getter
-  private final Map<Integer, List<Collector.MetricFamilySamples>> perBrokerMetrics;
-
-  public static PerBrokerScrapedMetrics empty() {
+  static PerBrokerScrapedMetrics empty() {
     return new PerBrokerScrapedMetrics(Map.of());
   }
 
