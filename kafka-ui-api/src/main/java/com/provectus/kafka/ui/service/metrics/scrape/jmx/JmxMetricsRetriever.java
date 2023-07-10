@@ -44,12 +44,12 @@ public class JmxMetricsRetriever implements Closeable {
     JmxSslSocketFactory.clearFactoriesCache();
   }
 
-  public Mono<List<RawMetric>> retrieveFromNode(MetricsScrapeProperties metricsConfig, Node node) {
-    if (isSslJmxEndpoint(metricsConfig) && !SSL_JMX_SUPPORTED) {
+  public Mono<List<RawMetric>> retrieveFromNode(MetricsScrapeProperties scrapeProperties, Node node) {
+    if (isSslJmxEndpoint(scrapeProperties) && !SSL_JMX_SUPPORTED) {
       log.warn("Cluster has jmx ssl configured, but it is not supported by app");
       return Mono.just(List.of());
     }
-    return Mono.fromSupplier(() -> retrieveSync(metricsConfig, node))
+    return Mono.fromSupplier(() -> retrieveSync(scrapeProperties, node))
         .subscribeOn(Schedulers.boundedElastic());
   }
 

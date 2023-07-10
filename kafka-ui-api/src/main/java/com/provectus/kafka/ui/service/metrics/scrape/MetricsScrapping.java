@@ -38,7 +38,7 @@ public class MetricsScrapping {
     var metrics = cluster.getMetrics();
     if (cluster.getMetrics() != null) {
       var scrapeProperties = createScrapeProps(cluster);
-      if (metrics.getType() == null || metrics.getType().equalsIgnoreCase(JMX_METRICS_TYPE)) {
+      if (metrics.getType().equalsIgnoreCase(JMX_METRICS_TYPE) && metrics.getPort() != null) {
         jmxMetricsScraper = new JmxMetricsScraper(scrapeProperties, jmxMetricsRetriever);
       } else if (metrics.getType().equalsIgnoreCase(PROMETHEUS_METRICS_TYPE)) {
         prometheusScraper = new PrometheusScraper(scrapeProperties);

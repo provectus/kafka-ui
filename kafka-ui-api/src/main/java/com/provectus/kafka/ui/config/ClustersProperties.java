@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.config;
 
-import com.provectus.kafka.ui.model.MetricsScrapeProperties;
+import static com.provectus.kafka.ui.model.MetricsScrapeProperties.JMX_METRICS_TYPE;
+
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -167,7 +168,7 @@ public class ClustersProperties {
   private void setMetricsDefaults() {
     for (Cluster cluster : clusters) {
       if (cluster.getMetrics() != null && !StringUtils.hasText(cluster.getMetrics().getType())) {
-        cluster.getMetrics().setType(MetricsScrapeProperties.JMX_METRICS_TYPE);
+        cluster.getMetrics().setType(JMX_METRICS_TYPE);
       }
     }
   }

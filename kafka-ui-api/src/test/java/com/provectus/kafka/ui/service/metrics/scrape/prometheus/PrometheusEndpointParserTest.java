@@ -4,13 +4,12 @@ import static com.provectus.kafka.ui.service.metrics.scrape.prometheus.Prometheu
 import static io.prometheus.client.Collector.MetricFamilySamples;
 import static io.prometheus.client.Collector.MetricFamilySamples.Sample;
 import static io.prometheus.client.Collector.Type;
-import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.provectus.kafka.ui.util.PrometheusEndpointUtil;
+import com.provectus.kafka.ui.service.metrics.PrometheusEndpointExpose;
 import io.prometheus.client.Collector;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
@@ -27,7 +26,7 @@ class PrometheusEndpointParserTest {
   @Test
   void parsesAllGeneratedMetricTypes() {
     List<MetricFamilySamples> original = generateMfs();
-    String exposed = PrometheusEndpointUtil.constructResponse(original.stream()).getBody();
+    String exposed = PrometheusEndpointExpose.constructResponse(original.stream()).getBody();
     List<MetricFamilySamples> parsed = parse(exposed.lines());
     assertThat(parsed).containsExactlyElementsOf(original);
   }
@@ -37,8 +36,8 @@ class PrometheusEndpointParserTest {
     String expose = """
             # HELP http_requests_total The total number of HTTP requests.
             # TYPE http_requests_total counter
-            http_requests_total{method="post",code="200"} 1027 1395066363000
-            http_requests_total{method="post",code="400"}    3 1395066363000
+            http_requests_total{method="post",code="200",} 1027 1395066363000
+            http_requests_total{method="post",code="400",}    3 1395066363000
             # Minimalistic line:
             metric_without_timestamp_and_labels 12.47
 

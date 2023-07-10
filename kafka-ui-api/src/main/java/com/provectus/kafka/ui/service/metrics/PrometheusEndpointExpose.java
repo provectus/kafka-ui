@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.util;
+package com.provectus.kafka.ui.service.metrics;
 
 import static io.prometheus.client.Collector.MetricFamilySamples;
 
@@ -17,9 +17,9 @@ import lombok.SneakyThrows;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
-public final class PrometheusEndpointUtil {
+public final class PrometheusEndpointExpose {
 
-  private PrometheusEndpointUtil() {
+  private PrometheusEndpointExpose() {
   }
 
   public static ResponseEntity<String> exposeAllMetrics(Map<String, Metrics> clustersMetrics) {
@@ -48,7 +48,7 @@ public final class PrometheusEndpointUtil {
             .map(mfs -> addLbl(mfs, "cluster", e.getKey())))
         // merging MFS with same name, keeping order
         .collect(Collectors.toMap(mfs -> mfs.name, mfs -> mfs,
-            PrometheusEndpointUtil::concatSamples, LinkedHashMap::new))
+            PrometheusEndpointExpose::concatSamples, LinkedHashMap::new))
         .values()
         .stream();
   }
