@@ -18,7 +18,8 @@ abstract class AbstractAuthSecurityConfig {
       "/logout",
       "/oauth2/**",
       "/static/**",
-      "/api/clusters/**/prometheus/expose/**"
+      "/api/clusters/**/prometheus/expose/**",
+      "/api/prometheus/expose/all"
   };
 
 }
