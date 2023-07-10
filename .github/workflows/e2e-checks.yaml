@@ -1,6 +1,6 @@
 name: "E2E: PR healthcheck"
 on:
-  pull_request_target:
+  pull_request:
     types: [ "opened", "edited", "reopened", "synchronize" ]
     paths:
       - "kafka-ui-api/**"

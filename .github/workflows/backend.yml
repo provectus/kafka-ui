@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - master
-  pull_request_target:
+  pull_request:
     types: ["opened", "edited", "reopened", "synchronize"]
     paths:
       - "kafka-ui-api/**"
@@ -29,7 +29,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Build and analyze pull request target
-        if: ${{ github.event_name == 'pull_request_target' }}
+        if: ${{ github.event_name == 'pull_request' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACKEND }}
