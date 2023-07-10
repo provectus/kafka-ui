@@ -33,7 +33,7 @@ public abstract class AbstractIntegrationTest {
   public static final String LOCAL = "local";
   public static final String SECOND_LOCAL = "secondLocal";
 
-  private static final String CONFLUENT_PLATFORM_VERSION = "5.5.0"; // Append ".arm64" for a local run
+  private static final String CONFLUENT_PLATFORM_VERSION = "7.2.1"; // Append ".arm64" for a local run
 
   public static final KafkaContainer kafka = new KafkaContainer(
       DockerImageName.parse("confluentinc/cp-kafka").withTag(CONFLUENT_PLATFORM_VERSION))
