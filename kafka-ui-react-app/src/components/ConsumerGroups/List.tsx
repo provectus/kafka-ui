@@ -5,15 +5,17 @@ import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel
 import {
   ConsumerGroupDetails,
   ConsumerGroupOrdering,
+  ConsumerGroupState,
   SortOrder,
 } from 'generated-sources';
 import useAppParams from 'lib/hooks/useAppParams';
 import { clusterConsumerGroupDetailsPath, ClusterNameRoute } from 'lib/paths';
 import { ColumnDef } from '@tanstack/react-table';
-import Table, { TagCell, LinkCell } from 'components/common/NewTable';
+import Table, { LinkCell, TagCell } from 'components/common/NewTable';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { PER_PAGE } from 'lib/constants';
+import { CONSUMER_GROUP_STATE_TOOLTIPS, PER_PAGE } from 'lib/constants';
 import { useConsumerGroups } from 'lib/hooks/api/consumers';
+import Tooltip from 'components/common/Tooltip/Tooltip';
 
 const List = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
@@ -59,6 +61,9 @@ const List = () => {
         id: ConsumerGroupOrdering.MESSAGES_BEHIND,
         header: 'Consumer Lag',
         accessorKey: 'consumerLag',
+        cell: (args) => {
+          return args.getValue() || 'N/A';
+        },
       },
       {
         header: 'Coordinator',
@@ -69,7 +74,17 @@ const List = () => {
         id: ConsumerGroupOrdering.STATE,
         header: 'State',
         accessorKey: 'state',
-        cell: TagCell,
+        // eslint-disable-next-line react/no-unstable-nested-components
+        cell: (args) => {
+          const value = args.getValue() as ConsumerGroupState;
+          return (
+            <Tooltip
+              value={<TagCell {...args} />}
+              content={CONSUMER_GROUP_STATE_TOOLTIPS[value]}
+              placement="bottom-end"
+            />
+          );
+        },
       },
     ],
     []

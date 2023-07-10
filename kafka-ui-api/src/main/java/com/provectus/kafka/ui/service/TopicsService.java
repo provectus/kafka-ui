@@ -170,21 +170,18 @@ public class TopicsService {
             .map(m -> m.values().stream().findFirst().orElse(List.of())));
   }
 
-  private Mono<InternalTopic> createTopic(KafkaCluster c, ReactiveAdminClient adminClient,
-                                          Mono<TopicCreationDTO> topicCreation) {
-    return topicCreation.flatMap(topicData ->
-            adminClient.createTopic(
-                topicData.getName(),
-                topicData.getPartitions(),
-                topicData.getReplicationFactor(),
-                topicData.getConfigs()
-            ).thenReturn(topicData)
-        )
+  private Mono<InternalTopic> createTopic(KafkaCluster c, ReactiveAdminClient adminClient, TopicCreationDTO topicData) {
+    return adminClient.createTopic(
+            topicData.getName(),
+            topicData.getPartitions(),
+            topicData.getReplicationFactor(),
+            topicData.getConfigs())
+        .thenReturn(topicData)
         .onErrorMap(t -> new TopicMetadataException(t.getMessage(), t))
-        .flatMap(topicData -> loadTopicAfterCreation(c, topicData.getName()));
+        .then(loadTopicAfterCreation(c, topicData.getName()));
   }
 
-  public Mono<InternalTopic> createTopic(KafkaCluster cluster, Mono<TopicCreationDTO> topicCreation) {
+  public Mono<InternalTopic> createTopic(KafkaCluster cluster, TopicCreationDTO topicCreation) {
     return adminClientService.get(cluster)
         .flatMap(ac -> createTopic(cluster, ac, topicCreation));
   }

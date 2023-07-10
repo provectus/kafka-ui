@@ -144,3 +144,6 @@ rbac:
 
         - resource: acl
           actions: all
+
+        - resource: audit
+          actions: all

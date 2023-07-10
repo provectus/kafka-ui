@@ -1,9 +1,9 @@
-name: Frontend build and test
+name: "Frontend: PR/master build & test"
 on:
   push:
     branches:
       - master
-  pull_request_target:
+  pull_request:
     types: ["opened", "edited", "reopened", "synchronize"]
     paths:
       - "kafka-ui-contract/**"

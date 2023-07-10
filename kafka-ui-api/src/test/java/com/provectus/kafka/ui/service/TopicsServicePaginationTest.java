@@ -18,6 +18,7 @@ import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.service.analyze.TopicAnalysisService;
+import com.provectus.kafka.ui.service.audit.AuditService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import com.provectus.kafka.ui.util.AccessControlServiceMock;
 import java.util.ArrayList;
@@ -33,7 +34,6 @@ import java.util.stream.IntStream;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.TopicPartitionInfo;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 import reactor.core.publisher.Mono;
 
 class TopicsServicePaginationTest {
@@ -46,7 +46,7 @@ class TopicsServicePaginationTest {
   private final AccessControlService accessControlService = new AccessControlServiceMock().getMock();
 
   private final TopicsController topicsController = new TopicsController(
-      topicsService, mock(TopicAnalysisService.class), clusterMapper, accessControlService);
+      topicsService, mock(TopicAnalysisService.class), clusterMapper, accessControlService, mock(AuditService.class));
 
   private void init(Map<String, InternalTopic> topicsInCache) {
 
@@ -59,7 +59,7 @@ class TopicsServicePaginationTest {
           List<String> lst = a.getArgument(1);
           return Mono.just(lst.stream().map(topicsInCache::get).collect(Collectors.toList()));
         });
-    ReflectionTestUtils.setField(topicsController, "clustersStorage", clustersStorage);
+    topicsController.setClustersStorage(clustersStorage);
   }
 
   @Test

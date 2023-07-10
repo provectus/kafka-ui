@@ -5,13 +5,10 @@ import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.KafkaConnectService;
 import com.provectus.kafka.ui.service.StatisticsCache;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import lombok.SneakyThrows;
 import org.opendatadiscovery.client.ApiClient;
 import org.opendatadiscovery.client.api.OpenDataDiscoveryIngestionApi;
-import org.opendatadiscovery.client.model.DataEntity;
 import org.opendatadiscovery.client.model.DataEntityList;
 import org.opendatadiscovery.client.model.DataSource;
 import org.opendatadiscovery.client.model.DataSourceList;
@@ -68,14 +65,14 @@ class OddExporter {
   private Mono<Void> exportTopics(KafkaCluster c) {
     return createKafkaDataSource(c)
         .thenMany(topicsExporter.export(c))
-        .concatMap(this::sentDataEntities)
+        .concatMap(this::sendDataEntities)
         .then();
   }
 
   private Mono<Void> exportKafkaConnects(KafkaCluster cluster) {
     return createConnectDataSources(cluster)
         .thenMany(connectorsExporter.export(cluster))
-        .concatMap(this::sentDataEntities)
+        .concatMap(this::sendDataEntities)
         .then();
   }
 
@@ -99,7 +96,7 @@ class OddExporter {
     );
   }
 
-  private Mono<Void> sentDataEntities(DataEntityList dataEntityList) {
+  private Mono<Void> sendDataEntities(DataEntityList dataEntityList) {
     return oddApi.postDataEntityList(dataEntityList);
   }
 
