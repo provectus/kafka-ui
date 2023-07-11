@@ -88,7 +88,8 @@ public class Metrics {
                               s1.labelNames,
                               s1.labelValues,
                               s1.value + s2.value
-                          )
+                          ),
+                          LinkedHashMap::new
                       )
                   )
                   .values()
