@@ -25,19 +25,27 @@ public class PrometheusEndpointParser {
 
     String name;
     String help;
-    Type type = null;
+    Type type;
+    String unit;
     Set<String> allowedNames = new HashSet<>();
     List<Sample> samples = new ArrayList<>();
 
     void registerAndReset() {
       if (!samples.isEmpty()) {
         registered.add(
-            new MetricFamilySamples(name, type, Optional.ofNullable(help).orElse(name), List.copyOf(samples)));
+            new MetricFamilySamples(
+                name,
+                Optional.ofNullable(unit).orElse(""),
+                type,
+                Optional.ofNullable(help).orElse(name),
+                List.copyOf(samples))
+        );
       }
       //resetting state:
       name = null;
       help = null;
       type = null;
+      unit = null;
       allowedNames.clear();
       samples.clear();
     }
@@ -60,6 +68,7 @@ public class PrometheusEndpointParser {
               switch (parts[1]) {
                 case "HELP" -> processHelp(context, parts);
                 case "TYPE" -> processType(context, parts);
+                case "UNIT" -> processUnit(context, parts);
                 default -> { /* probably a comment */ }
               }
             }
@@ -68,6 +77,19 @@ public class PrometheusEndpointParser {
           }
         });
     return context.getRegistered();
+  }
+
+  private static void processUnit(ParserContext context, String[] parts) {
+    if (!parts[2].equals(context.name)) {
+      // starting new metric family - need to register (if possible) prev one
+      context.registerAndReset();
+      context.name = parts[2];
+      context.type = DEFAULT_TYPE;
+      context.allowedNames.add(context.name);
+    }
+    if (parts.length == 4) {
+      context.unit = parts[3];
+    }
   }
 
   private static void processHelp(ParserContext context, String[] parts) {

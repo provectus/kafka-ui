@@ -47,6 +47,11 @@ class PrometheusEndpointParserTest {
             # TYPE something_untyped untyped
             something_untyped{} -123123
 
+            # TYPE unit_test_seconds counter
+            # UNIT unit_test_seconds seconds
+            # HELP unit_test_seconds Testing that unit parsed properly
+            unit_test_seconds_total 4.20072246e+06
+
             # HELP http_request_duration_seconds A histogram of the request duration.
             # TYPE http_request_duration_seconds histogram
             http_request_duration_seconds_bucket{le="0.05"} 24054
@@ -58,7 +63,7 @@ class PrometheusEndpointParserTest {
             http_request_duration_seconds_sum 53423
             http_request_duration_seconds_count 144320
         """;
-    var parsed = parse(expose.lines());
+    List<MetricFamilySamples> parsed = parse(expose.lines());
     assertThat(parsed).contains(
         new MetricFamilySamples(
             "http_requests_total",
@@ -86,6 +91,13 @@ class PrometheusEndpointParserTest {
             Type.GAUGE,
             "something_untyped",
             List.of(new Sample("something_untyped", List.of(), List.of(), -123123))
+        ),
+        new MetricFamilySamples(
+            "unit_test_seconds",
+            "seconds",
+            Type.COUNTER,
+            "Testing that unit parsed properly",
+            List.of(new Sample("unit_test_seconds_total", List.of(), List.of(), 4.20072246e+06))
         ),
         new MetricFamilySamples(
             "http_request_duration_seconds",
