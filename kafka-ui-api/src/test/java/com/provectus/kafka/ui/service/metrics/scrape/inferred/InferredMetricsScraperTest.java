@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.service.metrics.scrape.inferred;
 
+import static com.provectus.kafka.ui.model.InternalLogDirStats.LogDirSpaceStats;
+import static com.provectus.kafka.ui.model.InternalLogDirStats.SegmentStats;
 import static com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState.ConsumerGroupState;
 import static com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState.NodeState;
 import static com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState.TopicState;
@@ -29,8 +31,8 @@ class InferredMetricsScraperTest {
 
   @Test
   void allExpectedMetricsScraped() {
-    var segmentStats = new InternalLogDirStats.SegmentStats(1234L, 3);
-    var logDirStats = new InternalLogDirStats.LogDirSpaceStats(234L, 345L, Map.of(), Map.of());
+    var segmentStats = new SegmentStats(1234L, 3);
+    var logDirStats = new LogDirSpaceStats(234L, 345L, Map.of(), Map.of());
 
     Node node1 = new Node(1, "node1", 9092);
     Node node2 = new Node(2, "node2", 9092);
