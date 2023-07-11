@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
@@ -27,6 +28,7 @@ import org.apache.kafka.common.TopicPartition;
 import reactor.core.publisher.Mono;
 
 @Builder(toBuilder = true)
+@RequiredArgsConstructor
 @Value
 public class ScrapedClusterState {
 

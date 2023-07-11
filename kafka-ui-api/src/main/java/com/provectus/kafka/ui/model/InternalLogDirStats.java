@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.apache.kafka.clients.admin.LogDirDescription;
 import org.apache.kafka.common.TopicPartition;
@@ -21,13 +22,13 @@ import reactor.util.function.Tuples;
 public class InternalLogDirStats {
 
   @Value
+  @RequiredArgsConstructor
   public static class SegmentStats {
     Long segmentSize;
     Integer segmentsCount;
 
     private SegmentStats(LongSummaryStatistics s) {
-      segmentSize = s.getSum();
-      segmentsCount = (int) s.getCount();
+      this(s.getSum(), (int) s.getCount());
     }
   }
 
