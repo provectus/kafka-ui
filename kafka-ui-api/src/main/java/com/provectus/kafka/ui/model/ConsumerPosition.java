@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.model;
 
+import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.exception.ValidationException;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +15,12 @@ public record ConsumerPosition(PollingModeDTO pollingMode,
                                @Nullable Long timestamp,
                                @Nullable Offsets offsets) {
 
-  // one of properties will be null
   public record Offsets(@Nullable Long offset, //should be applied to all partitions
                         @Nullable Map<TopicPartition, Long> tpOffsets) {
+    public Offsets {
+      // only one of properties should be set
+      Preconditions.checkArgument((offset == null && tpOffsets != null) || (offset != null && tpOffsets == null));
+    }
   }
 
   public static ConsumerPosition create(PollingModeDTO pollingMode,
