@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.service.integration.odd.schema;
 
 import com.google.common.collect.ImmutableSet;
-import com.provectus.kafka.ui.sr.model.SchemaSubject;
+import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.avro.Schema;
@@ -14,8 +14,8 @@ final class AvroExtractor {
   private AvroExtractor() {
   }
 
-  static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn, boolean isKey) {
-    var schema = new Schema.Parser().parse(subject.getSchema());
+  static List<DataSetField> extract(AvroSchema avroSchema, KafkaPath topicOddrn, boolean isKey) {
+    var schema = avroSchema.rawSchema();
     List<DataSetField> result = new ArrayList<>();
     result.add(DataSetFieldsExtractors.rootField(topicOddrn, isKey));
     extract(
