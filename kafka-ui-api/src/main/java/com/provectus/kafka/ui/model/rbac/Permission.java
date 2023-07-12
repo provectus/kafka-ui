@@ -74,7 +74,10 @@ public class Permission {
   }
 
   private List<String> getAllActionValues() {
-    if (resource == null) return Collections.emptyList();
+    if (resource == null) {
+      return Collections.emptyList();
+    }
+
     return switch (this.resource) {
       case APPLICATIONCONFIG -> Arrays.stream(ApplicationConfigAction.values()).map(Enum::toString).toList();
       case CLUSTERCONFIG -> Arrays.stream(ClusterConfigAction.values()).map(Enum::toString).toList();
