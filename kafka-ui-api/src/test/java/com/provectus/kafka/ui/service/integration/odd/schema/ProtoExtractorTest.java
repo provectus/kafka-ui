@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service.integration.odd.schema;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.provectus.kafka.ui.sr.model.SchemaSubject;
+import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.opendatadiscovery.client.model.DataSetField;
@@ -54,8 +54,7 @@ class ProtoExtractorTest {
         }""";
 
     var list = ProtoExtractor.extract(
-        new SchemaSubject()
-            .schema(protoSchema),
+        new ProtobufSchema(protoSchema),
         KafkaPath.builder()
             .cluster("localhost:9092")
             .topic("someTopic")

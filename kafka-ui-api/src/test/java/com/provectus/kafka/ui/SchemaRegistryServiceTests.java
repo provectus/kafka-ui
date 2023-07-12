@@ -2,6 +2,7 @@ package com.provectus.kafka.ui;
 
 import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
 import com.provectus.kafka.ui.model.NewSchemaSubjectDTO;
+import com.provectus.kafka.ui.model.SchemaReferenceDTO;
 import com.provectus.kafka.ui.model.SchemaSubjectDTO;
 import com.provectus.kafka.ui.model.SchemaSubjectsResponseDTO;
 import com.provectus.kafka.ui.model.SchemaTypeDTO;
@@ -190,6 +191,58 @@ class SchemaRegistryServiceTests extends AbstractIntegrationTest {
     Assertions.assertEquals(schema, actual.getSchema());
   }
 
+
+  @Test
+  void shouldCreateNewProtobufSchemaWithRefs() {
+    NewSchemaSubjectDTO requestBody = new NewSchemaSubjectDTO()
+        .schemaType(SchemaTypeDTO.PROTOBUF)
+        .subject(subject + "-ref")
+        .schema("""
+            syntax = "proto3";
+            message MyRecord {
+              int32 id = 1;
+              string name = 2;
+            }
+            """);
+
+    webTestClient
+        .post()
+        .uri("/api/clusters/{clusterName}/schemas", LOCAL)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(BodyInserters.fromPublisher(Mono.just(requestBody), NewSchemaSubjectDTO.class))
+        .exchange()
+        .expectStatus()
+        .isOk();
+
+    requestBody = new NewSchemaSubjectDTO()
+        .schemaType(SchemaTypeDTO.PROTOBUF)
+        .subject(subject)
+        .schema("""
+            syntax = "proto3";
+            import "MyRecord.proto";
+            message MyRecordWithRef {
+              int32 id = 1;
+              MyRecord my_ref = 2;
+            }
+            """)
+        .references(List.of(new SchemaReferenceDTO().name("MyRecord.proto").subject(subject + "-ref").version(1)));
+
+    SchemaSubjectDTO actual = webTestClient
+        .post()
+        .uri("/api/clusters/{clusterName}/schemas", LOCAL)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(BodyInserters.fromPublisher(Mono.just(requestBody), NewSchemaSubjectDTO.class))
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody(SchemaSubjectDTO.class)
+        .returnResult()
+        .getResponseBody();
+
+    Assertions.assertNotNull(actual);
+    Assertions.assertEquals(requestBody.getReferences(), actual.getReferences());
+  }
+
   @Test
   public void shouldReturnBackwardAsGlobalCompatibilityLevelByDefault() {
     webTestClient
@@ -278,7 +331,7 @@ class SchemaRegistryServiceTests extends AbstractIntegrationTest {
   void shouldCreateNewSchemaWhenSubjectIncludesNonAsciiCharacters() {
     String schema =
         "{\"subject\":\"test/test\",\"schemaType\":\"JSON\",\"schema\":"
-        + "\"{\\\"type\\\": \\\"string\\\"}\"}";
+            + "\"{\\\"type\\\": \\\"string\\\"}\"}";
 
     webTestClient
         .post()

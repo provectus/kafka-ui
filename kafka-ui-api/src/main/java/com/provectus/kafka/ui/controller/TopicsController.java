@@ -123,9 +123,11 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .operationName("deleteTopic")
         .build();
 
-    return accessControlService.validateAccess(context).then(
-        topicsService.deleteTopic(getCluster(clusterName), topicName).map(ResponseEntity::ok)
-    ).doOnEach(sig -> auditService.audit(context, sig));
+    return accessControlService.validateAccess(context)
+        .then(
+            topicsService.deleteTopic(getCluster(clusterName), topicName)
+                .thenReturn(ResponseEntity.ok().<Void>build())
+        ).doOnEach(sig -> auditService.audit(context, sig));
   }
 
 
