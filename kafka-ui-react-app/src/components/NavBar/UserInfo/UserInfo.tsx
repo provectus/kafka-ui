@@ -3,11 +3,13 @@ import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 import UserIcon from 'components/common/Icons/UserIcon';
 import DropdownArrowIcon from 'components/common/Icons/DropdownArrowIcon';
 import { useUserInfo } from 'lib/hooks/useUserInfo';
+import { useNavigate } from 'react-router-dom';
 
 import * as S from './UserInfo.styled';
 
 const UserInfo = () => {
   const { username } = useUserInfo();
+  const navigate = useNavigate();
 
   return username ? (
     <Dropdown
@@ -19,8 +21,8 @@ const UserInfo = () => {
         </S.Wrapper>
       }
     >
-      <DropdownItem>
-        <S.LogoutLink href={`${window.basePath}/logout`}>Log out</S.LogoutLink>
+      <DropdownItem onClick={() => navigate('/logout')}>
+        <S.LogoutLink>Log out</S.LogoutLink>
       </DropdownItem>
     </Dropdown>
   ) : null;
