@@ -43,7 +43,7 @@ public class ClustersProperties {
     KsqldbServerAuth ksqldbServerAuth;
     KeystoreConfig ksqldbServerSsl;
     List<ConnectCluster> kafkaConnect;
-    MetricsConfigData metrics;
+    MetricsConfig metrics;
     Map<String, Object> properties;
     boolean readOnly = false;
     List<SerdeConfig> serde;
@@ -66,7 +66,7 @@ public class ClustersProperties {
 
   @Data
   @ToString(exclude = {"password", "keystorePassword"})
-  public static class MetricsConfigData {
+  public static class MetricsConfig {
     String type;
     Integer port;
     Boolean ssl;
