@@ -20,7 +20,7 @@
         <selenide.version>6.12.3</selenide.version>
         <testng.version>7.7.1</testng.version>
         <allure.version>2.22.2</allure.version>
-        <qase.io.version>3.0.4</qase.io.version>
+        <qase.io.version>3.0.5</qase.io.version>
         <aspectj.version>1.9.9.1</aspectj.version>
         <assertj.version>3.24.2</assertj.version>
         <hamcrest.version>2.2</hamcrest.version>
