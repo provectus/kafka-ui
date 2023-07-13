@@ -39,7 +39,7 @@
         <spring-boot.version>3.1.1</spring-boot.version>
         <kafka-ui-serde-api.version>1.0.0</kafka-ui-serde-api.version>
         <odd-oddrn-generator.version>0.1.17</odd-oddrn-generator.version>
-        <odd-oddrn-client.version>0.1.23</odd-oddrn-client.version>
+        <odd-oddrn-client.version>0.1.25</odd-oddrn-client.version>
         <org.json.version>20230227</org.json.version>
 
         <!-- Test dependency versions -->
