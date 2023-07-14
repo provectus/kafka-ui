@@ -1,4 +1,4 @@
-name: Build Docker image and push
+name: "Infra: Image Testing: Deploy"
 on:
   workflow_dispatch:
   pull_request:
@@ -64,14 +64,11 @@ jobs:
             JAR_FILE=kafka-ui-api-${{ steps.build.outputs.version }}.jar
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
-      - name: update status check
-        uses: Sibz/github-status-action@v1.1.6
+      - name: make comment with private deployment link
+        uses: peter-evans/create-or-update-comment@v3
         with:
-          authToken: ${{secrets.GITHUB_TOKEN}}
-          context: "Image published at"
-          state: "success"
-          sha: ${{ github.event.pull_request.head.sha  || github.sha }}
-          target_url: "public.ecr.aws/provectus/kafka-ui-custom-build:${{ steps.extract_branch.outputs.tag }}"
-
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Image published at public.ecr.aws/provectus/kafka-ui-custom-build:${{ steps.extract_branch.outputs.tag }}
     outputs:
       tag: ${{ steps.extract_branch.outputs.tag }}

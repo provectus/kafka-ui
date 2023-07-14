@@ -16,13 +16,15 @@ import { Table } from 'components/common/table/Table/Table.styled';
 import getTagColor from 'components/common/Tag/getTagColor';
 import { Dropdown } from 'components/common/Dropdown';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
-import { Action, ResourceType } from 'generated-sources';
+import { Action, ConsumerGroupState, ResourceType } from 'generated-sources';
 import { ActionDropdownItem } from 'components/common/ActionComponent';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import {
   useConsumerGroupDetails,
   useDeleteConsumerGroupMutation,
 } from 'lib/hooks/api/consumers';
+import Tooltip from 'components/common/Tooltip/Tooltip';
+import { CONSUMER_GROUP_STATE_TOOLTIPS } from 'lib/constants';
 
 import ListItem from './ListItem';
 
@@ -96,9 +98,19 @@ const Details: React.FC = () => {
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator label="State">
-            <Tag color={getTagColor(consumerGroup.data?.state)}>
-              {consumerGroup.data?.state}
-            </Tag>
+            <Tooltip
+              value={
+                <Tag color={getTagColor(consumerGroup.data?.state)}>
+                  {consumerGroup.data?.state}
+                </Tag>
+              }
+              content={
+                CONSUMER_GROUP_STATE_TOOLTIPS[
+                  consumerGroup.data?.state || ConsumerGroupState.UNKNOWN
+                ]
+              }
+              placement="bottom-start"
+            />
           </Metrics.Indicator>
           <Metrics.Indicator label="Members">
             {consumerGroup.data?.members}

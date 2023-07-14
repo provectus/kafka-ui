@@ -1,4 +1,4 @@
-name: Add triage label to new PRs
+name: "Infra: Triage: Apply triage label for PRs"
 on:
   pull_request:
     types:

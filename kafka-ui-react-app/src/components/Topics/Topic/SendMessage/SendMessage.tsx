@@ -118,8 +118,8 @@ const SendMessage: React.FC<{ closeSidebar: () => void }> = ({
         valueSerde,
       });
       if (!keepContents) {
-        setValue('key', '');
-        setValue('content', '');
+        setValue('key', defaultValues.key || '');
+        setValue('content', defaultValues.content || '');
         closeSidebar();
       }
     } catch (e) {

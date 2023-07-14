@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.model.rbac;
 
 import com.provectus.kafka.ui.model.rbac.permission.AclAction;
 import com.provectus.kafka.ui.model.rbac.permission.ApplicationConfigAction;
+import com.provectus.kafka.ui.model.rbac.permission.AuditAction;
 import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
@@ -11,6 +12,7 @@ import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import lombok.Value;
 import org.springframework.util.Assert;
 
@@ -40,6 +42,11 @@ public class AccessContext {
 
   Collection<AclAction> aclActions;
 
+  Collection<AuditAction> auditAction;
+
+  String operationName;
+  Object operationParams;
+
   public static AccessContextBuilder builder() {
     return new AccessContextBuilder();
   }
@@ -59,6 +66,10 @@ public class AccessContext {
     private Collection<SchemaAction> schemaActions = Collections.emptySet();
     private Collection<KsqlAction> ksqlActions = Collections.emptySet();
     private Collection<AclAction> aclActions = Collections.emptySet();
+    private Collection<AuditAction> auditActions = Collections.emptySet();
+
+    private String operationName;
+    private Object operationParams;
 
     private AccessContextBuilder() {
     }
@@ -141,6 +152,27 @@ public class AccessContext {
       return this;
     }
 
+    public AccessContextBuilder auditActions(AuditAction... actions) {
+      Assert.isTrue(actions.length > 0, "actions not present");
+      this.auditActions = List.of(actions);
+      return this;
+    }
+
+    public AccessContextBuilder operationName(String operationName) {
+      this.operationName = operationName;
+      return this;
+    }
+
+    public AccessContextBuilder operationParams(Object operationParams) {
+      this.operationParams = operationParams;
+      return this;
+    }
+
+    public AccessContextBuilder operationParams(Map<String, Object> paramsMap) {
+      this.operationParams = paramsMap;
+      return this;
+    }
+
     public AccessContext build() {
       return new AccessContext(
           applicationConfigActions,
@@ -150,7 +182,8 @@ public class AccessContext {
           connect, connectActions,
           connector,
           schema, schemaActions,
-          ksqlActions, aclActions);
+          ksqlActions, aclActions, auditActions,
+          operationName, operationParams);
     }
   }
 }
