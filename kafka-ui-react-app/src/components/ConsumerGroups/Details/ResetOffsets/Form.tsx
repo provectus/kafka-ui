@@ -122,7 +122,7 @@ const Form: React.FC<FormProps> = ({ defaultValues, partitions, topics }) => {
           <div>
             <InputLabel>Partitions</InputLabel>
             <MultiSelect
-              className={isDarkMode ? 'dark' : ''}
+              className={isDarkMode ? 'dark' : 'rmsc'}
               options={partitionOptions}
               value={partitionsValue.map((p) => ({
                 value: p,
