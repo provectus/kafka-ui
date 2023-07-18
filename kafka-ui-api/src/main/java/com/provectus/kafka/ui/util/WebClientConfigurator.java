@@ -28,13 +28,12 @@ import reactor.netty.http.client.HttpClient;
 public class WebClientConfigurator {
 
   private final WebClient.Builder builder = WebClient.builder();
+  private HttpClient httpClient = HttpClient
+      .create()
+      .proxyWithSystemProperties();
 
   public WebClientConfigurator() {
     configureObjectMapper(defaultOM());
-    var httpClient = HttpClient
-        .create()
-        .proxyWithSystemProperties();
-    builder.clientConnector(new ReactorClientHttpConnector(httpClient));
   }
 
   private static ObjectMapper defaultOM() {
@@ -94,12 +93,7 @@ public class WebClientConfigurator {
     // Create webclient
     SslContext context = contextBuilder.build();
 
-    var httpClient = HttpClient
-        .create()
-        .secure(t -> t.sslContext(context))
-        .proxyWithSystemProperties();
-
-    builder.clientConnector(new ReactorClientHttpConnector(httpClient));
+    httpClient = httpClient.secure(t -> t.sslContext(context));
     return this;
   }
 
@@ -135,6 +129,6 @@ public class WebClientConfigurator {
   }
 
   public WebClient build() {
-    return builder.build();
+    return builder.clientConnector(new ReactorClientHttpConnector(httpClient)).build();
   }
 }
