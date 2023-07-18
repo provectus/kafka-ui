@@ -22,7 +22,7 @@ paths:
         - PrometheusClient
       summary: Returns label values
       description: "returns a list of label values for a provided label name"
-      operationId: labelValuesGET
+      operationId: getLabelValues
       parameters:
         - name: label_name
           in: path
@@ -31,28 +31,25 @@ paths:
             type: string
         - name: start
           in: query
-          description: Start timestamp. Optional.
+          description: Start timestamp.
           schema:
             type: string
             format: rfc3339 | unix_timestamp
         - name: end
           in: query
-          description: End timestamp. Optional.
+          description: End timestamp.
           schema:
             type: string
             format: rfc3339 | unix_timestamp
         - name: match[]
           in: query
-          description: Repeated series selector argument that selects the series from which to read the label values. Optional.
+          description: Repeated series selector argument that selects the series from which to read the label values.
           schema:
             type: string
             format: series_selector
       responses:
         200:
-          description: |
-            Success
-
-            This example queries for all label values for the job label
+          description: Success
           content:
             application/json:
               schema:
@@ -64,19 +61,19 @@ paths:
         - PrometheusClient
       summary: Returns label names
       description: returns a list of label names
-      operationId: labelNamesGET
+      operationId: getLabelNames
       parameters:
         - name: start
           in: query
           description: |
-            Start timestamp. Optional.
+            Start timestamp.
           schema:
             type: string
             format: rfc3339 | unix_timestamp
         - name: end
           in: query
           description: |
-            End timestamp. Optional.
+            End timestamp.
           schema:
             type: string
             format: rfc3339 | unix_timestamp
@@ -100,25 +97,22 @@ paths:
         - PrometheusClient
       summary: Returns metric metadata
       description: returns a list of label names
-      operationId: metricMetadataGET
+      operationId: getMetricMetadata
       parameters:
         - name: limit
           in: query
-          description: |
-            Maximum number of metrics to return.
+          description: Maximum number of metrics to return.
           required: true
           schema:
             type: number
         - name: metric
           in: query
-          description: |
-            A metric name to filter metadata for. All metric metadata is retrieved if left empty.
+          description: A metric name to filter metadata for. All metric metadata is retrieved if left empty.
           schema:
             type: string
       responses:
         200:
-          description: |
-            Success
+          description: Success
           content:
             application/json:
               schema:
@@ -138,7 +132,7 @@ paths:
       summary: Evaluates instant query
       description: |
         Evaluates an instant query at a single point in time
-      operationId: queryGET
+      operationId: query
       parameters:
         - name: query
           in: query
@@ -176,45 +170,24 @@ paths:
       tags:
         - PrometheusClient
       summary: Evaluates query over range of time.
-      description: |
-        The following endpoint evaluates an expression query over a range of time
-
-        You can URL-encode these parameters directly in the request body by using the ```POST``` method and ```Content-Type: application/x-www-form-urlencoded``` header. This is useful when specifying a large query that may breach server-side URL character limits.
-
-        The data section of the query result has the following format
-        ```
-        {
-          "resultType": "matrix",
-          "result": <value>
-        }
-        ```
-        For the format of the ```<value>``` placeholder, see the [range-vector result format](https://prometheus.io/docs/prometheus/latest/querying/api/#range-vectors).
-      operationId: queryRangeGET
+      description:  Evaluates an expression query over a range of time
+      operationId: queryRange
       parameters:
         - name: query
           in: query
-          description: |
-            Prometheus expression query string.
-
-            Example: ```?query=up```
+          description: Prometheus expression query string.
           required: true
           schema:
             type: string
         - name: start
           in: query
-          description: |
-            Start timestamp.
-
-            Example: ```&start=2015-07-01T20:10:30.781Z```
+          description: Start timestamp.
           schema:
             type: string
             format: rfc3339 | unix_timestamp
         - name: end
           in: query
-          description: |
-            End timestamp.
-
-            Example: ```&end=2015-07-01T20:11:00.781Z```
+          description: End timestamp.
           schema:
             type: string
             format: rfc3339 | unix_timestamp
@@ -274,7 +247,7 @@ paths:
       tags:
         - PrometheusClient
       summary: Returns time series
-      operationId: seriesGET
+      operationId: getSeries
       parameters:
         - name: start
           in: query
