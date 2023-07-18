@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.springframework.util.ResourceUtils;
+import prometheus.query.api.PrometheusClientApi;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -46,7 +47,7 @@ public final class KafkaServicesValidation {
   public static Optional<String> validateTruststore(TruststoreConfig truststoreConfig) {
     if (truststoreConfig.getTruststoreLocation() != null && truststoreConfig.getTruststorePassword() != null) {
       try (FileInputStream fileInputStream = new FileInputStream(
-             (ResourceUtils.getFile(truststoreConfig.getTruststoreLocation())))) {
+          (ResourceUtils.getFile(truststoreConfig.getTruststoreLocation())))) {
         KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
         trustStore.load(fileInputStream, truststoreConfig.getTruststorePassword().toCharArray());
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
@@ -141,5 +142,18 @@ public final class KafkaServicesValidation {
         .onErrorResume(KafkaServicesValidation::invalid);
   }
 
+  public static Mono<ApplicationPropertyValidationDTO> validatePrometheusStore(
+      Supplier<ReactiveFailover<PrometheusClientApi>> clientSupplier) {
+    ReactiveFailover<PrometheusClientApi> client;
+    try {
+      client = clientSupplier.get();
+    } catch (Exception e) {
+      log.error("Error creating Prometheus client", e);
+      return invalid("Error creating Prometheus client: " + e.getMessage());
+    }
+    return client.mono(c -> c.query("1", null, null)) //TODO: check params
+        .then(valid())
+        .onErrorResume(KafkaServicesValidation::invalid);
+  }
 
 }

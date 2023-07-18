@@ -2,10 +2,6 @@ openapi: 3.0.1
 info:
   title: |
     Prometheus query HTTP API
-    Copied from https://raw.githubusercontent.com/HelloKunal/OpenAPI-Specification-of-Go-API/main/swagger.yaml
-  description: |
-    The current stable HTTP API is reachable under /api/v1 on a Prometheus server. Any non-breaking additions will be added under that endpoint.
-  termsOfService: urn:tos
   version: 0.1.0
   contact: { }
 
@@ -53,7 +49,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/responseLabelValues'
+                $ref: '#/components/schemas/LabelValuesResponse'
 
   /api/v1/labels:
     get:
@@ -89,7 +85,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/responseLabelNames'
+                $ref: '#/components/schemas/LabelNamesResponse'
 
   /api/v1/metadata:
     get:
@@ -104,7 +100,7 @@ paths:
           description: Maximum number of metrics to return.
           required: true
           schema:
-            type: number
+            type: integer
         - name: metric
           in: query
           description: A metric name to filter metadata for. All metric metadata is retrieved if left empty.
@@ -116,14 +112,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/responseMetadata'
+                $ref: '#/components/schemas/MetadataResponse'
         201:
           description: |
             Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/responseMetadata'
+                $ref: '#/components/schemas/MetadataResponse'
 
   /api/v1/query:
     get:
@@ -162,7 +158,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/queryData'
+                $ref: '#/components/schemas/QueryResponse'
 
 
   /api/v1/query_range:
@@ -170,7 +166,7 @@ paths:
       tags:
         - PrometheusClient
       summary: Evaluates query over range of time.
-      description:  Evaluates an expression query over a range of time
+      description: Evaluates an expression query over a range of time
       operationId: queryRange
       parameters:
         - name: query
@@ -212,34 +208,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/responseQuery_range"
-              example:
-                status: success
-                data:
-                  resultType: matrix
-                  result:
-                    - metric:
-                        __name__: up
-                        job: prometheus
-                        instance: localhost:9090
-                      values:
-                        - - 1.435781430781E9
-                          - "1"
-                        - - 1.435781445781E9
-                          - "1"
-                        - - 1.435781460781E9
-                          - "1"
-                    - metric:
-                        __name__: up
-                        job: node
-                        instance: localhost:9091
-                      values:
-                        - - 1.435781430781E9
-                          - "0"
-                        - - 1.435781445781E9
-                          - "0"
-                        - - 1.435781460781E9
-                          - "1"
+                $ref: "#/components/schemas/QueryResponse"
 
 
   /api/v1/series:
@@ -278,175 +247,141 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/responseSeries'
-              example:
-                status: success
-                data:
-                  - __name__: up
-                    job: prometheus
-                    instance: localhost:9090
-                  - __name__: up
-                    job: node
-                    instance: localhost:9091
-                  - __name__: process_start_time_seconds
-                    job: prometheus
-                    instance: localhost:9090
+                $ref: '#/components/schemas/SeriesResponse'
 
 components:
   schemas:
-    Label:
+    BaseResponse:
       type: object
+      required: [ status ]
       properties:
-        Name:
+        status:
           type: string
-        Value:
+          enum: [ "success", "error" ]
+        error:
           type: string
-      description: Label is a key/value pair of strings.
-    Labels:
-      type: array
-      description: |-
-        Labels is a sorted set of labels. Order has to be guaranteed upon
-        instantiation.
-      items:
-        $ref: '#/components/schemas/Label'
-    MetricType:
-      type: string
-      description: MetricType represents metric type values.
-
-    metadata:
-      type: object
-      properties:
-        Help:
+        errorType:
           type: string
-        Type:
-          $ref: '#/components/schemas/MetricType'
-        Unit:
-          type: string
-
-    queryData:
-      type: object
-      properties:
-        Result:
-          type: object
-          properties:
-            metric:
-              type: object
-              properties:
-                __name__:
-                  type: string
-                job:
-                  type: string
-                instance:
-                  type: string
-            value:
-              type: array
-              items:
-                oneOf:
-                  - type: string
-                    format: "unix_timestamp"
-                  - type: string
-                    format: "sample_value"
-        ResultType:
-          type: string
-          enum:
-            - matrix
-            - vector
-            - scalar
-            - string
-            -
-    responseSeries:
-      type: array
-      description: a list of objects that contain the label name/value pairs which
-        identify each series
-      items:
-        type: object
-        properties:
-          __name__:
-            type: string
-          job:
-            type: string
-          instance:
+        warnings:
+          type: array
+          items:
             type: string
 
-    responseSnapshot:
+    QueryResponse:
       type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
       properties:
-        name:
-          type: string
+        data:
+          $ref: '#/components/schemas/QueryResponseData'
 
-    responseQuery_exemplars:
+    QueryResponseData:
       type: object
-      properties:
-        seriesLabels:
-          type: object
-          properties:
-            __name__:
-              type: string
-            job:
-              type: string
-            instance:
-              type: string
-            service:
-              type: string
-        exemplars:
-          type: object
-          properties:
-            labels:
-              type: object
-              properties:
-                traceID:
-                  type: string
-            values:
-              type: string
-            timestamp:
-              type: string
-              format: "unix_timestamp"
-
-    responseQuery_range:
-      type: object
+      required: [ "resultType" ]
       properties:
         resultType:
           type: string
-        result:
-          type: object
-          properties:
-            metric:
-              type: object
-              properties:
-                __name__:
-                  type: string
-                job:
-                  type: string
-                instance:
-                  type: string
-            values:
-              type: array
-              items:
-                oneOf:
-                  - type: string
-                    format: "unix_timestamp"
-                  - type: string
-                    format: "sample_value"
+      discriminator:
+        propertyName: resultType
+        mapping:
+          matrix: '#/components/schemas/MatrixQueryResponse'
+          vector: '#/components/schemas/InstantVectorQueryResponse'
+          scalar: '#/components/schemas/ScalarQueryResponse'
+          string: '#/components/schemas/StringQueryResponse'
+      anyOf:
+        - $ref: '#/components/schemas/MatrixQueryResponse'
+        - $ref: '#/components/schemas/InstantVectorQueryResponse'
+        - $ref: '#/components/schemas/ScalarQueryResponse'
+        - $ref: '#/components/schemas/StringQueryResponse'
 
-    responseMetadata:
+    MatrixQueryResponse:
       type: object
+      allOf:
+        - $ref: "#/components/schemas/QueryResponseData"
       properties:
-        metric name:
-          type: string
-      additionalProperties:
-        $ref: '#/components/schemas/metadata'
-      description: a (key, object) map. `metric name`is an example key
+        result:
+          type: array
+          items: { }
 
-    responseLabelValues:
-      type: array
-      description: a list of string label values
-      items:
-        type: string
+    InstantVectorQueryResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/QueryResponseData"
+      properties:
+        result:
+          type: array
+          items: { }
 
-    responseLabelNames:
-      type: array
-      description: a list of string label names
-      items:
-        type: string
+    ScalarQueryResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/QueryResponseData"
+      properties:
+        result:
+          type: array
+          items: { }
+
+    StringQueryResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/QueryResponseData"
+      properties:
+        result:
+          type: array
+          items: { }
+
+    SeriesResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+      properties:
+        data:
+          type: array
+          description: a list of objects that contain the label name/value pairs which
+            identify each series
+          items:
+            type: object
+            properties:
+              __name__:
+                type: string
+              job:
+                type: string
+              instance:
+                type: string
+
+    MetadataResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: object
+              additionalProperties: true
+
+    LabelValuesResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+      properties:
+        data:
+          type: array
+          description: a list of string label values
+          items:
+            type: string
+
+    LabelNamesResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+      properties:
+        data:
+          type: array
+          description: a list of string label names
+          items:
+            type: string
 
 

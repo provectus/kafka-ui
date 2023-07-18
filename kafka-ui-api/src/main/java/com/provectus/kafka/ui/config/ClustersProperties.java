@@ -75,6 +75,7 @@ public class ClustersProperties {
     String keystoreLocation;
     String keystorePassword;
 
+    Boolean prometheusExpose;
     MetricsStorage store;
   }
 

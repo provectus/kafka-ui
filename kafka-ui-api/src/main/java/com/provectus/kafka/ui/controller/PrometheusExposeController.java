@@ -23,6 +23,7 @@ public class PrometheusExposeController extends AbstractController implements Pr
         PrometheusExpose.exposeAllMetrics(
             clustersStorage.getKafkaClusters()
                 .stream()
+                .filter(KafkaCluster::isExposeMetricsViaPrometheusEndpoint)
                 .collect(Collectors.toMap(KafkaCluster::getName, c -> statisticsCache.get(c).getMetrics()))
         )
     );
@@ -30,9 +31,13 @@ public class PrometheusExposeController extends AbstractController implements Pr
 
   @Override
   public Mono<ResponseEntity<String>> getAllClusterMetrics(String clusterName, ServerWebExchange exchange) {
+    var cluster = getCluster(clusterName);
+    if (!cluster.isExposeMetricsViaPrometheusEndpoint()) {
+      return Mono.empty();
+    }
     return Mono.just(
         PrometheusExpose.exposeClusterMetrics(
-            statisticsCache.get(getCluster(clusterName)).getMetrics()
+            statisticsCache.get(cluster).getMetrics()
         )
     );
   }
@@ -41,9 +46,13 @@ public class PrometheusExposeController extends AbstractController implements Pr
   public Mono<ResponseEntity<String>> getBrokerMetrics(String clusterName,
                                                        Long brokerId,
                                                        ServerWebExchange exchange) {
+    var cluster = getCluster(clusterName);
+    if (!cluster.isExposeMetricsViaPrometheusEndpoint()) {
+      return Mono.empty();
+    }
     return Mono.just(
         PrometheusExpose.exposeBrokerMetrics(
-            statisticsCache.get(getCluster(clusterName)).getMetrics(), brokerId.intValue()
+            statisticsCache.get(cluster).getMetrics(), brokerId.intValue()
         )
     );
   }

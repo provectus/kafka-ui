@@ -3677,6 +3677,8 @@ components:
             $ref: '#/components/schemas/ApplicationPropertyValidation'
         ksqldb:
           $ref: '#/components/schemas/ApplicationPropertyValidation'
+        prometheusStorage:
+          $ref: '#/components/schemas/ApplicationPropertyValidation'
 
     ApplicationConfig:
       type: object
