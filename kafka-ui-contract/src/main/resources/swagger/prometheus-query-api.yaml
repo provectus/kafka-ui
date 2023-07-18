@@ -1,0 +1,479 @@
+openapi: 3.0.1
+info:
+  title: |
+    Prometheus query HTTP API
+    Copied from https://raw.githubusercontent.com/HelloKunal/OpenAPI-Specification-of-Go-API/main/swagger.yaml
+  description: |
+    The current stable HTTP API is reachable under /api/v1 on a Prometheus server. Any non-breaking additions will be added under that endpoint.
+  termsOfService: urn:tos
+  version: 0.1.0
+  contact: { }
+
+tags:
+  - name: /promclient
+servers:
+  - url: /localhost
+
+
+paths:
+  /api/v1/label/{label_name}/values:
+    get:
+      tags:
+        - PrometheusClient
+      summary: Returns label values
+      description: "returns a list of label values for a provided label name"
+      operationId: labelValuesGET
+      parameters:
+        - name: label_name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: Start timestamp. Optional.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: end
+          in: query
+          description: End timestamp. Optional.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: match[]
+          in: query
+          description: Repeated series selector argument that selects the series from which to read the label values. Optional.
+          schema:
+            type: string
+            format: series_selector
+      responses:
+        200:
+          description: |
+            Success
+
+            This example queries for all label values for the job label
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseLabelValues'
+
+  /api/v1/labels:
+    get:
+      tags:
+        - PrometheusClient
+      summary: Returns label names
+      description: returns a list of label names
+      operationId: labelNamesGET
+      parameters:
+        - name: start
+          in: query
+          description: |
+            Start timestamp. Optional.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: end
+          in: query
+          description: |
+            End timestamp. Optional.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: match[]
+          in: query
+          description: Repeated series selector argument that selects the series from which to read the label values. Optional.
+          schema:
+            type: string
+            format: series_selector
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseLabelNames'
+
+  /api/v1/metadata:
+    get:
+      tags:
+        - PrometheusClient
+      summary: Returns metric metadata
+      description: returns a list of label names
+      operationId: metricMetadataGET
+      parameters:
+        - name: limit
+          in: query
+          description: |
+            Maximum number of metrics to return.
+          required: true
+          schema:
+            type: number
+        - name: metric
+          in: query
+          description: |
+            A metric name to filter metadata for. All metric metadata is retrieved if left empty.
+          schema:
+            type: string
+      responses:
+        200:
+          description: |
+            Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseMetadata'
+        201:
+          description: |
+            Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseMetadata'
+
+  /api/v1/query:
+    get:
+      tags:
+        - PrometheusClient
+      summary: Evaluates instant query
+      description: |
+        Evaluates an instant query at a single point in time
+      operationId: queryGET
+      parameters:
+        - name: query
+          in: query
+          description: |
+            Prometheus expression query string.
+          required: true
+          schema:
+            type: string
+        - name: time
+          in: query
+          description: |
+            Evaluation timestamp. Optional.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: timeout
+          in: query
+          description: |
+            Evaluation timeout. Optional.
+          schema:
+            type: string
+            format: duration
+      responses:
+        200:
+          description: |
+            Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/queryData'
+
+
+  /api/v1/query_range:
+    get:
+      tags:
+        - PrometheusClient
+      summary: Evaluates query over range of time.
+      description: |
+        The following endpoint evaluates an expression query over a range of time
+
+        You can URL-encode these parameters directly in the request body by using the ```POST``` method and ```Content-Type: application/x-www-form-urlencoded``` header. This is useful when specifying a large query that may breach server-side URL character limits.
+
+        The data section of the query result has the following format
+        ```
+        {
+          "resultType": "matrix",
+          "result": <value>
+        }
+        ```
+        For the format of the ```<value>``` placeholder, see the [range-vector result format](https://prometheus.io/docs/prometheus/latest/querying/api/#range-vectors).
+      operationId: queryRangeGET
+      parameters:
+        - name: query
+          in: query
+          description: |
+            Prometheus expression query string.
+
+            Example: ```?query=up```
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: |
+            Start timestamp.
+
+            Example: ```&start=2015-07-01T20:10:30.781Z```
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: end
+          in: query
+          description: |
+            End timestamp.
+
+            Example: ```&end=2015-07-01T20:11:00.781Z```
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: step
+          in: query
+          description: |
+            Query resolution step width in ```duration``` format or float number of seconds.
+          schema:
+            type: string
+            format: duration | float
+        - name: timeout
+          in: query
+          description: |
+            Evaluation timeout. Optional. Defaults to and is capped by the value of the ```-query.timeout``` flag.
+          schema:
+            type: string
+            format: duration
+      responses:
+        200:
+          description: |
+            Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseQuery_range"
+              example:
+                status: success
+                data:
+                  resultType: matrix
+                  result:
+                    - metric:
+                        __name__: up
+                        job: prometheus
+                        instance: localhost:9090
+                      values:
+                        - - 1.435781430781E9
+                          - "1"
+                        - - 1.435781445781E9
+                          - "1"
+                        - - 1.435781460781E9
+                          - "1"
+                    - metric:
+                        __name__: up
+                        job: node
+                        instance: localhost:9091
+                      values:
+                        - - 1.435781430781E9
+                          - "0"
+                        - - 1.435781445781E9
+                          - "0"
+                        - - 1.435781460781E9
+                          - "1"
+
+
+  /api/v1/series:
+    get:
+      tags:
+        - PrometheusClient
+      summary: Returns time series
+      operationId: seriesGET
+      parameters:
+        - name: start
+          in: query
+          description: |
+            Start timestamp. Optional.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: end
+          in: query
+          description: |
+            End timestamp. Optional.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: match[]
+          in: query
+          description: |
+            Repeated series selector argument that selects the series to return. At least one ```match[]``` argument must be provided.
+          required: true
+          schema:
+            type: string
+            format: series_selector
+      responses:
+        200:
+          description: |
+            Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseSeries'
+              example:
+                status: success
+                data:
+                  - __name__: up
+                    job: prometheus
+                    instance: localhost:9090
+                  - __name__: up
+                    job: node
+                    instance: localhost:9091
+                  - __name__: process_start_time_seconds
+                    job: prometheus
+                    instance: localhost:9090
+
+components:
+  schemas:
+    Label:
+      type: object
+      properties:
+        Name:
+          type: string
+        Value:
+          type: string
+      description: Label is a key/value pair of strings.
+    Labels:
+      type: array
+      description: |-
+        Labels is a sorted set of labels. Order has to be guaranteed upon
+        instantiation.
+      items:
+        $ref: '#/components/schemas/Label'
+    MetricType:
+      type: string
+      description: MetricType represents metric type values.
+
+    metadata:
+      type: object
+      properties:
+        Help:
+          type: string
+        Type:
+          $ref: '#/components/schemas/MetricType'
+        Unit:
+          type: string
+
+    queryData:
+      type: object
+      properties:
+        Result:
+          type: object
+          properties:
+            metric:
+              type: object
+              properties:
+                __name__:
+                  type: string
+                job:
+                  type: string
+                instance:
+                  type: string
+            value:
+              type: array
+              items:
+                oneOf:
+                  - type: string
+                    format: "unix_timestamp"
+                  - type: string
+                    format: "sample_value"
+        ResultType:
+          type: string
+          enum:
+            - matrix
+            - vector
+            - scalar
+            - string
+            -
+    responseSeries:
+      type: array
+      description: a list of objects that contain the label name/value pairs which
+        identify each series
+      items:
+        type: object
+        properties:
+          __name__:
+            type: string
+          job:
+            type: string
+          instance:
+            type: string
+
+    responseSnapshot:
+      type: object
+      properties:
+        name:
+          type: string
+
+    responseQuery_exemplars:
+      type: object
+      properties:
+        seriesLabels:
+          type: object
+          properties:
+            __name__:
+              type: string
+            job:
+              type: string
+            instance:
+              type: string
+            service:
+              type: string
+        exemplars:
+          type: object
+          properties:
+            labels:
+              type: object
+              properties:
+                traceID:
+                  type: string
+            values:
+              type: string
+            timestamp:
+              type: string
+              format: "unix_timestamp"
+
+    responseQuery_range:
+      type: object
+      properties:
+        resultType:
+          type: string
+        result:
+          type: object
+          properties:
+            metric:
+              type: object
+              properties:
+                __name__:
+                  type: string
+                job:
+                  type: string
+                instance:
+                  type: string
+            values:
+              type: array
+              items:
+                oneOf:
+                  - type: string
+                    format: "unix_timestamp"
+                  - type: string
+                    format: "sample_value"
+
+    responseMetadata:
+      type: object
+      properties:
+        metric name:
+          type: string
+      additionalProperties:
+        $ref: '#/components/schemas/metadata'
+      description: a (key, object) map. `metric name`is an example key
+
+    responseLabelValues:
+      type: array
+      description: a list of string label values
+      items:
+        type: string
+
+    responseLabelNames:
+      type: array
+      description: a list of string label names
+      items:
+        type: string
+
+

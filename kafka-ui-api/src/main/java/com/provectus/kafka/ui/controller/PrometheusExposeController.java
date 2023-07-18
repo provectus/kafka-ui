@@ -3,7 +3,7 @@ package com.provectus.kafka.ui.controller;
 import com.provectus.kafka.ui.api.PrometheusExposeApi;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.StatisticsCache;
-import com.provectus.kafka.ui.service.metrics.PrometheusEndpointExpose;
+import com.provectus.kafka.ui.service.metrics.prometheus.PrometheusExpose;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class PrometheusExposeController extends AbstractController implements Pr
   @Override
   public Mono<ResponseEntity<String>> getAllMetrics(ServerWebExchange exchange) {
     return Mono.just(
-        PrometheusEndpointExpose.exposeAllMetrics(
+        PrometheusExpose.exposeAllMetrics(
             clustersStorage.getKafkaClusters()
                 .stream()
                 .collect(Collectors.toMap(KafkaCluster::getName, c -> statisticsCache.get(c).getMetrics()))
@@ -31,7 +31,7 @@ public class PrometheusExposeController extends AbstractController implements Pr
   @Override
   public Mono<ResponseEntity<String>> getAllClusterMetrics(String clusterName, ServerWebExchange exchange) {
     return Mono.just(
-        PrometheusEndpointExpose.exposeClusterMetrics(
+        PrometheusExpose.exposeClusterMetrics(
             statisticsCache.get(getCluster(clusterName)).getMetrics()
         )
     );
@@ -42,7 +42,7 @@ public class PrometheusExposeController extends AbstractController implements Pr
                                                        Long brokerId,
                                                        ServerWebExchange exchange) {
     return Mono.just(
-        PrometheusEndpointExpose.exposeBrokerMetrics(
+        PrometheusExpose.exposeBrokerMetrics(
             statisticsCache.get(getCluster(clusterName)).getMetrics(), brokerId.intValue()
         )
     );

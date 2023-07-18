@@ -156,6 +156,30 @@
                                     </configOptions>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>generate-prometheus-query-api</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <inputSpec>${project.basedir}/src/main/resources/swagger/prometheus-query-api.yaml
+                                    </inputSpec>
+                                    <output>${project.build.directory}/generated-sources/prometheus-query-api</output>
+                                    <generatorName>java</generatorName>
+                                    <generateApiTests>false</generateApiTests>
+                                    <generateModelTests>false</generateModelTests>
+                                    <configOptions>
+                                        <modelPackage>prometheus.query.model</modelPackage>
+                                        <apiPackage>prometheus.query.api</apiPackage>
+                                        <sourceFolder>prometheus-query</sourceFolder>
+                                        <asyncNative>true</asyncNative>
+                                        <library>webclient</library>
+                                        <useJakartaEe>true</useJakartaEe>
+                                        <useBeanValidation>true</useBeanValidation>
+                                        <dateLibrary>java8</dateLibrary>
+                                    </configOptions>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
@@ -262,7 +286,7 @@
                         </executions>
                         <configuration>
                             <attachProtoSources>false</attachProtoSources>
-                            <protoSourceRoot>${project.basedir}/src/main/resources/proto</protoSourceRoot>
+                            <protoSourceRoot>${project.basedir}/src/main/resources/proto/prometheus-remote-write-api</protoSourceRoot>
                             <includes>
                                 <include>**/*.proto</include>
                             </includes>

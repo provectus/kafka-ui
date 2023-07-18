@@ -157,7 +157,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ClusterMetrics'
 
-  /api/prometheus/expose/all:
+  /metrics:
     get:
       tags:
         - PrometheusExpose

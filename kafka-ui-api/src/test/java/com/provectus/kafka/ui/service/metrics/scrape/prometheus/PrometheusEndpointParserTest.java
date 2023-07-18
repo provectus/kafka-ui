@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.provectus.kafka.ui.service.metrics.PrometheusEndpointExpose;
+import com.provectus.kafka.ui.service.metrics.prometheus.PrometheusExpose;
 import io.prometheus.client.Collector;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
@@ -26,7 +26,7 @@ class PrometheusEndpointParserTest {
   @Test
   void parsesAllGeneratedMetricTypes() {
     List<MetricFamilySamples> original = generateMfs();
-    String exposed = PrometheusEndpointExpose.constructResponse(original.stream()).getBody();
+    String exposed = PrometheusExpose.constructHttpsResponse(original.stream()).getBody();
     List<MetricFamilySamples> parsed = parse(exposed.lines());
     assertThat(parsed).containsExactlyElementsOf(original);
   }

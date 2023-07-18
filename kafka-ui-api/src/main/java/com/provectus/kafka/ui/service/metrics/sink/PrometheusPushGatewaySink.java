@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service.metrics.sink;
 
 import static io.prometheus.client.Collector.MetricFamilySamples;
+import static org.springframework.util.StringUtils.hasText;
 
 import io.prometheus.client.Collector;
 import io.prometheus.client.exporter.BasicAuthHttpConnectionFactory;
@@ -12,54 +13,50 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 @RequiredArgsConstructor
 class PrometheusPushGatewaySink implements MetricsSink {
 
-  private final static String DEFAULT_PGW_JOBNAME = "kafkaui";
+  private static final String DEFAULT_PGW_JOB_NAME = "kafkaui";
 
   private final PushGateway pushGateway;
   private final String job;
-  //TODO: read about grouping rules
 
   @SneakyThrows
   static PrometheusPushGatewaySink create(String url,
-                                          @Nullable String job,
+                                          @Nullable String jobName,
                                           @Nullable String username,
                                           @Nullable String passw) {
     var pushGateway = new PushGateway(new URL(url));
-    if (StringUtils.hasText(username) && StringUtils.hasText(passw)) {
+    if (hasText(username) && hasText(passw)) {
       pushGateway.setConnectionFactory(new BasicAuthHttpConnectionFactory(username, passw));
     }
     return new PrometheusPushGatewaySink(
         pushGateway,
-        Optional.ofNullable(job).orElse(DEFAULT_PGW_JOBNAME)
+        Optional.ofNullable(jobName).orElse(DEFAULT_PGW_JOB_NAME)
     );
   }
 
   @Override
   public Mono<Void> send(Stream<MetricFamilySamples> metrics) {
-    return Mono.<Void>fromRunnable(() -> pushSync(metrics.toList()))
+    List<MetricFamilySamples> metricsToPush = metrics.toList();
+    if (metricsToPush.isEmpty()) {
+      return Mono.empty();
+    }
+    return Mono.<Void>fromRunnable(() -> pushSync(metricsToPush))
         .subscribeOn(Schedulers.boundedElastic());
   }
 
   @SneakyThrows
   private void pushSync(List<MetricFamilySamples> metricsToPush) {
-    if (metricsToPush.isEmpty()) {
-      return;
-    }
-    pushGateway.push(
-        new Collector() {
-          @Override
-          public List<MetricFamilySamples> collect() {
-            return metricsToPush;
-          }
-        },
-        job
-    );
+    Collector allMetrics = new Collector() {
+      @Override
+      public List<MetricFamilySamples> collect() {
+        return metricsToPush;
+      }
+    };
+    pushGateway.push(allMetrics, job);
   }
 }

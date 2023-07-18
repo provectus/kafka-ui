@@ -74,6 +74,24 @@ public class ClustersProperties {
     String password;
     String keystoreLocation;
     String keystorePassword;
+
+    MetricsStorage store;
+  }
+
+  @Data
+  public static class MetricsStorage {
+    PrometheusStorage prometheus;
+  }
+
+  @Data
+  @ToString(exclude = {"pushGatewayPassword"})
+  public static class PrometheusStorage {
+    String url;
+    String pushGatewayUrl;
+    String pushGatewayUsername;
+    String pushGatewayPassword;
+    String pushGatewayJobName;
+    Boolean remoteWrite;
   }
 
   @Data

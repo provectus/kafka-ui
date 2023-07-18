@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.service.metrics;
+package com.provectus.kafka.ui.service.metrics.prometheus;
 
 import static io.prometheus.client.Collector.MetricFamilySamples;
 
@@ -17,22 +17,24 @@ import lombok.SneakyThrows;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
-public final class PrometheusEndpointExpose {
+public final class PrometheusExpose {
 
-  private PrometheusEndpointExpose() {
+  private static final String CLUSTER_SELECTION_EXPOSE_LBL_NAME = "cluster";
+
+  private PrometheusExpose() {
   }
 
   public static ResponseEntity<String> exposeAllMetrics(Map<String, Metrics> clustersMetrics) {
-    return constructResponse(getSummarizedMetricsWithClusterLbl(clustersMetrics));
+    return constructHttpsResponse(getMetricsForGlobalExpose(clustersMetrics));
   }
 
   public static ResponseEntity<String> exposeClusterMetrics(Metrics clusterMetrics) {
-    return constructResponse(clusterMetrics.getSummarizedMetrics());
+    return constructHttpsResponse(clusterMetrics.getSummarizedMetrics());
   }
 
   public static ResponseEntity<String> exposeBrokerMetrics(Metrics clusterMetrics, int brokerId) {
     //TODO: discuss - do we need to append broker_id lbl ?
-    return constructResponse(
+    return constructHttpsResponse(
         clusterMetrics
             .getPerBrokerScrapedMetrics()
             .getOrDefault(brokerId, List.of())
@@ -40,26 +42,27 @@ public final class PrometheusEndpointExpose {
     );
   }
 
-  private static Stream<MetricFamilySamples> getSummarizedMetricsWithClusterLbl(Map<String, Metrics> clustersMetrics) {
+  private static Stream<MetricFamilySamples> getMetricsForGlobalExpose(Map<String, Metrics> clustersMetrics) {
     return clustersMetrics.entrySet()
         .stream()
-        .flatMap(e -> e.getValue()
-            .getSummarizedMetrics()
-            .map(mfs -> addLbl(mfs, "cluster", e.getKey())))
-        // merging MFS with same name, keeping order
+        .flatMap(e -> prepareMetricsForGlobalExpose(e.getKey(), e.getValue()))
+        // merging MFS with same name with LinkedHashMap(for order keeping)
         .collect(Collectors.toMap(mfs -> mfs.name, mfs -> mfs,
-            PrometheusEndpointExpose::concatSamples, LinkedHashMap::new))
+            PrometheusExpose::concatSamples, LinkedHashMap::new))
         .values()
         .stream();
+  }
+
+  public static Stream<MetricFamilySamples> prepareMetricsForGlobalExpose(String clusterName, Metrics metrics) {
+    return metrics
+        .getSummarizedMetrics()
+        .map(mfs -> addLbl(mfs, CLUSTER_SELECTION_EXPOSE_LBL_NAME, clusterName));
   }
 
   private static MetricFamilySamples concatSamples(MetricFamilySamples mfs1,
                                                    MetricFamilySamples mfs2) {
     return new MetricFamilySamples(
-        mfs1.name,
-        mfs1.unit,
-        mfs1.type,
-        mfs1.help,
+        mfs1.name, mfs1.unit, mfs1.type, mfs1.help,
         Stream.concat(mfs1.samples.stream(), mfs2.samples.stream()).toList()
     );
   }
@@ -87,13 +90,12 @@ public final class PrometheusEndpointExpose {
 
   @VisibleForTesting
   @SneakyThrows
-  public static ResponseEntity<String> constructResponse(Stream<MetricFamilySamples> metrics) {
+  public static ResponseEntity<String> constructHttpsResponse(Stream<MetricFamilySamples> metrics) {
     StringWriter writer = new StringWriter();
     TextFormat.writeOpenMetrics100(writer, Iterators.asEnumeration(metrics.iterator()));
 
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.set(HttpHeaders.CONTENT_TYPE, TextFormat.CONTENT_TYPE_OPENMETRICS_100);
-
     return ResponseEntity
         .ok()
         .headers(responseHeaders)
