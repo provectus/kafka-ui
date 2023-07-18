@@ -31,6 +31,10 @@ public class WebClientConfigurator {
 
   public WebClientConfigurator() {
     configureObjectMapper(defaultOM());
+    var httpClient = HttpClient
+        .create()
+        .proxyWithSystemProperties();
+    builder.clientConnector(new ReactorClientHttpConnector(httpClient));
   }
 
   private static ObjectMapper defaultOM() {
