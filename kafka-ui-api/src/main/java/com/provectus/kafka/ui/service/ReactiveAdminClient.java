@@ -131,7 +131,7 @@ public class ReactiveAdminClient implements Closeable {
                                    Set<SupportedFeature> features,
                                    boolean topicDeletionIsAllowed) {
 
-    final static Duration UPDATE_DURATION = Duration.of(1, ChronoUnit.HOURS);
+    static final Duration UPDATE_DURATION = Duration.of(1, ChronoUnit.HOURS);
 
     private static Mono<ConfigRelatedInfo> extract(AdminClient ac) {
       return ReactiveAdminClient.describeClusterImpl(ac, Set.of())
