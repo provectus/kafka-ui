@@ -301,6 +301,15 @@ components:
       properties:
         result:
           type: array
+          description: |
+            Format:
+            [
+              {
+                "metric": { "<label_name>": "<label_value>", ... },
+                "values": [ [ <unix_time>, "<sample_value>" ], ... ],
+                "histograms": [ [ <unix_time>, <histogram> ], ... ]
+              }, ...
+            ]
           items: { }
 
     InstantVectorQueryResponse:
@@ -310,6 +319,15 @@ components:
       properties:
         result:
           type: array
+          description: |
+            Format:
+            [
+              {
+                "metric": { "<label_name>": "<label_value>", ... },
+                "value": [ <unix_time>, "<sample_value>" ],
+                "histogram": [ <unix_time>, <histogram> ]
+             }, ...
+            ]
           items: { }
 
     ScalarQueryResponse:
@@ -319,6 +337,9 @@ components:
       properties:
         result:
           type: array
+          description: |
+            Format:
+            [ <unix_time>, "<scalar_value>" ]
           items: { }
 
     StringQueryResponse:
@@ -328,6 +349,9 @@ components:
       properties:
         result:
           type: array
+          description: |
+            Format:
+            [ <unix_time>, "<string_value>" ]
           items: { }
 
     SeriesResponse:
