@@ -8,6 +8,9 @@ on:
     paths:
       - "kafka-ui-contract/**"
       - "kafka-ui-react-app/**"
+permissions:
+  checks: write
+  pull-requests: write
 jobs:
   build-and-test:
     env:
