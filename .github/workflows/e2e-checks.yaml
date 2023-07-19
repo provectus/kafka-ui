@@ -9,7 +9,7 @@ on:
       - "kafka-ui-e2e-checks/**"
       - "pom.xml"
 permissions:
-  statuses: write      
+  statuses: write
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
