@@ -179,7 +179,7 @@ public class KafkaClusterFactory {
 
   private ReactiveFailover<PrometheusClientApi> prometheusStorageClient(ClustersProperties.Cluster cluster) {
     WebClient webClient = new WebClientConfigurator()
-        .configureSsl(cluster.getSsl(), cluster.getSchemaRegistrySsl())
+        .configureSsl(cluster.getSsl(), null)
         .configureBufferSize(webClientMaxBuffSize)
         .build();
     return ReactiveFailover.create(
