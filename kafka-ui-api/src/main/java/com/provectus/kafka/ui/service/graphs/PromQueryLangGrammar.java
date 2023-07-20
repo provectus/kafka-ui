@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.service.metrics.prometheus;
+package com.provectus.kafka.ui.service.graphs;
 
 import java.util.Optional;
 import org.antlr.v4.runtime.BailErrorStrategy;
@@ -26,9 +26,7 @@ class PromQueryLangGrammar {
   }
 
   private static PromQLParser createParser(String str) {
-    PromQLLexer lexer = new PromQLLexer(CharStreams.fromString(str));
-    CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-    var parser = new PromQLParser(tokenStream);
+    var parser = new PromQLParser(new CommonTokenStream(new PromQLLexer(CharStreams.fromString(str))));
     parser.removeErrorListeners();
     parser.setErrorHandler(new BailErrorStrategy());
     return parser;

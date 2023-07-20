@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.service.metrics.prometheus.PromQueryTemplate;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;

@@ -1,29 +1,28 @@
-package com.provectus.kafka.ui.service.metrics.prometheus;
+package com.provectus.kafka.ui.service.graphs;
 
 import com.google.common.collect.Sets;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.service.graphs.GraphDescription;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.apache.commons.lang3.text.StrSubstitutor;
 
-public class PromQueryTemplate {
+class PromQueryTemplate {
 
   private final String queryTemplate;
   private final Set<String> paramsNames;
 
-  public PromQueryTemplate(GraphDescription d) {
+  PromQueryTemplate(GraphDescription d) {
     this(d.prometheusQuery(), d.params());
   }
 
-  public PromQueryTemplate(String templateQueryString, Set<String> paramsNames) {
+  PromQueryTemplate(String templateQueryString, Set<String> paramsNames) {
     this.queryTemplate = templateQueryString;
     this.paramsNames = paramsNames;
   }
 
-  public String getQuery(String clusterName, Map<String, String> paramValues) {
+  String getQuery(String clusterName, Map<String, String> paramValues) {
     var missingParams = Sets.difference(paramsNames, paramValues.keySet());
     if (!missingParams.isEmpty()) {
       throw new ValidationException("Not all params set for query, missing: " + missingParams);
@@ -33,12 +32,12 @@ public class PromQueryTemplate {
     return replaceParams(replacements);
   }
 
-  public Optional<String> validateSyntax() {
+  Optional<String> validateSyntax() {
     Map<String, String> fakeReplacements = new HashMap<>();
     fakeReplacements.put("cluster", "1");
     paramsNames.forEach(paramName -> fakeReplacements.put(paramName, "1"));
 
-    String prepared =  replaceParams(fakeReplacements);
+    String prepared = replaceParams(fakeReplacements);
     return PromQueryLangGrammar.validateExpression(prepared);
   }
 

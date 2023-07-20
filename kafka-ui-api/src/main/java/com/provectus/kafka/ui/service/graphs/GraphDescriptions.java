@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.service.graphs;
 
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.service.metrics.prometheus.PromQueryTemplate;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
