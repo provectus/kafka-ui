@@ -184,7 +184,7 @@ public class KafkaClusterFactory {
         .build();
     return ReactiveFailover.create(
         parseUrlList(cluster.getMetrics().getStore().getPrometheus().getUrl()),
-        url -> new PrometheusClientApi(new prometheus.query.ApiClient(webClient, null, null).setBasePath(url)),
+        url -> new PrometheusClientApi(new prometheus.query.ApiClient(webClient).setBasePath(url)),
         ReactiveFailover.CONNECTION_REFUSED_EXCEPTION_FILTER,
         "No live schemaRegistry instances available",
         ReactiveFailover.DEFAULT_RETRY_GRACE_PERIOD_MS

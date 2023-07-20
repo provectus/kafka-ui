@@ -4,18 +4,17 @@ import com.provectus.kafka.ui.api.GraphsApi;
 import com.provectus.kafka.ui.model.GraphDataRequestDTO;
 import com.provectus.kafka.ui.model.GraphDescriptionDTO;
 import com.provectus.kafka.ui.model.GraphDescriptionsDTO;
+import com.provectus.kafka.ui.model.GraphParameterDTO;
 import com.provectus.kafka.ui.model.PrometheusApiQueryResponseDTO;
-import com.provectus.kafka.ui.model.PrometheusApiQueryResponseDataDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
-import com.provectus.kafka.ui.model.rbac.permission.KsqlAction;
-import com.provectus.kafka.ui.service.AdminClientService;
 import com.provectus.kafka.ui.service.graphs.GraphsService;
 import com.provectus.kafka.ui.service.audit.AuditService;
+import com.provectus.kafka.ui.service.graphs.GraphsStorage;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -66,15 +65,22 @@ public class GraphsController extends AbstractController implements GraphsApi {
   @Override
   public Mono<ResponseEntity<GraphDescriptionsDTO>> getGraphsList(String clusterName,
                                                                   ServerWebExchange exchange) {
-    var graphs = graphsService.getAllGraphs().toList();
+    var graphs = graphsService.getAllGraphs();
     var cluster = getCluster(clusterName);
     if (cluster.getPrometheusStorageClient() == null) {
-      graphs = List.of();
+      graphs = Stream.empty();
     }
     return Mono.just(
         ResponseEntity.ok(
-            new GraphDescriptionsDTO().graphs(graphs)
+            new GraphDescriptionsDTO().graphs(graphs.map(this::map).toList())
         )
     );
+  }
+
+  private GraphDescriptionDTO map(GraphsStorage.GraphDescription graph) {
+    return new GraphDescriptionDTO(graph.id())
+        .defaultPeriod(Optional.ofNullable(graph.defaultInterval()).map(Duration::toString).orElse(null))
+        .type(graph.isRange() ? GraphDescriptionDTO.TypeEnum.RANGE : GraphDescriptionDTO.TypeEnum.INSTANT)
+        .parameters(graph.params().stream().map(GraphParameterDTO::new).toList());
   }
 }

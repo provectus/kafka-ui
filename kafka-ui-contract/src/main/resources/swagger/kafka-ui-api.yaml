@@ -3730,23 +3730,20 @@ components:
         id:
           type: string
           description: Id that should be used to query data on API level
-        metadata:
-          description: Additional info that can be used on UI for rendering adjustments
-          type: object
-          additionalProperties: true
+        type:
+          type: string
+          enum: ["range", "instant"]
         defaultPeriod:
           type: string
-          description: ISO_8601 duration string. If not set - instant (not range) query will be executed
+          description: ISO_8601 duration string (for "range" graphs only)
         parameters:
           type: array
           items:
             $ref: '#/components/schemas/GraphParameter'
-        prometheusQuery:
-          type: string
-          description: Mustache query template with param holders
 
     GraphParameter:
       type: object
+      required: ["name"]
       properties:
         name:
           type: string

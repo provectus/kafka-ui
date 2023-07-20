@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service.metrics.prometheus;
 
 import com.provectus.kafka.ui.exception.ValidationException;
+import java.util.Optional;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -9,24 +10,23 @@ import org.antlr.v4.runtime.Recognizer;
 import promql.PromQLLexer;
 import promql.PromQLParser;
 
-public class PromQlGrammar {
+class PromQueryLangGrammar {
 
-  public static void main(String[] args) {
-    String promql = "sum( " +
-        "        kafka_controller_kafkacontroller_activecontrollercount{cluster_name=\"3299fef4\",metrics=\"kafka\"}) OR " +
-        "        kafka_controller_kafkacontroller_activecontrollercount{cluster_name=\"3299fef4\",job=\"topic-scanner\"}";
-    System.out.println(parseMetricSelector(promql));
+  // returns error msg, or empty if query is valid
+  static Optional<String> validateExpression(String query) {
+    try {
+      parseExpression(query);
+      return Optional.empty();
+    } catch (ValidationException v) {
+      return Optional.of(v.getMessage());
+    }
   }
 
-  public static PromQLParser.InstantSelectorContext parseMetricSelector(String selector) {
-    return parse(selector).instantSelector();
-  }
-
-  public static PromQLParser.ExpressionContext parseExpression(String query) {
+  static PromQLParser.ExpressionContext parseExpression(String query) {
     return parse(query).expression();
   }
 
-  private static PromQLParser parse(String str) {
+  private static PromQLParser parse(String str) throws ValidationException {
     PromQLLexer lexer = new PromQLLexer(CharStreams.fromString(str));
     lexer.addErrorListener(new BaseErrorListener() {
       @Override

@@ -3,17 +3,16 @@ package com.provectus.kafka.ui.service.graphs;
 import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.model.GraphDescriptionDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.service.graphs.GraphsStorage.GraphDescription;
+import com.provectus.kafka.ui.service.metrics.prometheus.PromQueryTemplate;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.text.StrSubstitutor;
 import org.springframework.stereotype.Component;
 import prometheus.query.api.PrometheusClientApi;
 import prometheus.query.model.QueryResponse;
@@ -42,9 +41,9 @@ public class GraphsService {
     }
     return cluster.getPrometheusStorageClient()
         .mono(client -> {
-          String preparedQuery = prepareQuery(cluster.getName(), graph.getPrometheusQuery(), params);
-          if (graph.getDefaultPeriod() != null) {
-            return queryRange(client, preparedQuery, Duration.parse(graph.getDefaultPeriod()), from, to);
+          String preparedQuery = prepareQuery(graph, cluster.getName(), params);
+          if (graph.isRange()) {
+            return queryRange(client, preparedQuery, graph.defaultInterval(), from, to);
           }
           return queryInstant(client, preparedQuery);
         });
@@ -77,7 +76,7 @@ public class GraphsService {
       return intervalInSecs + "s";
     }
     int step = ((int) (((double) intervalInSecs) / 200));
-    System.out.println("Chosen step size"); //TODo
+    System.out.println("Chosen step size " + step); //TODo
     return step + "s";
   }
 
@@ -85,15 +84,11 @@ public class GraphsService {
     return c.query(preparedQuery, null, null);
   }
 
-
-  private String prepareQuery(String clusterName, String queryTemplate, @Nullable Map<String, String> params) {
-    Map<String, String> replacements = new HashMap<>();
-    replacements.putAll(Optional.ofNullable(params).orElse(Map.of()));
-    replacements.put("cluster", clusterName);
-    return new StrSubstitutor(replacements).replace(queryTemplate);
+  public static String prepareQuery(GraphDescription d, String clusterName, @Nullable Map<String, String> params) {
+    return new PromQueryTemplate(d).getQuery(clusterName, Optional.ofNullable(params).orElse(Map.of()));
   }
 
-  public Stream<GraphDescriptionDTO> getAllGraphs() {
+  public Stream<GraphDescription> getAllGraphs() {
     return graphsStorage.getAll();
   }
 
