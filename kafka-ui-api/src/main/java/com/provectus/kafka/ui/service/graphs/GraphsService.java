@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.service.graphs.GraphsStorage.GraphDescription;
 import com.provectus.kafka.ui.service.metrics.prometheus.PromQueryTemplate;
 import java.time.Duration;
 import java.time.Instant;
@@ -24,7 +23,7 @@ public class GraphsService {
 
   private static final int TARGET_MATRIX_DATA_POINTS = 200;
 
-  private final GraphsStorage graphsStorage;
+  private final GraphDescriptions graphDescriptions;
 
   public Mono<QueryResponse> getGraphData(KafkaCluster cluster,
                                           String id,
@@ -32,16 +31,16 @@ public class GraphsService {
                                           @Nullable Instant to,
                                           @Nullable Map<String, String> params) {
 
-    var graph = graphsStorage.getDescription(id)
+    var graph = graphDescriptions.getById(id)
         .orElseThrow(() -> new NotFoundException("No graph found with id = " + id));
 
     var promClient = cluster.getPrometheusStorageClient();
     if (promClient == null) {
       throw new ValidationException("Prometheus not configured for cluster");
     }
+    String preparedQuery = prepareQuery(graph, cluster.getName(), params);
     return cluster.getPrometheusStorageClient()
         .mono(client -> {
-          String preparedQuery = prepareQuery(graph, cluster.getName(), params);
           if (graph.isRange()) {
             return queryRange(client, preparedQuery, graph.defaultInterval(), from, to);
           }
@@ -75,8 +74,7 @@ public class GraphsService {
     if (intervalInSecs <= TARGET_MATRIX_DATA_POINTS) {
       return intervalInSecs + "s";
     }
-    int step = ((int) (((double) intervalInSecs) / 200));
-    System.out.println("Chosen step size " + step); //TODo
+    int step = ((int) (((double) intervalInSecs) / TARGET_MATRIX_DATA_POINTS));
     return step + "s";
   }
 
@@ -84,12 +82,15 @@ public class GraphsService {
     return c.query(preparedQuery, null, null);
   }
 
-  public static String prepareQuery(GraphDescription d, String clusterName, @Nullable Map<String, String> params) {
+  private String prepareQuery(GraphDescription d, String clusterName, @Nullable Map<String, String> params) {
     return new PromQueryTemplate(d).getQuery(clusterName, Optional.ofNullable(params).orElse(Map.of()));
   }
 
-  public Stream<GraphDescription> getAllGraphs() {
-    return graphsStorage.getAll();
+  public Stream<GraphDescription> getGraphs(KafkaCluster cluster) {
+    if (cluster.getPrometheusStorageClient() == null) {
+      return Stream.empty();
+    }
+    return graphDescriptions.all();
   }
 
 }

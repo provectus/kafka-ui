@@ -7,9 +7,9 @@ import com.provectus.kafka.ui.model.GraphDescriptionsDTO;
 import com.provectus.kafka.ui.model.GraphParameterDTO;
 import com.provectus.kafka.ui.model.PrometheusApiQueryResponseDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
+import com.provectus.kafka.ui.service.graphs.GraphDescription;
 import com.provectus.kafka.ui.service.graphs.GraphsService;
 import com.provectus.kafka.ui.service.audit.AuditService;
-import com.provectus.kafka.ui.service.graphs.GraphsStorage;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -65,11 +65,7 @@ public class GraphsController extends AbstractController implements GraphsApi {
   @Override
   public Mono<ResponseEntity<GraphDescriptionsDTO>> getGraphsList(String clusterName,
                                                                   ServerWebExchange exchange) {
-    var graphs = graphsService.getAllGraphs();
-    var cluster = getCluster(clusterName);
-    if (cluster.getPrometheusStorageClient() == null) {
-      graphs = Stream.empty();
-    }
+    var graphs = graphsService.getGraphs(getCluster(clusterName));
     return Mono.just(
         ResponseEntity.ok(
             new GraphDescriptionsDTO().graphs(graphs.map(this::map).toList())
@@ -77,7 +73,7 @@ public class GraphsController extends AbstractController implements GraphsApi {
     );
   }
 
-  private GraphDescriptionDTO map(GraphsStorage.GraphDescription graph) {
+  private GraphDescriptionDTO map(GraphDescription graph) {
     return new GraphDescriptionDTO(graph.id())
         .defaultPeriod(Optional.ofNullable(graph.defaultInterval()).map(Duration::toString).orElse(null))
         .type(graph.isRange() ? GraphDescriptionDTO.TypeEnum.RANGE : GraphDescriptionDTO.TypeEnum.INSTANT)

@@ -10,38 +10,26 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
-import lombok.Builder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GraphsStorage {
+class GraphDescriptions {
 
   private static final Duration DEFAULT_RANGE_DURATION = Duration.ofDays(7);
 
-  @Builder
-  public record GraphDescription(String id,
-                                 @Nullable Duration defaultInterval,
-                                 String prometheusQuery,
-                                 Set<String> params) {
-    public boolean isRange() {
-      return defaultInterval != null;
-    }
-  }
-
   private final Map<String, GraphDescription> graphsById;
 
-  GraphsStorage() {
+  GraphDescriptions() {
     validateGraphDescr(PREDEFINED_GRAPHS);
     this.graphsById = PREDEFINED_GRAPHS.stream()
         .collect(Collectors.toMap(GraphDescription::id, d -> d));
   }
 
-  Optional<GraphDescription> getDescription(String id) {
+  Optional<GraphDescription> getById(String id) {
     return Optional.ofNullable(graphsById.get(id));
   }
 
-  Stream<GraphDescription> getAll() {
+  Stream<GraphDescription> all() {
     return graphsById.values().stream();
   }
 

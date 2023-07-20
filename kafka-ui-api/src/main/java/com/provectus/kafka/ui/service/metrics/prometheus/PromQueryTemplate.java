@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service.metrics.prometheus;
 
 import com.google.common.collect.Sets;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.service.graphs.GraphsStorage;
+import com.provectus.kafka.ui.service.graphs.GraphDescription;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -14,7 +14,7 @@ public class PromQueryTemplate {
   private final String queryTemplate;
   private final Set<String> paramsNames;
 
-  public PromQueryTemplate(GraphsStorage.GraphDescription d) {
+  public PromQueryTemplate(GraphDescription d) {
     this(d.prometheusQuery(), d.params());
   }
 
@@ -35,8 +35,9 @@ public class PromQueryTemplate {
 
   public Optional<String> validateSyntax() {
     Map<String, String> fakeReplacements = new HashMap<>();
-    paramsNames.forEach(paramName -> fakeReplacements.put(paramName, "1"));
     fakeReplacements.put("cluster", "1");
+    paramsNames.forEach(paramName -> fakeReplacements.put(paramName, "1"));
+
     String prepared =  replaceParams(fakeReplacements);
     return PromQueryLangGrammar.validateExpression(prepared);
   }
