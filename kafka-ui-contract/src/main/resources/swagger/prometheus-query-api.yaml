@@ -281,82 +281,32 @@ components:
       properties:
         resultType:
           type: string
+          enum: [ "matrix", "vector", "scalar", "string"]
         result:
           type: array
           items: { }
-
-#      discriminator:
-#        propertyName: resultType
-#        mapping:
-#          matrix: '#/components/schemas/MatrixQueryResponse'
-#          vector: '#/components/schemas/InstantVectorQueryResponse'
-#          scalar: '#/components/schemas/ScalarQueryResponse'
-#          string: '#/components/schemas/StringQueryResponse'
-#      anyOf:
-#        - $ref: '#/components/schemas/MatrixQueryResponse'
-#        - $ref: '#/components/schemas/InstantVectorQueryResponse'
-#        - $ref: '#/components/schemas/ScalarQueryResponse'
-#        - $ref: '#/components/schemas/StringQueryResponse'
-
-#    MatrixQueryResponse:
-#      type: object
-#      allOf:
-#        - $ref: "#/components/schemas/QueryResponseData"
-#      properties:
-#        result:
-#          type: array
-#          description: |
-#            Format:
-#            [
-#              {
-#                "metric": { "<label_name>": "<label_value>", ... },
-#                "values": [ [ <unix_time>, "<sample_value>" ], ... ],
-#                "histograms": [ [ <unix_time>, <histogram> ], ... ]
-#              }, ...
-#            ]
-#          items: { }
-#
-#    InstantVectorQueryResponse:
-#      type: object
-#      allOf:
-#        - $ref: "#/components/schemas/QueryResponseData"
-#      properties:
-#        result:
-#          type: array
-#          description: |
-#            Format:
-#            [
-#              {
-#                "metric": { "<label_name>": "<label_value>", ... },
-#                "value": [ <unix_time>, "<sample_value>" ],
-#                "histogram": [ <unix_time>, <histogram> ]
-#             }, ...
-#            ]
-#          items: { }
-#
-#    ScalarQueryResponse:
-#      type: object
-#      allOf:
-#        - $ref: "#/components/schemas/QueryResponseData"
-#      properties:
-#        result:
-#          type: array
-#          description: |
-#            Format:
-#            [ <unix_time>, "<scalar_value>" ]
-#          items: { }
-#
-#    StringQueryResponse:
-#      type: object
-#      allOf:
-#        - $ref: "#/components/schemas/QueryResponseData"
-#      properties:
-#        result:
-#          type: array
-#          description: |
-#            Format:
-#            [ <unix_time>, "<string_value>" ]
-#          items: { }
+          description: |
+            Depending on resultType format can vary:
+            "vector":
+              [
+                {
+                  "metric": { "<label_name>": "<label_value>", ... },
+                  "value": [ <unix_time>, "<sample_value>" ],
+                  "histogram": [ <unix_time>, <histogram> ]
+               }, ...
+              ]
+            "matrix":
+              [
+                {
+                  "metric": { "<label_name>": "<label_value>", ... },
+                  "values": [ [ <unix_time>, "<sample_value>" ], ... ],
+                  "histograms": [ [ <unix_time>, <histogram> ], ... ]
+                }, ...
+              ]
+            "scalar":
+              [ <unix_time>, "<scalar_value>" ]
+            "string":
+              [ <unix_time>, "<string_value>" ]
 
     SeriesResponse:
       type: object
