@@ -151,7 +151,7 @@ public final class KafkaServicesValidation {
       log.error("Error creating Prometheus client", e);
       return invalid("Error creating Prometheus client: " + e.getMessage());
     }
-    return client.mono(c -> c.query("1", null, null)) //TODO: check params
+    return client.mono(c -> c.query("1", null, null))
         .then(valid())
         .onErrorResume(KafkaServicesValidation::invalid);
   }

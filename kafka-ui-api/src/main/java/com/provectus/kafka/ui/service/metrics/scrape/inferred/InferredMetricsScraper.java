@@ -23,7 +23,7 @@ public class InferredMetricsScraper {
 
   public synchronized Mono<InferredMetrics> scrape(ScrapedClusterState newState) {
     var inferred = infer(prevState, newState);
-    prevState = newState;
+    this.prevState = newState;
     return Mono.just(inferred);
   }
 
@@ -34,7 +34,7 @@ public class InferredMetricsScraper {
     fillTopicMetrics(registry, newState);
     fillConsumerGroupsMetrics(registry, newState);
     List<MetricFamilySamples> metrics = registry.metrics.values().stream().toList();
-    log.debug("{} metrics inferred from cluster state", metrics.size());
+    log.debug("{} metric families inferred from cluster state", metrics.size());
     return new InferredMetrics(metrics);
   }
 
@@ -94,7 +94,6 @@ public class InferredMetricsScraper {
               state.logDirSpaceStats().totalBytes()
           );
         }
-        //TODO: maybe add per-directory stats also?
       }
     });
   }

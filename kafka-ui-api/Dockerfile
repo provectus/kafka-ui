@@ -1,5 +1,5 @@
 #FROM azul/zulu-openjdk-alpine:17-jre-headless
-FROM azul/zulu-openjdk-alpine:17-jre-headless
+FROM azul/zulu-openjdk-alpine@sha256:a36679ac0d28cb835e2a8c00e1e0d95509c6c51c5081c7782b85edb1f37a771a
 
 RUN apk add --no-cache gcompat # need to make snappy codec work
 RUN addgroup -S kafkaui && adduser -S kafkaui -G kafkaui
@@ -18,4 +18,4 @@ ENV JAVA_OPTS=
 EXPOSE 8080
 
 # see JmxSslSocketFactory docs to understand why add-opens is needed
-CMD java --add-opens java.rmi/javax.rmi.ssl=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/sun.nio.cs=ALL-UNNAMED $JAVA_OPTS -jar kafka-ui-api.jar
+CMD java --add-opens java.rmi/javax.rmi.ssl=ALL-UNNAMED $JAVA_OPTS -jar kafka-ui-api.jar

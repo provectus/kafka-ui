@@ -32,7 +32,7 @@ class IoRatesMetricsScanner {
     });
   }
 
-  public Metrics.IoRates get() {
+  Metrics.IoRates get() {
     return Metrics.IoRates.builder()
         .topicBytesInPerSec(bytesInFifteenMinuteRate)
         .topicBytesOutPerSec(bytesOutFifteenMinuteRate)

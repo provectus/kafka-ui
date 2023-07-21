@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.xerial.snappy.pure.PureJavaSnappy;
+import org.xerial.snappy.Snappy;
 import prometheus.Remote;
 import reactor.core.publisher.Mono;
 
@@ -32,7 +32,7 @@ class PrometheusRemoteWriteSink implements MetricsSink {
   @SneakyThrows
   @Override
   public Mono<Void> send(Stream<MetricFamilySamples> metrics) {
-    byte[] bytesToWrite = compressSnappy(createWriteRequest(metrics).toByteArray());
+    byte[] bytesToWrite = Snappy.compress(createWriteRequest(metrics).toByteArray());
     return webClient.post()
         .uri(writeEndpoint)
         .header("Content-Type", "application/x-protobuf")
@@ -43,16 +43,6 @@ class PrometheusRemoteWriteSink implements MetricsSink {
         .retrieve()
         .toBodilessEntity()
         .then();
-  }
-
-  //TODO: rm this
-  private static byte[] compressSnappy(byte[] data) throws IOException {
-    PureJavaSnappy impl = new PureJavaSnappy();
-    byte[] buf = new byte[impl.maxCompressedLength(data.length)];
-    int compressedByteSize = impl.rawCompress(data, 0, data.length, buf, 0);
-    byte[] result = new byte[compressedByteSize];
-    System.arraycopy(buf, 0, result, 0, compressedByteSize);
-    return result;
   }
 
   private static Remote.WriteRequest createWriteRequest(Stream<MetricFamilySamples> metrics) {
@@ -79,7 +69,7 @@ class PrometheusRemoteWriteSink implements MetricsSink {
         request.addTimeseries(timeSeriesBuilder);
       }
     });
-    //TODO: how to pass Metadata????
+    //TODO: how to pass Metadata ???
     return request.build();
   }
 

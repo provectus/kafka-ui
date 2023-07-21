@@ -190,8 +190,13 @@ public class MessagesService {
 
   public static KafkaProducer<byte[], byte[]> createProducer(KafkaCluster cluster,
                                                              Map<String, Object> additionalProps) {
+    return createProducer(cluster.getOriginalProperties(), additionalProps);
+  }
+
+  public static KafkaProducer<byte[], byte[]> createProducer(ClustersProperties.Cluster cluster,
+                                                             Map<String, Object> additionalProps) {
     Properties properties = new Properties();
-    SslPropertiesUtil.addKafkaSslProperties(cluster.getOriginalProperties().getSsl(), properties);
+    SslPropertiesUtil.addKafkaSslProperties(cluster.getSsl(), properties);
     properties.putAll(cluster.getProperties());
     properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
     properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);

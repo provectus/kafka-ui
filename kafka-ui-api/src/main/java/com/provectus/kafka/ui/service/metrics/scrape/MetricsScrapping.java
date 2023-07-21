@@ -74,7 +74,6 @@ public class MetricsScrapping {
   private void sendMetricsToSink(Metrics metrics) {
     sink.send(prepareMetricsForSending(metrics))
         .doOnError(th -> log.warn("Error sending metrics to metrics sink", th))
-        .doOnTerminate(() -> log.debug("Metrics sent to sink")) //todo
         .subscribe();
   }
 
