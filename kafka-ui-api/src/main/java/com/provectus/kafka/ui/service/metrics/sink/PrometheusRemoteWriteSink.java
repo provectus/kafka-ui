@@ -5,9 +5,8 @@ import static prometheus.Types.Label;
 import static prometheus.Types.Sample;
 import static prometheus.Types.TimeSeries;
 
+import com.provectus.kafka.ui.service.metrics.prometheus.PrometheusExpose;
 import com.provectus.kafka.ui.util.WebClientConfigurator;
-import java.io.IOException;
-import java.io.StringWriter;
 import java.net.URI;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +57,7 @@ class PrometheusRemoteWriteSink implements MetricsSink {
           timeSeriesBuilder.addLabels(
               Label.newBuilder()
                   .setName(sample.labelNames.get(i))
-                  .setValue(escapedLabelValue(sample.labelValues.get(i)))
+                  .setValue(PrometheusExpose.escapedLabelValue(sample.labelValues.get(i)))
           );
         }
         timeSeriesBuilder.addSamples(
@@ -69,22 +68,9 @@ class PrometheusRemoteWriteSink implements MetricsSink {
         request.addTimeseries(timeSeriesBuilder);
       }
     });
-    //TODO: how to pass Metadata ???
+    //TODO: pass Metadata
     return request.build();
   }
 
-  private static String escapedLabelValue(String s) {
-    StringWriter writer = new StringWriter(s.length());
-    for (int i = 0; i < s.length(); i++) {
-      char c = s.charAt(i);
-      switch (c) {
-        case '\\' -> writer.append("\\\\");
-        case '\"' -> writer.append("\\\"");
-        case '\n' -> writer.append("\\n");
-        default -> writer.append(c);
-      }
-    }
-    return writer.toString();
-  }
 
 }

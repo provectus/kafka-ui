@@ -34,7 +34,6 @@ public final class PrometheusExpose {
   }
 
   public static ResponseEntity<String> exposeAllMetrics(Map<String, Metrics> clustersMetrics) {
-    System.out.println("Exposing metrics:" + clustersMetrics);
     return constructHttpsResponse(getMetricsForGlobalExpose(clustersMetrics));
   }
 
@@ -93,6 +92,21 @@ public final class PrometheusExpose {
         .ok()
         .headers(PROMETHEUS_EXPOSE_ENDPOINT_HEADERS)
         .body(writer.toString());
+  }
+
+  // copied from io.prometheus.client.exporter.common.TextFormat:writeEscapedLabelValue
+  public static String escapedLabelValue(String s) {
+    StringWriter writer = new StringWriter(s.length());
+    for (int i = 0; i < s.length(); i++) {
+      char c = s.charAt(i);
+      switch (c) {
+        case '\\' -> writer.append("\\\\");
+        case '\"' -> writer.append("\\\"");
+        case '\n' -> writer.append("\\n");
+        default -> writer.append(c);
+      }
+    }
+    return writer.toString();
   }
 
 }

@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service.metrics.sink;
 
-import static com.provectus.kafka.ui.service.MessagesService.*;
+import static com.provectus.kafka.ui.service.MessagesService.createProducer;
+import static com.provectus.kafka.ui.service.metrics.prometheus.PrometheusExpose.escapedLabelValue;
 import static io.prometheus.client.Collector.*;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -54,7 +55,7 @@ class KafkaSink implements MetricsSink {
           var lbls = new LinkedHashMap<String, String>();
           lbls.put("__name__", sample.name);
           for (int i = 0; i < sample.labelNames.size(); i++) {
-            lbls.put(sample.labelNames.get(i), sample.labelValues.get(i));
+            lbls.put(sample.labelNames.get(i), escapedLabelValue(sample.labelValues.get(i)));
           }
           var km = new KafkaMetric(ts, doubleToGoString(sample.value), sample.name, lbls);
           return new ProducerRecord<>(topic, toJson(km));
