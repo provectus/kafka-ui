@@ -1,6 +1,8 @@
 package com.provectus.kafka.ui.service.metrics.prometheus;
 
 import static io.prometheus.client.Collector.MetricFamilySamples;
+import static io.prometheus.client.exporter.common.TextFormat.CONTENT_TYPE_OPENMETRICS_100;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Iterators;
@@ -19,27 +21,21 @@ import org.springframework.http.ResponseEntity;
 
 public final class PrometheusExpose {
 
-  private static final String CLUSTER_SELECTION_EXPOSE_LBL_NAME = "cluster";
+  private static final String CLUSTER_EXPOSE_LBL_NAME = "cluster";
+
+  private static final HttpHeaders PROMETHEUS_EXPOSE_ENDPOINT_HEADERS;
+
+  static {
+    PROMETHEUS_EXPOSE_ENDPOINT_HEADERS = new HttpHeaders();
+    PROMETHEUS_EXPOSE_ENDPOINT_HEADERS.set(CONTENT_TYPE, CONTENT_TYPE_OPENMETRICS_100);
+  }
 
   private PrometheusExpose() {
   }
 
   public static ResponseEntity<String> exposeAllMetrics(Map<String, Metrics> clustersMetrics) {
+    System.out.println("Exposing metrics:" + clustersMetrics);
     return constructHttpsResponse(getMetricsForGlobalExpose(clustersMetrics));
-  }
-
-  public static ResponseEntity<String> exposeClusterMetrics(Metrics clusterMetrics) {
-    return constructHttpsResponse(clusterMetrics.getSummarizedMetrics());
-  }
-
-  public static ResponseEntity<String> exposeBrokerMetrics(Metrics clusterMetrics, int brokerId) {
-    //TODO: discuss - do we need to append broker_id lbl ?
-    return constructHttpsResponse(
-        clusterMetrics
-            .getPerBrokerScrapedMetrics()
-            .getOrDefault(brokerId, List.of())
-            .stream()
-    );
   }
 
   private static Stream<MetricFamilySamples> getMetricsForGlobalExpose(Map<String, Metrics> clustersMetrics) {
@@ -56,7 +52,7 @@ public final class PrometheusExpose {
   public static Stream<MetricFamilySamples> prepareMetricsForGlobalExpose(String clusterName, Metrics metrics) {
     return metrics
         .getSummarizedMetrics()
-        .map(mfs -> addLbl(mfs, CLUSTER_SELECTION_EXPOSE_LBL_NAME, clusterName));
+        .map(mfs -> addLbl(mfs, CLUSTER_EXPOSE_LBL_NAME, clusterName));
   }
 
   private static MetricFamilySamples concatSamples(MetricFamilySamples mfs1,
@@ -93,12 +89,9 @@ public final class PrometheusExpose {
   public static ResponseEntity<String> constructHttpsResponse(Stream<MetricFamilySamples> metrics) {
     StringWriter writer = new StringWriter();
     TextFormat.writeOpenMetrics100(writer, Iterators.asEnumeration(metrics.iterator()));
-
-    HttpHeaders responseHeaders = new HttpHeaders();
-    responseHeaders.set(HttpHeaders.CONTENT_TYPE, TextFormat.CONTENT_TYPE_OPENMETRICS_100);
     return ResponseEntity
         .ok()
-        .headers(responseHeaders)
+        .headers(PROMETHEUS_EXPOSE_ENDPOINT_HEADERS)
         .body(writer.toString());
   }
 

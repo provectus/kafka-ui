@@ -139,7 +139,7 @@ public class KafkaClusterFactory {
 
   private boolean exposeMetricsViaPrometheusEndpoint(ClustersProperties.Cluster clusterProperties) {
     return Optional.ofNullable(clusterProperties.getMetrics())
-        .map(m -> Boolean.TRUE.equals(m.getPrometheusExpose()))
+        .map(m -> m.getPrometheusExpose() == null || m.getPrometheusExpose())
         .orElse(true);
   }
 

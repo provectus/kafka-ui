@@ -29,32 +29,4 @@ public class PrometheusExposeController extends AbstractController implements Pr
     );
   }
 
-  @Override
-  public Mono<ResponseEntity<String>> getAllClusterMetrics(String clusterName, ServerWebExchange exchange) {
-    var cluster = getCluster(clusterName);
-    if (!cluster.isExposeMetricsViaPrometheusEndpoint()) {
-      return Mono.empty();
-    }
-    return Mono.just(
-        PrometheusExpose.exposeClusterMetrics(
-            statisticsCache.get(cluster).getMetrics()
-        )
-    );
-  }
-
-  @Override
-  public Mono<ResponseEntity<String>> getBrokerMetrics(String clusterName,
-                                                       Long brokerId,
-                                                       ServerWebExchange exchange) {
-    var cluster = getCluster(clusterName);
-    if (!cluster.isExposeMetricsViaPrometheusEndpoint()) {
-      return Mono.empty();
-    }
-    return Mono.just(
-        PrometheusExpose.exposeBrokerMetrics(
-            statisticsCache.get(cluster).getMetrics(), brokerId.intValue()
-        )
-    );
-  }
-
 }

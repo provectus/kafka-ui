@@ -217,52 +217,6 @@ paths:
               schema:
                 type: string
 
-  /api/clusters/{clusterName}/prometheus/expose/all:
-    get:
-      tags:
-        - PrometheusExpose
-      summary: getAllClusterMetrics
-      operationId: getAllClusterMetrics
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/text:
-              schema:
-                type: string
-
-  /api/clusters/{clusterName}/prometheus/expose/broker/{brokerId}:
-    get:
-      tags:
-        - PrometheusExpose
-      summary: getBrokerMetrics
-      operationId: getBrokerMetrics
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: brokerId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        200:
-          description: OK
-          content:
-            application/text:
-              schema:
-                type: string
-
   /api/clusters/{clusterName}/stats:
     get:
       tags:

@@ -71,6 +71,8 @@ class GraphDescriptions {
           .prometheusQuery("kafka_topic_partition_current_offset{cluster=\"${cluster}\",topic = \"${topic}\"}")
           .params(Set.of("topic"))
           .build()
+
+      //TODO: add
   );
 
 }
