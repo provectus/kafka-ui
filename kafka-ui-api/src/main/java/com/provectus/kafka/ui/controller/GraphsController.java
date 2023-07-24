@@ -64,12 +64,14 @@ public class GraphsController extends AbstractController implements GraphsApi {
   @Override
   public Mono<ResponseEntity<GraphDescriptionsDTO>> getGraphsList(String clusterName,
                                                                   ServerWebExchange exchange) {
+    var context = AccessContext.builder()
+        .cluster(clusterName)
+        .operationName("getGraphsList")
+        .build();
+
     var graphs = graphsService.getGraphs(getCluster(clusterName));
-    return Mono.just(
-        ResponseEntity.ok(
-            new GraphDescriptionsDTO().graphs(graphs.map(this::map).toList())
-        )
-    );
+    return accessControlService.validateAccess(context).then(
+        Mono.just(ResponseEntity.ok(new GraphDescriptionsDTO().graphs(graphs.map(this::map).toList()))));
   }
 
   private GraphDescriptionDTO map(GraphDescription graph) {

@@ -42,7 +42,7 @@ public interface MetricsSink {
     return compoundSink(sinks);
   }
 
-  static MetricsSink compoundSink(List<MetricsSink> sinks) {
+  private static MetricsSink compoundSink(List<MetricsSink> sinks) {
     return metricsStream -> {
       var materialized = metricsStream.toList();
       return Flux.fromIterable(sinks)
