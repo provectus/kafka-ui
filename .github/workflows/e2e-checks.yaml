@@ -1,6 +1,6 @@
 name: "E2E: PR healthcheck"
 on:
-  pull_request:
+  pull_request_target:
     types: [ "opened", "edited", "reopened", "synchronize" ]
     paths:
       - "kafka-ui-api/**"
@@ -8,6 +8,8 @@ on:
       - "kafka-ui-react-app/**"
       - "kafka-ui-e2e-checks/**"
       - "pom.xml"
+permissions:
+  statuses: write
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -18,8 +20,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.S3_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.S3_AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
       - name: Set up environment
         id: set_env_values
