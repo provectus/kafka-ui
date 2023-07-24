@@ -27,7 +27,7 @@ public class MetricsScrapeProperties {
   @Nullable
   TruststoreConfig truststoreConfig;
 
-  public static MetricsScrapeProperties create(ClustersProperties.Cluster cluster){
+  public static MetricsScrapeProperties create(ClustersProperties.Cluster cluster) {
     var metrics = Objects.requireNonNull(cluster.getMetrics());
     return MetricsScrapeProperties.builder()
         .port(metrics.getPort())

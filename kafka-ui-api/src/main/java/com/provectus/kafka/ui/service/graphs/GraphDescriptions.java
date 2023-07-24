@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.service.graphs;
 
+import static java.util.stream.Collectors.toMap;
+
 import com.provectus.kafka.ui.exception.ValidationException;
 import java.time.Duration;
 import java.util.HashMap;
@@ -7,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.stereotype.Component;
 
@@ -19,9 +20,8 @@ class GraphDescriptions {
   private final Map<String, GraphDescription> graphsById;
 
   GraphDescriptions() {
-    validateGraphDescr(PREDEFINED_GRAPHS);
-    this.graphsById = PREDEFINED_GRAPHS.stream()
-        .collect(Collectors.toMap(GraphDescription::id, d -> d));
+    validate();
+    this.graphsById = PREDEFINED_GRAPHS.stream().collect(toMap(GraphDescription::id, d -> d));
   }
 
   Optional<GraphDescription> getById(String id) {
@@ -32,9 +32,9 @@ class GraphDescriptions {
     return graphsById.values().stream();
   }
 
-  private void validateGraphDescr(List<GraphDescription> descriptions) {
+  private void validate() {
     Map<String, String> errors = new HashMap<>();
-    for (GraphDescription description : descriptions) {
+    for (GraphDescription description : PREDEFINED_GRAPHS) {
       new PromQueryTemplate(description)
           .validateSyntax()
           .ifPresent(err -> errors.put(description.id(), err));
@@ -46,33 +46,29 @@ class GraphDescriptions {
 
   private static final List<GraphDescription> PREDEFINED_GRAPHS = List.of(
 
-      GraphDescription.builder()
+      GraphDescription.range(DEFAULT_RANGE_DURATION)
           .id("broker_bytes_disk_ts")
-          .defaultInterval(DEFAULT_RANGE_DURATION)
           .prometheusQuery("broker_bytes_disk{cluster=\"${cluster}\"}")
           .params(Set.of())
           .build(),
 
-      GraphDescription.builder()
+      GraphDescription.instant()
           .id("broker_bytes_disk")
           .prometheusQuery("broker_bytes_disk{cluster=\"${cluster}\"}")
           .params(Set.of())
           .build(),
 
-      GraphDescription.builder()
+      GraphDescription.instant()
           .id("kafka_topic_partition_current_offset")
           .prometheusQuery("kafka_topic_partition_current_offset{cluster=\"${cluster}\"}")
           .params(Set.of())
           .build(),
 
-      GraphDescription.builder()
+      GraphDescription.range(DEFAULT_RANGE_DURATION)
           .id("kafka_topic_partition_current_offset_per_topic_ts")
-          .defaultInterval(DEFAULT_RANGE_DURATION)
           .prometheusQuery("kafka_topic_partition_current_offset{cluster=\"${cluster}\",topic = \"${topic}\"}")
           .params(Set.of("topic"))
           .build()
-
-      //TODO: add
   );
 
 }

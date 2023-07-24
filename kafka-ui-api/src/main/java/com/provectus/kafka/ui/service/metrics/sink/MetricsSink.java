@@ -19,20 +19,19 @@ public interface MetricsSink {
         .flatMap(metrics -> Optional.ofNullable(metrics.getStore()))
         .flatMap(store -> Optional.ofNullable(store.getPrometheus()))
         .ifPresent(prometheusConf -> {
-              if (hasText(prometheusConf.getUrl()) && Boolean.TRUE.equals(prometheusConf.getRemoteWrite())) {
-                sinks.add(new PrometheusRemoteWriteSink(prometheusConf.getUrl()));
-              }
-              if (hasText(prometheusConf.getPushGatewayUrl())) {
-                sinks.add(
-                    PrometheusPushGatewaySink.create(
-                        prometheusConf.getPushGatewayUrl(),
-                        prometheusConf.getPushGatewayJobName(),
-                        prometheusConf.getPushGatewayUsername(),
-                        prometheusConf.getPushGatewayPassword()
-                    ));
-              }
-            }
-        );
+          if (hasText(prometheusConf.getUrl()) && Boolean.TRUE.equals(prometheusConf.getRemoteWrite())) {
+            sinks.add(new PrometheusRemoteWriteSink(prometheusConf.getUrl()));
+          }
+          if (hasText(prometheusConf.getPushGatewayUrl())) {
+            sinks.add(
+                PrometheusPushGatewaySink.create(
+                    prometheusConf.getPushGatewayUrl(),
+                    prometheusConf.getPushGatewayJobName(),
+                    prometheusConf.getPushGatewayUsername(),
+                    prometheusConf.getPushGatewayPassword()
+                ));
+          }
+        });
 
     Optional.ofNullable(cluster.getMetrics())
         .flatMap(metrics -> Optional.ofNullable(metrics.getStore()))

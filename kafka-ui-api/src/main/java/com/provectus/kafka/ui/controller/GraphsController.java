@@ -7,14 +7,13 @@ import com.provectus.kafka.ui.model.GraphDescriptionsDTO;
 import com.provectus.kafka.ui.model.GraphParameterDTO;
 import com.provectus.kafka.ui.model.PrometheusApiQueryResponseDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
+import com.provectus.kafka.ui.service.audit.AuditService;
 import com.provectus.kafka.ui.service.graphs.GraphDescription;
 import com.provectus.kafka.ui.service.graphs.GraphsService;
-import com.provectus.kafka.ui.service.audit.AuditService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Optional;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -41,7 +40,7 @@ public class GraphsController extends AbstractController implements GraphsApi {
 
   @Override
   public Mono<ResponseEntity<PrometheusApiQueryResponseDTO>> getGraphData(String clusterName,
-                                                                          Mono<GraphDataRequestDTO> graphDataRequestDTO,
+                                                                          Mono<GraphDataRequestDTO> graphDataRequestDto,
                                                                           ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
@@ -50,7 +49,7 @@ public class GraphsController extends AbstractController implements GraphsApi {
 
     return accessControlService.validateAccess(context)
         .then(
-            graphDataRequestDTO.flatMap(req ->
+            graphDataRequestDto.flatMap(req ->
                     graphsService.getGraphData(
                         getCluster(clusterName),
                         req.getId(),

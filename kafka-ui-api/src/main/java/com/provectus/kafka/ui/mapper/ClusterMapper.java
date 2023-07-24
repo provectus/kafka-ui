@@ -32,11 +32,11 @@ import com.provectus.kafka.ui.model.ReplicaDTO;
 import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
+import com.provectus.kafka.ui.service.metrics.SummarizedMetrics;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -60,11 +60,11 @@ public interface ClusterMapper {
   @Deprecated
   default ClusterMetricsDTO toClusterMetrics(Metrics metrics) {
     return new ClusterMetricsDTO()
-        .items(convert(metrics.getSummarizedMetrics().toList()));
+        .items(convert(new SummarizedMetrics(metrics).asStream()).toList());
   }
 
-  private List<MetricDTO> convert(List<MetricFamilySamples> metrics) {
-    return metrics.stream()
+  private Stream<MetricDTO> convert(Stream<MetricFamilySamples> metrics) {
+    return metrics
         .flatMap(m -> m.samples.stream())
         .map(s ->
             new MetricDTO()
@@ -74,11 +74,11 @@ public interface ClusterMapper {
                     //collecting to map, keeping order
                     .collect(toMap(s.labelNames::get, s.labelValues::get, (m1, m2) -> null, LinkedHashMap::new)))
                 .value(BigDecimal.valueOf(s.value))
-        ).toList();
+        );
   }
 
   default BrokerMetricsDTO toBrokerMetrics(List<MetricFamilySamples> metrics) {
-    return new BrokerMetricsDTO().metrics(convert(metrics));
+    return new BrokerMetricsDTO().metrics(convert(metrics.stream()).toList());
   }
 
   @Mapping(target = "isSensitive", source = "sensitive")

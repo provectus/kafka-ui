@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 public final class PrometheusExpose {
 
   private static final String CLUSTER_EXPOSE_LBL_NAME = "cluster";
+  private static final String BROKER_EXPOSE_LBL_NAME = "broker_id";
 
   private static final HttpHeaders PROMETHEUS_EXPOSE_ENDPOINT_HEADERS;
 
@@ -49,9 +50,19 @@ public final class PrometheusExpose {
   }
 
   public static Stream<MetricFamilySamples> prepareMetricsForGlobalExpose(String clusterName, Metrics metrics) {
-    return metrics
-        .getSummarizedMetrics()
-        .map(mfs -> addLbl(mfs, CLUSTER_EXPOSE_LBL_NAME, clusterName));
+    return Stream.concat(
+            metrics.getInferredMetrics().asStream(),
+            extractBrokerMetricsWithLabel(metrics)
+        )
+        .map(mfs -> appendLabel(mfs, CLUSTER_EXPOSE_LBL_NAME, clusterName));
+  }
+
+  private static Stream<MetricFamilySamples> extractBrokerMetricsWithLabel(Metrics metrics) {
+    return metrics.getPerBrokerScrapedMetrics().entrySet().stream()
+        .flatMap(e -> {
+          String brokerId = String.valueOf(e.getKey());
+          return e.getValue().stream().map(mfs -> appendLabel(mfs, BROKER_EXPOSE_LBL_NAME, brokerId));
+        });
   }
 
   private static MetricFamilySamples concatSamples(MetricFamilySamples mfs1,
@@ -62,7 +73,7 @@ public final class PrometheusExpose {
     );
   }
 
-  private static MetricFamilySamples addLbl(MetricFamilySamples mfs, String lblName, String lblVal) {
+  private static MetricFamilySamples appendLabel(MetricFamilySamples mfs, String lblName, String lblVal) {
     return new MetricFamilySamples(
         mfs.name, mfs.unit, mfs.type, mfs.help,
         mfs.samples.stream()
@@ -96,17 +107,17 @@ public final class PrometheusExpose {
 
   // copied from io.prometheus.client.exporter.common.TextFormat:writeEscapedLabelValue
   public static String escapedLabelValue(String s) {
-    StringWriter writer = new StringWriter(s.length());
+    StringBuilder sb = new StringBuilder(s.length());
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);
       switch (c) {
-        case '\\' -> writer.append("\\\\");
-        case '\"' -> writer.append("\\\"");
-        case '\n' -> writer.append("\\n");
-        default -> writer.append(c);
+        case '\\' -> sb.append("\\\\");
+        case '\"' -> sb.append("\\\"");
+        case '\n' -> sb.append("\\n");
+        default -> sb.append(c);
       }
     }
-    return writer.toString();
+    return sb.toString();
   }
 
 }

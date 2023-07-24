@@ -11,6 +11,14 @@ public record GraphDescription(String id,
                                String prometheusQuery,
                                Set<String> params) {
 
+  public static GraphDescriptionBuilder instant() {
+    return builder();
+  }
+
+  public static GraphDescriptionBuilder range(Duration defaultInterval) {
+    return builder().defaultInterval(defaultInterval);
+  }
+
   public boolean isRange() {
     return defaultInterval != null;
   }
