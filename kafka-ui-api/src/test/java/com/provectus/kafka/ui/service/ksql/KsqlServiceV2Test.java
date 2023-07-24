@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.service.ksql;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractIntegrationTest;
-import com.provectus.kafka.ui.container.KsqlDbContainer;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KsqlStreamDescriptionDTO;
 import com.provectus.kafka.ui.model.KsqlTableDescriptionDTO;
@@ -15,13 +14,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.utility.DockerImageName;
 
 class KsqlServiceV2Test extends AbstractIntegrationTest {
-
-  private static final KsqlDbContainer KSQL_DB = new KsqlDbContainer(
-      DockerImageName.parse("confluentinc/ksqldb-server").withTag("0.24.0"))
-      .withKafka(kafka);
 
   private static final Set<String> STREAMS_TO_DELETE = new CopyOnWriteArraySet<>();
   private static final Set<String> TABLES_TO_DELETE = new CopyOnWriteArraySet<>();

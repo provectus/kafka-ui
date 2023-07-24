@@ -1,4 +1,4 @@
-name: Feature testing init
+name: "Infra: Feature Testing: Init env"
 on:
   workflow_dispatch:
 
@@ -84,18 +84,22 @@ jobs:
           git add ../kafka-ui-from-branch/
           git commit -m "added env:${{ needs.build.outputs.deploy }}" && git push || true
 
-      - name: make comment with private deployment link
+      - name: update status check for private deployment
         if: ${{ github.event.label.name == 'status/feature_testing' }}
-        uses: peter-evans/create-or-update-comment@v3
+        uses: Sibz/github-status-action@v1.1.6
         with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            Custom deployment will be available at http://${{ needs.build.outputs.tag }}.internal.kafka-ui.provectus.io
+          authToken: ${{secrets.GITHUB_TOKEN}}
+          context: "Click Details button to open custom deployment page"
+          state: "success"
+          sha: ${{ github.event.pull_request.head.sha  || github.sha }}
+          target_url: "http://${{ needs.build.outputs.tag }}.internal.kafka-ui.provectus.io"
 
-      - name: make comment with public deployment link
+      - name: update status check for public deployment
         if: ${{ github.event.label.name == 'status/feature_testing_public' }}
-        uses: peter-evans/create-or-update-comment@v3
+        uses: Sibz/github-status-action@v1.1.6
         with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            Custom deployment will be available at http://${{ needs.build.outputs.tag }}.kafka-ui.provectus.io in 5 minutes
+          authToken: ${{secrets.GITHUB_TOKEN}}
+          context: "Click Details button to open custom deployment page"
+          state: "success"
+          sha: ${{ github.event.pull_request.head.sha  || github.sha }}
+          target_url: "http://${{ needs.build.outputs.tag }}.internal.kafka-ui.provectus.io"

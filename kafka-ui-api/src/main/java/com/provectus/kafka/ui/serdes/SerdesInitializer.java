@@ -11,6 +11,7 @@ import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.builtin.AvroEmbeddedSerde;
 import com.provectus.kafka.ui.serdes.builtin.Base64Serde;
+import com.provectus.kafka.ui.serdes.builtin.ConsumerOffsetsSerde;
 import com.provectus.kafka.ui.serdes.builtin.Int32Serde;
 import com.provectus.kafka.ui.serdes.builtin.Int64Serde;
 import com.provectus.kafka.ui.serdes.builtin.ProtobufFileSerde;
@@ -118,6 +119,8 @@ public class SerdesInitializer {
       }
     });
 
+    registerTopicRelatedSerde(registeredSerdes);
+
     return new ClusterSerdes(
         registeredSerdes,
         Optional.ofNullable(clusterProperties.getDefaultKeySerde())
@@ -129,6 +132,27 @@ public class SerdesInitializer {
             .or(() -> Optional.ofNullable(registeredSerdes.get(ProtobufFileSerde.name())))
             .orElse(null),
         createFallbackSerde()
+    );
+  }
+
+  /**
+   * Registers serdse that should only be used for specific (hard-coded) topics, like ConsumerOffsetsSerde.
+   */
+  private void registerTopicRelatedSerde(Map<String, SerdeInstance> serdes) {
+    registerConsumerOffsetsSerde(serdes);
+  }
+
+  private void registerConsumerOffsetsSerde(Map<String, SerdeInstance> serdes) {
+    var pattern = Pattern.compile(ConsumerOffsetsSerde.TOPIC);
+    serdes.put(
+        ConsumerOffsetsSerde.name(),
+        new SerdeInstance(
+            ConsumerOffsetsSerde.name(),
+            new ConsumerOffsetsSerde(),
+            pattern,
+            pattern,
+            null
+        )
     );
   }
 

@@ -1,4 +1,4 @@
-name: Build Docker image and push
+name: "Infra: Image Testing: Deploy"
 on:
   workflow_dispatch:
   pull_request:
@@ -70,6 +70,5 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             Image published at public.ecr.aws/provectus/kafka-ui-custom-build:${{ steps.extract_branch.outputs.tag }}
-
     outputs:
       tag: ${{ steps.extract_branch.outputs.tag }}
