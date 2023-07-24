@@ -10,6 +10,8 @@ import org.apache.commons.lang3.text.StrSubstitutor;
 
 class PromQueryTemplate {
 
+  private static final String CLUSTER_LABEL_NAME = "cluster";
+
   private final String queryTemplate;
   private final Set<String> paramsNames;
 
@@ -28,13 +30,14 @@ class PromQueryTemplate {
       throw new ValidationException("Not all params set for query, missing: " + missingParams);
     }
     Map<String, String> replacements = new HashMap<>(paramValues);
-    replacements.put("cluster", clusterName);
+    replacements.put(CLUSTER_LABEL_NAME, clusterName);
     return replaceParams(replacements);
   }
 
+  // returns error msg or empty if no errors found
   Optional<String> validateSyntax() {
     Map<String, String> fakeReplacements = new HashMap<>();
-    fakeReplacements.put("cluster", "1");
+    fakeReplacements.put(CLUSTER_LABEL_NAME, "1");
     paramsNames.forEach(paramName -> fakeReplacements.put(paramName, "1"));
 
     String prepared = replaceParams(fakeReplacements);

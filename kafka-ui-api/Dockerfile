@@ -18,4 +18,4 @@ ENV JAVA_OPTS=
 EXPOSE 8080
 
 # see JmxSslSocketFactory docs to understand why add-opens is needed
-CMD java --add-opens java.rmi/javax.rmi.ssl=ALL-UNNAMED $JAVA_OPTS -jar kafka-ui-api.jar
+CMD java --add-opens java.rmi/javax.rmi.ssl=ALL-UNNAMED  $JAVA_OPTS -jar kafka-ui-api.jar
