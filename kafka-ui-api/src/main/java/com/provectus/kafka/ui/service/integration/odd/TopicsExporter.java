@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.StatisticsCache;
 import com.provectus.kafka.ui.service.integration.odd.schema.DataSetFieldsExtractors;
+import com.provectus.kafka.ui.sr.model.SchemaSubject;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,8 @@ import org.opendatadiscovery.oddrn.model.KafkaPath;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -101,12 +104,20 @@ class TopicsExporter {
       return Mono.just(List.of());
     }
     String subject = topic + (isKey ? "-key" : "-value");
-    return cluster.getSchemaRegistryClient()
-        .mono(client -> client.getSubjectVersion(subject, "latest"))
-        .map(subj -> DataSetFieldsExtractors.extract(subj, topicOddrn, isKey))
+    return getSubjWithResolvedRefs(cluster, subject)
+        .map(t -> DataSetFieldsExtractors.extract(t.getT1(), t.getT2(), topicOddrn, isKey))
         .onErrorResume(WebClientResponseException.NotFound.class, th -> Mono.just(List.of()))
         .onErrorMap(WebClientResponseException.class, err ->
             new IllegalStateException("Error retrieving subject %s".formatted(subject), err));
+  }
+
+  private Mono<Tuple2<SchemaSubject, Map<String, String>>> getSubjWithResolvedRefs(KafkaCluster cluster,
+                                                                                   String subjectName) {
+    return cluster.getSchemaRegistryClient()
+        .mono(client ->
+            client.getSubjectVersion(subjectName, "latest", false)
+                .flatMap(subj -> new SchemaReferencesResolver(client).resolve(subj.getReferences())
+                    .map(resolvedRefs -> Tuples.of(subj, resolvedRefs))));
   }
 
 }
