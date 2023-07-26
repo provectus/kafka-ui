@@ -125,7 +125,7 @@ public class SchemaRegistryService {
         .onErrorMap(WebClientResponseException.Conflict.class,
             th -> new SchemaCompatibilityException())
         .onErrorMap(WebClientResponseException.UnprocessableEntity.class,
-            th -> new ValidationException("Invalid schema"))
+            th -> new ValidationException("Invalid schema. Error from registry: " + th.getResponseBodyAsString()))
         .then(getLatestSchemaVersionBySubject(cluster, subject));
   }
 
