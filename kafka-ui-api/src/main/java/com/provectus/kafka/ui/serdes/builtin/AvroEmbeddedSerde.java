@@ -20,12 +20,6 @@ public class AvroEmbeddedSerde implements BuiltInSerde {
   }
 
   @Override
-  public void configure(PropertyResolver serdeProperties,
-                        PropertyResolver kafkaClusterProperties,
-                        PropertyResolver globalProperties) {
-  }
-
-  @Override
   public Optional<String> getDescription() {
     return Optional.empty();
   }

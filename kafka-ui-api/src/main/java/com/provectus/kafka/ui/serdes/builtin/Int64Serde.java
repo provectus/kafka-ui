@@ -55,15 +55,11 @@ public class Int64Serde implements BuiltInSerde {
 
   @Override
   public Deserializer deserializer(String topic, Target type) {
-    return new Deserializer() {
-      @Override
-      public DeserializeResult deserialize(RecordHeaders headers, byte[] data) {
-        return new DeserializeResult(
+    return (headers, data) ->
+        new DeserializeResult(
             String.valueOf(Longs.fromByteArray(data)),
             DeserializeResult.Type.JSON,
             Map.of()
         );
-      }
-    };
   }
 }
