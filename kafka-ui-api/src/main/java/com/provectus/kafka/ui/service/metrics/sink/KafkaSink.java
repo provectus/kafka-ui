@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.service.metrics.sink;
 
-import static com.google.common.base.Charsets.UTF_8;
 import static com.provectus.kafka.ui.service.MessagesService.createProducer;
 import static com.provectus.kafka.ui.service.metrics.prometheus.PrometheusExpose.escapedLabelValue;
 import static io.prometheus.client.Collector.MetricFamilySamples;
@@ -68,7 +67,7 @@ class KafkaSink implements MetricsSink {
 
   @SneakyThrows
   private static byte[] toJsonBytes(KafkaMetric m) {
-    return JSON_MAPPER.writeValueAsString(m).getBytes(UTF_8);
+    return JSON_MAPPER.writeValueAsBytes(m);
   }
 
 }
