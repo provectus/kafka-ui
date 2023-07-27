@@ -5,11 +5,12 @@ import static prometheus.Types.Label;
 import static prometheus.Types.Sample;
 import static prometheus.Types.TimeSeries;
 
+import com.provectus.kafka.ui.config.ClustersProperties.TruststoreConfig;
 import com.provectus.kafka.ui.service.metrics.prometheus.PrometheusExpose;
 import com.provectus.kafka.ui.util.WebClientConfigurator;
+import jakarta.annotation.Nullable;
 import java.net.URI;
 import java.util.stream.Stream;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,15 +18,17 @@ import org.xerial.snappy.Snappy;
 import prometheus.Remote;
 import reactor.core.publisher.Mono;
 
-@RequiredArgsConstructor
 class PrometheusRemoteWriteSink implements MetricsSink {
 
-  private final WebClient webClient;
   private final URI writeEndpoint;
+  private final WebClient webClient;
 
-  PrometheusRemoteWriteSink(String prometheusUrl) {
+  PrometheusRemoteWriteSink(String prometheusUrl, @Nullable TruststoreConfig truststoreConfig) {
     this.writeEndpoint = URI.create(prometheusUrl).resolve("/api/v1/write");
-    this.webClient = new WebClientConfigurator().configureBufferSize(DataSize.ofMegabytes(20)).build();
+    this.webClient = new WebClientConfigurator()
+        .configureSsl(truststoreConfig, null)
+        .configureBufferSize(DataSize.ofMegabytes(20))
+        .build();
   }
 
   @SneakyThrows

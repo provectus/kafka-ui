@@ -20,7 +20,7 @@ public interface MetricsSink {
         .flatMap(store -> Optional.ofNullable(store.getPrometheus()))
         .ifPresent(prometheusConf -> {
           if (hasText(prometheusConf.getUrl()) && Boolean.TRUE.equals(prometheusConf.getRemoteWrite())) {
-            sinks.add(new PrometheusRemoteWriteSink(prometheusConf.getUrl()));
+            sinks.add(new PrometheusRemoteWriteSink(prometheusConf.getUrl(), cluster.getSsl()));
           }
           if (hasText(prometheusConf.getPushGatewayUrl())) {
             sinks.add(
