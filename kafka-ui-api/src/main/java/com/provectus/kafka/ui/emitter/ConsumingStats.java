@@ -11,7 +11,7 @@ class ConsumingStats {
   private long elapsed = 0;
 
   void sendConsumingEvt(FluxSink<TopicMessageEventDTO> sink,
-                        EnhancedConsumer.PolledRecords polledRecords,
+                        PolledRecords polledRecords,
                         int filterApplyErrors) {
     bytes += polledRecords.bytes();
     this.records += polledRecords.count();

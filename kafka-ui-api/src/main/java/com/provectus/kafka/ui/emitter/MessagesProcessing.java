@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.emitter;
 
-import static com.provectus.kafka.ui.emitter.EnhancedConsumer.PolledRecords;
-
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicMessagePhaseDTO;

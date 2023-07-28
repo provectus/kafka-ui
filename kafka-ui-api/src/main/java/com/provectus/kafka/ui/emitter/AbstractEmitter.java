@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.emitter;
 
-import com.provectus.kafka.ui.emitter.EnhancedConsumer.PolledRecords;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import java.time.Duration;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
