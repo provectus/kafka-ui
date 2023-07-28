@@ -335,14 +335,12 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     final Map<String, ? extends Serializable> map = Map.of(
         ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers(),
         ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString(),
-        ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 19, // to check multiple polls
-        ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class,
-        ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class
+        ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 19 // to check multiple polls
     );
     Properties props = new Properties();
     props.putAll(map);
     props.putAll(properties);
-    return new EnhancedConsumer(new KafkaConsumer<>(props), PollingThrottler.noop(), ApplicationMetrics.noop());
+    return new EnhancedConsumer(props, PollingThrottler.noop(), ApplicationMetrics.noop());
   }
 
   @Value
