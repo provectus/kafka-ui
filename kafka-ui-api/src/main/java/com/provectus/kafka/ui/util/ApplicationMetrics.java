@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.util;
 
+import static lombok.AccessLevel.PRIVATE;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.provectus.kafka.ui.emitter.PolledRecords;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -11,10 +13,9 @@ import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.util.concurrent.atomic.AtomicInteger;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+@RequiredArgsConstructor(access = PRIVATE)
 public class ApplicationMetrics {
 
   private final String clusterName;
