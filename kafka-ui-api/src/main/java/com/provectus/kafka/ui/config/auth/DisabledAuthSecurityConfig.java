@@ -27,10 +27,12 @@ public class DisabledAuthSecurityConfig extends AbstractAuthSecurityConfig {
       System.exit(1);
     }
     log.warn("Authentication is disabled. Access will be unrestricted.");
-    return http.authorizeExchange()
-        .anyExchange().permitAll()
-        .and()
-        .csrf().disable()
+
+    return http.authorizeExchange(spec -> spec
+            .anyExchange()
+            .permitAll()
+        )
+        .csrf(ServerHttpSecurity.CsrfSpec::disable)
         .build();
   }
 
