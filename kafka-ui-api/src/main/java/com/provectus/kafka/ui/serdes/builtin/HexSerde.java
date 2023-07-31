@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class HexSerde implements BuiltInSerde {
 
-  private HexFormat hexFormat;
+  private HexFormat deserializeHexFormat;
 
   public static String name() {
     return "Hex";
@@ -22,9 +22,9 @@ public class HexSerde implements BuiltInSerde {
                         PropertyResolver globalProperties) {
     String delim = serdeProperties.getProperty("delimiter", String.class).orElse(" ");
     boolean uppercase = serdeProperties.getProperty("uppercase", Boolean.class).orElse(true);
-    hexFormat = HexFormat.ofDelimiter(delim);
+    deserializeHexFormat = HexFormat.ofDelimiter(delim);
     if (uppercase) {
-      hexFormat = hexFormat.withUpperCase();
+      deserializeHexFormat = deserializeHexFormat.withUpperCase();
     }
   }
 
@@ -54,17 +54,25 @@ public class HexSerde implements BuiltInSerde {
       input = input.trim();
       // it is a hack to provide ability to sent empty array as a key/value
       if (input.length() == 0) {
-        return new byte[]{};
+        return new byte[] {};
       }
-      return hexFormat.parseHex(input);
+      return HexFormat.of().parseHex(prepareInputForParse(input));
     };
+  }
+
+  // removing most-common delimiters and prefixes
+  private static String prepareInputForParse(String input) {
+    return input
+        .replaceAll(" ", "")
+        .replaceAll("#", "")
+        .replaceAll(":", "");
   }
 
   @Override
   public Deserializer deserializer(String topic, Target type) {
     return (headers, data) ->
         new DeserializeResult(
-            hexFormat.formatHex(data),
+            deserializeHexFormat.formatHex(data),
             DeserializeResult.Type.STRING,
             Map.of()
         );

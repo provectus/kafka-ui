@@ -8,6 +8,7 @@ import com.provectus.kafka.ui.serdes.PropertyResolverImpl;
 import com.provectus.kafka.ui.serdes.RecordHeadersImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
 public class HexSerdeTest {
@@ -27,12 +28,22 @@ public class HexSerdeTest {
     );
   }
 
+
   @ParameterizedTest
-  @EnumSource
-  void serializesInputAsHexString(Serde.Target type) {
-    var serializer = hexSerde.serializer("anyTopic", type);
-    byte[] bytes = serializer.serialize(TEST_BYTES_HEX_ENCODED);
-    assertThat(bytes).isEqualTo(TEST_BYTES);
+  @CsvSource({
+      "68656C6C6F20776F726C64", // uppercase
+      "68656c6c6f20776f726c64", // lowercase
+      "68:65:6c:6c:6f:20:77:6f:72:6c:64", // ':' delim
+      "68 65 6C 6C 6F 20 77 6F 72 6C 64", // space delim, UC
+      "68 65 6c 6c 6f 20 77 6f 72 6c 64", // space delim, LC
+      "#68 #65 #6C #6C #6F #20 #77 #6F #72 #6C #64"  // '#' prefix, space delim
+  })
+  void serializesInputAsHexString(String hexString) {
+    for (Serde.Target type : Serde.Target.values()) {
+      var serializer = hexSerde.serializer("anyTopic", type);
+      byte[] bytes = serializer.serialize(hexString);
+      assertThat(bytes).isEqualTo(TEST_BYTES);
+    }
   }
 
   @ParameterizedTest
