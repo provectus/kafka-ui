@@ -35,8 +35,8 @@ const Configs: React.FC = () => {
   const getData = () => {
     return data
       .filter((item) => {
-        const nameMatch = item.name.toLocaleLowerCase().includes(keyword);
-        return nameMatch ? true : item.value && item.value.toLocaleLowerCase().includes(keyword); // try to match the keyword on any of the item.value elements when nameMatch fails but item.value exists
+        const nameMatch = item.name.toLocaleLowerCase().includes(keyword.toLocaleLowerCase());
+        return nameMatch ? true : item.value && item.value.toLocaleLowerCase().includes(keyword.toLocaleLowerCase()); // try to match the keyword on any of the item.value elements when nameMatch fails but item.value exists
       })
       .sort((a, b) => {
         if (a.source === b.source) return 0;
