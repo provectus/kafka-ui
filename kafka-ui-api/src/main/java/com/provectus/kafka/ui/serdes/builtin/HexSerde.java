@@ -13,7 +13,7 @@ public class HexSerde implements BuiltInSerde {
   private HexFormat hexFormat;
 
   public static String name() {
-    return "HEX";
+    return "Hex";
   }
 
   @Override
