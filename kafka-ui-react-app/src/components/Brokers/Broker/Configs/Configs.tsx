@@ -33,15 +33,22 @@ const Configs: React.FC = () => {
   );
 
   const getData = () => {
-  	return data
-  		.filter((item) => {
-  			const nameMatch = item.name.toLocaleLowerCase().includes(keyword.toLocaleLowerCase());
-  			return nameMatch ? true : item.value && item.value.toLocaleLowerCase().includes(keyword.toLocaleLowerCase()); // try to match the keyword on any of the item.value elements when nameMatch fails but item.value exists
-  })
-  		.sort((a, b) => {
-  			if (a.source === b.source) return 0;
-  			return a.source === ConfigSource.DYNAMIC_BROKER_CONFIG ? -1 : 1;
-  		});
+    return data
+      .filter((item) => {
+        const nameMatch = item.name
+          .toLocaleLowerCase()
+          .includes(keyword.toLocaleLowerCase());
+        return nameMatch
+          ? true
+          : item.value &&
+              item.value
+                .toLocaleLowerCase()
+                .includes(keyword.toLocaleLowerCase()); // try to match the keyword on any of the item.value elements when nameMatch fails but item.value exists
+      })
+      .sort((a, b) => {
+        if (a.source === b.source) return 0;
+        return a.source === ConfigSource.DYNAMIC_BROKER_CONFIG ? -1 : 1;
+      });
   };
 
   const dataSource = React.useMemo(() => getData(), [data, keyword]);
