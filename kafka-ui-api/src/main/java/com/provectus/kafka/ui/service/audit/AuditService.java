@@ -125,7 +125,7 @@ public class AuditService implements Closeable {
     try {
       ac = acSupplier.get();
     } catch (Exception e) {
-      printAuditInitError(cluster, "Error connect to cluster", e);
+      printAuditInitError(cluster, "Error while connecting to the cluster", e);
       return false;
     }
     boolean topicExists;
