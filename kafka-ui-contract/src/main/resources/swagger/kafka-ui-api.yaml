@@ -2979,6 +2979,10 @@ components:
           type: string
         schemaType:
           $ref: '#/components/schemas/SchemaType'
+        references:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchemaReference'
       required:
         - id
         - subject
@@ -2996,12 +3000,29 @@ components:
         schema:
           type: string
         schemaType:
-          $ref: '#/components/schemas/SchemaType'
-          # upon updating a schema, the type of existing schema can't be changed
+          $ref: '#/components/schemas/SchemaType' # upon updating a schema, the type of existing schema can't be changed
+        references:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchemaReference'
       required:
         - subject
         - schema
         - schemaType
+
+    SchemaReference:
+      type: object
+      properties:
+        name:
+          type: string
+        subject:
+          type: string
+        version:
+          type: integer
+      required:
+        - name
+        - subject
+        - version
 
     CompatibilityLevel:
       type: object

@@ -1,4 +1,4 @@
-name: Feature testing init
+name: "Infra: Feature Testing: Init env"
 on:
   workflow_dispatch:
 
