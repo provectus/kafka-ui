@@ -108,11 +108,12 @@ public class MessagesController extends AbstractController implements MessagesAp
                                                                              String valueSerde,
                                                                              String cursor,
                                                                              ServerWebExchange exchange) {
-    final Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(MESSAGES_READ)
-        .build());
+        .operationName("getTopicMessages")
+        .build();
 
     Flux<TopicMessageEventDTO> messagesFlux;
     if (cursor != null) {
@@ -129,7 +130,9 @@ public class MessagesController extends AbstractController implements MessagesAp
           valueSerde
       );
     }
-    return validateAccess.then(Mono.just(ResponseEntity.ok(messagesFlux)));
+    return accessControlService.validateAccess(context)
+        .then(Mono.just(ResponseEntity.ok(messagesFlux)))
+        .doOnEach(sig -> auditService.audit(context, sig));
   }
 
   @Override
