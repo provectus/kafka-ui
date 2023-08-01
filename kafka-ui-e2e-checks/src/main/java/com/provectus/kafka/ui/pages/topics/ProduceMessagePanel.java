@@ -14,7 +14,7 @@ public class ProduceMessagePanel extends BasePage {
   protected SelenideElement keyTextArea = $x("//div[@id='key']/textarea");
   protected SelenideElement valueTextArea = $x("//div[@id='content']/textarea");
   protected SelenideElement headersTextArea = $x("//div[@id='headers']/textarea");
-  protected SelenideElement submitBtn = headersTextArea.$x("../../../..//button[@type='submit']");
+  protected SelenideElement submitProduceMessageBtn = headersTextArea.$x("../../../..//button[@type='submit']");
   protected SelenideElement partitionDdl = $x("//ul[@name='partition']");
   protected SelenideElement keySerdeDdl = $x("//ul[@name='keySerde']");
   protected SelenideElement contentSerdeDdl = $x("//ul[@name='valueSerde']");
@@ -48,8 +48,8 @@ public class ProduceMessagePanel extends BasePage {
 
   @Step
   public ProduceMessagePanel submitProduceMessage() {
-    clickByActions(submitBtn);
-    submitBtn.shouldBe(Condition.disappear);
+    clickByActions(submitProduceMessageBtn);
+    submitProduceMessageBtn.shouldBe(Condition.disappear);
     refresh();
     return this;
   }

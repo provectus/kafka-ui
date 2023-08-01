@@ -313,14 +313,44 @@ public class TopicsTest extends BaseTest {
     verifyElementsCondition(topicDetails.getAllAddFilterModalDisabledElements(), Condition.disabled);
     Assert.assertFalse(topicDetails.isSaveThisFilterCheckBoxSelected(), "isSaveThisFilterCheckBoxSelected()");
     topicDetails
-        .setFilterCodeFieldAddFilterMdl(filterName);
+        .setFilterCodeFldAddFilterMdl(filterName);
     Assert.assertTrue(topicDetails.isAddFilterBtnAddFilterMdlEnabled(), "isAddFilterBtnAddFilterMdlEnabled()");
     topicDetails.clickAddFilterBtnAndCloseMdl(true);
     Assert.assertTrue(topicDetails.isActiveFilterVisible(filterName), "isActiveFilterVisible()");
   }
 
-  @QaseId(13)
+  @QaseId(352)
   @Test(priority = 13)
+  public void editActiveSmartFilterCheck() {
+    String filterName = randomAlphabetic(5);
+    String filterCode = randomAlphabetic(5);
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
+    topicDetails
+        .openDetailsTab(MESSAGES)
+        .clickMessagesAddFiltersBtn()
+        .waitUntilAddFiltersMdlVisible()
+        .setFilterCodeFldAddFilterMdl(filterCode)
+        .setDisplayNameFldAddFilterMdl(filterName)
+        .clickAddFilterBtnAndCloseMdl(true)
+        .clickEditActiveFilterBtn(filterName)
+        .waitUntilAddFiltersMdlVisible();
+    SoftAssert softly = new SoftAssert();
+    softly.assertEquals(topicDetails.getFilterCodeValue(), filterCode, "getFilterCodeValue()");
+    softly.assertEquals(topicDetails.getFilterNameValue(), filterName, "getFilterNameValue()");
+    softly.assertAll();
+    String newFilterName = randomAlphabetic(5);
+    String newFilterCode = randomAlphabetic(5);
+    topicDetails
+        .setFilterCodeFldAddFilterMdl(newFilterCode)
+        .setDisplayNameFldAddFilterMdl(newFilterName)
+        .clickSaveFilterBtnAndCloseMdl(true);
+    softly.assertTrue(topicDetails.isActiveFilterVisible(newFilterName), "isActiveFilterVisible()");
+    softly.assertEquals(topicDetails.getSearchFieldValue(), newFilterCode, "getSearchFieldValue()");
+    softly.assertAll();
+  }
+
+  @QaseId(13)
+  @Test(priority = 14)
   public void checkFilterSavingWithinSavedFilters() {
     String displayName = randomAlphabetic(5);
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
@@ -328,7 +358,7 @@ public class TopicsTest extends BaseTest {
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
         .waitUntilAddFiltersMdlVisible()
-        .setFilterCodeFieldAddFilterMdl(randomAlphabetic(4))
+        .setFilterCodeFldAddFilterMdl(randomAlphabetic(4))
         .selectSaveThisFilterCheckboxMdl(true)
         .setDisplayNameFldAddFilterMdl(displayName);
     Assert.assertTrue(topicDetails.isAddFilterBtnAddFilterMdlEnabled(),
@@ -341,7 +371,7 @@ public class TopicsTest extends BaseTest {
   }
 
   @QaseId(14)
-  @Test(priority = 14)
+  @Test(priority = 15)
   public void checkApplyingSavedFilterWithinTopicMessages() {
     String displayName = randomAlphabetic(5);
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
@@ -349,7 +379,7 @@ public class TopicsTest extends BaseTest {
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
         .waitUntilAddFiltersMdlVisible()
-        .setFilterCodeFieldAddFilterMdl(randomAlphabetic(4))
+        .setFilterCodeFldAddFilterMdl(randomAlphabetic(4))
         .selectSaveThisFilterCheckboxMdl(true)
         .setDisplayNameFldAddFilterMdl(displayName)
         .clickAddFilterBtnAndCloseMdl(false)
@@ -360,24 +390,25 @@ public class TopicsTest extends BaseTest {
   }
 
   @QaseId(11)
-  @Test(priority = 15)
+  @Test(priority = 16)
   public void checkShowInternalTopicsButton() {
     navigateToTopics();
     topicsList
         .setShowInternalRadioButton(true);
-    SoftAssert softly = new SoftAssert();
-    softly.assertTrue(topicsList.getInternalTopics().size() > 0, "getInternalTopics()");
-    softly.assertTrue(topicsList.getNonInternalTopics().size() > 0, "getNonInternalTopics()");
-    softly.assertAll();
+    Assert.assertTrue(topicsList.getInternalTopics().size() > 0, "getInternalTopics()");
+    topicsList
+        .goToLastPage();
+    Assert.assertTrue(topicsList.getNonInternalTopics().size() > 0, "getNonInternalTopics()");
     topicsList
         .setShowInternalRadioButton(false);
+    SoftAssert softly = new SoftAssert();
     softly.assertEquals(topicsList.getInternalTopics().size(), 0, "getInternalTopics()");
     softly.assertTrue(topicsList.getNonInternalTopics().size() > 0, "getNonInternalTopics()");
     softly.assertAll();
   }
 
   @QaseId(334)
-  @Test(priority = 16)
+  @Test(priority = 17)
   public void checkInternalTopicsNaming() {
     navigateToTopics();
     SoftAssert softly = new SoftAssert();
@@ -390,7 +421,7 @@ public class TopicsTest extends BaseTest {
   }
 
   @QaseId(56)
-  @Test(priority = 17)
+  @Test(priority = 18)
   public void checkRetentionBytesAccordingToMaxSizeOnDisk() {
     navigateToTopics();
     topicsList
@@ -438,7 +469,7 @@ public class TopicsTest extends BaseTest {
   }
 
   @QaseId(247)
-  @Test(priority = 18)
+  @Test(priority = 19)
   public void recreateTopicFromTopicProfile() {
     Topic topicToRecreate = new Topic()
         .setName("topic-to-recreate-" + randomAlphabetic(5))
@@ -466,7 +497,7 @@ public class TopicsTest extends BaseTest {
   }
 
   @QaseId(8)
-  @Test(priority = 19)
+  @Test(priority = 20)
   public void checkCopyTopicPossibility() {
     Topic topicToCopy = new Topic()
         .setName("topic-to-copy-" + randomAlphabetic(5))
@@ -486,11 +517,7 @@ public class TopicsTest extends BaseTest {
     topicDetails
         .waitUntilScreenReady();
     TOPIC_LIST.add(topicToCopy);
-    SoftAssert softly = new SoftAssert();
-    softly.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS, "Topic successfully created."),
-        "isAlertWithMessageVisible()");
-    softly.assertTrue(topicDetails.isTopicHeaderVisible(topicToCopy.getName()), "isTopicHeaderVisible()");
-    softly.assertAll();
+    Assert.assertTrue(topicDetails.isTopicHeaderVisible(topicToCopy.getName()), "isTopicHeaderVisible()");
   }
 
   @AfterClass(alwaysRun = true)

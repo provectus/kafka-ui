@@ -51,6 +51,7 @@ public class ClustersProperties {
     List<Masking> masking;
     Long pollingThrottleRate;
     TruststoreConfig ssl;
+    AuditProperties audit;
   }
 
   @Data
@@ -131,8 +132,9 @@ public class ClustersProperties {
   @Data
   public static class Masking {
     Type type;
-    List<String> fields; //if null or empty list - policy will be applied to all fields
-    List<String> pattern; //used when type=MASK
+    List<String> fields;
+    String fieldsNamePattern;
+    List<String> maskingCharsReplacement; //used when type=MASK
     String replacement; //used when type=REPLACE
     String topicKeysPattern;
     String topicValuesPattern;
@@ -140,6 +142,17 @@ public class ClustersProperties {
     public enum Type {
       REMOVE, MASK, REPLACE
     }
+  }
+
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class AuditProperties {
+    String topic;
+    Integer auditTopicsPartitions;
+    Boolean topicAuditEnabled;
+    Boolean consoleAuditEnabled;
+    Map<String, String> auditTopicProperties;
   }
 
   @PostConstruct

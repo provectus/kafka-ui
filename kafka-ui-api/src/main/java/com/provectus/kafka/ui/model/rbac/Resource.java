@@ -11,7 +11,9 @@ public enum Resource {
   CONSUMER,
   SCHEMA,
   CONNECT,
-  KSQL;
+  KSQL,
+  ACL,
+  AUDIT;
 
   @Nullable
   public static Resource fromString(String name) {

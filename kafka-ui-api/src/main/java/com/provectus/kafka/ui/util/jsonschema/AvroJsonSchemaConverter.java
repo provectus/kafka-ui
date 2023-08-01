@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.avro.Schema;
 import reactor.util.function.Tuple2;
@@ -40,6 +41,10 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
 
   private FieldSchema convertSchema(Schema schema,
                                     Map<String, FieldSchema> definitions, boolean isRoot) {
+    Optional<FieldSchema> logicalTypeSchema = JsonAvroConversion.LogicalTypeConversion.getJsonSchema(schema);
+    if (logicalTypeSchema.isPresent()) {
+      return logicalTypeSchema.get();
+    }
     if (!schema.isUnion()) {
       JsonType type = convertType(schema);
       switch (type.getType()) {
@@ -65,7 +70,6 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
       return createUnionSchema(schema, definitions);
     }
   }
-
 
   // this method formats json-schema field in a way
   // to fit avro-> json encoding rules (https://avro.apache.org/docs/1.11.1/specification/_print/#json-encoding)
@@ -147,30 +151,16 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
   }
 
   private JsonType convertType(Schema schema) {
-    switch (schema.getType()) {
-      case INT:
-      case LONG:
-        return new SimpleJsonType(JsonType.Type.INTEGER);
-      case MAP:
-      case RECORD:
-        return new SimpleJsonType(JsonType.Type.OBJECT);
-      case ENUM:
-        return new EnumJsonType(schema.getEnumSymbols());
-      case BYTES:
-      case STRING:
-        return new SimpleJsonType(JsonType.Type.STRING);
-      case NULL:
-        return new SimpleJsonType(JsonType.Type.NULL);
-      case ARRAY:
-        return new SimpleJsonType(JsonType.Type.ARRAY);
-      case FIXED:
-      case FLOAT:
-      case DOUBLE:
-        return new SimpleJsonType(JsonType.Type.NUMBER);
-      case BOOLEAN:
-        return new SimpleJsonType(JsonType.Type.BOOLEAN);
-      default:
-        return new SimpleJsonType(JsonType.Type.STRING);
-    }
+    return switch (schema.getType()) {
+      case INT, LONG -> new SimpleJsonType(JsonType.Type.INTEGER);
+      case MAP, RECORD -> new SimpleJsonType(JsonType.Type.OBJECT);
+      case ENUM -> new EnumJsonType(schema.getEnumSymbols());
+      case BYTES, STRING -> new SimpleJsonType(JsonType.Type.STRING);
+      case NULL -> new SimpleJsonType(JsonType.Type.NULL);
+      case ARRAY -> new SimpleJsonType(JsonType.Type.ARRAY);
+      case FIXED, FLOAT, DOUBLE -> new SimpleJsonType(JsonType.Type.NUMBER);
+      case BOOLEAN -> new SimpleJsonType(JsonType.Type.BOOLEAN);
+      default -> new SimpleJsonType(JsonType.Type.STRING);
+    };
   }
 }

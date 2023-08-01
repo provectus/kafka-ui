@@ -14,9 +14,10 @@ import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.Step;
 import io.qameta.allure.selenide.AllureSelenide;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 @Slf4j
 public abstract class WebDriver {
@@ -29,7 +30,7 @@ public abstract class WebDriver {
     Configuration.screenshots = true;
     Configuration.savePageSource = false;
     Configuration.pageLoadTimeout = 120000;
-    ChromeOptions options = new ChromeOptions()
+    ChromeOptions chromeOptions = new ChromeOptions()
         .addArguments("--no-sandbox")
         .addArguments("--verbose")
         .addArguments("--remote-allow-origins=*")
@@ -37,14 +38,15 @@ public abstract class WebDriver {
         .addArguments("--disable-gpu")
         .addArguments("--lang=en_US");
     switch (BROWSER) {
-      case (LOCAL) -> Configuration.browserCapabilities = options;
+      case (LOCAL) -> Configuration.browserCapabilities = chromeOptions;
       case (CONTAINER) -> {
         Configuration.remote = REMOTE_URL;
         Configuration.remoteConnectionTimeout = 180000;
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("enableVNC", true);
-        capabilities.setCapability("enableVideo", false);
-        Configuration.browserCapabilities = capabilities.merge(options);
+        Map<String, Object> selenoidOptions = new HashMap<>();
+        selenoidOptions.put("enableVNC", true);
+        selenoidOptions.put("enableVideo", false);
+        chromeOptions.setCapability("selenoid:options", selenoidOptions);
+        Configuration.browserCapabilities = chromeOptions;
       }
       default -> throw new IllegalStateException("Unexpected value: " + BROWSER);
     }

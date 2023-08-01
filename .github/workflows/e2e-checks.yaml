@@ -1,4 +1,4 @@
-name: E2E PR health check
+name: "E2E: PR healthcheck"
 on:
   pull_request_target:
     types: [ "opened", "edited", "reopened", "synchronize" ]
@@ -8,6 +8,8 @@ on:
       - "kafka-ui-react-app/**"
       - "kafka-ui-e2e-checks/**"
       - "pom.xml"
+permissions:
+  statuses: write
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -18,8 +20,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.S3_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.S3_AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
       - name: Set up environment
         id: set_env_values
@@ -45,7 +47,7 @@ jobs:
         # use the following command until #819 will be fixed
         run: |
           docker-compose -f kafka-ui-e2e-checks/docker/selenoid-git.yaml up -d
-          docker-compose -f ./documentation/compose/e2e-tests.yaml up -d
+          docker-compose -f ./documentation/compose/e2e-tests.yaml up -d && until [ "$(docker exec  kafka-ui wget --spider  --server-response  http://localhost:8080/actuator/health 2>&1 |  grep -c 'HTTP/1.1 200 OK')" == "1" ]; do echo "Waiting for kafka-ui ..." && sleep 1; done
       - name: Run test suite
         run: |
           ./mvnw -B -ntp versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}

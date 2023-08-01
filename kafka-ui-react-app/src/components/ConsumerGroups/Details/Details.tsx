@@ -16,13 +16,15 @@ import { Table } from 'components/common/table/Table/Table.styled';
 import getTagColor from 'components/common/Tag/getTagColor';
 import { Dropdown } from 'components/common/Dropdown';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
-import { Action, ResourceType } from 'generated-sources';
+import { Action, ConsumerGroupState, ResourceType } from 'generated-sources';
 import { ActionDropdownItem } from 'components/common/ActionComponent';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import {
   useConsumerGroupDetails,
   useDeleteConsumerGroupMutation,
 } from 'lib/hooks/api/consumers';
+import Tooltip from 'components/common/Tooltip/Tooltip';
+import { CONSUMER_GROUP_STATE_TOOLTIPS } from 'lib/constants';
 
 import ListItem from './ListItem';
 
@@ -54,6 +56,8 @@ const Details: React.FC = () => {
     ? filteredPartitionsByTopic
     : Object.keys(partitionsByTopic);
 
+  const hasAssignedTopics = consumerGroup?.data?.topics !== 0;
+
   return (
     <div>
       <div>
@@ -71,6 +75,7 @@ const Details: React.FC = () => {
                   action: Action.RESET_OFFSETS,
                   value: consumerGroupID,
                 }}
+                disabled={!hasAssignedTopics}
               >
                 Reset offset
               </ActionDropdownItem>
@@ -93,9 +98,19 @@ const Details: React.FC = () => {
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator label="State">
-            <Tag color={getTagColor(consumerGroup.data?.state)}>
-              {consumerGroup.data?.state}
-            </Tag>
+            <Tooltip
+              value={
+                <Tag color={getTagColor(consumerGroup.data?.state)}>
+                  {consumerGroup.data?.state}
+                </Tag>
+              }
+              content={
+                CONSUMER_GROUP_STATE_TOOLTIPS[
+                  consumerGroup.data?.state || ConsumerGroupState.UNKNOWN
+                ]
+              }
+              placement="bottom-start"
+            />
           </Metrics.Indicator>
           <Metrics.Indicator label="Members">
             {consumerGroup.data?.members}
@@ -110,7 +125,7 @@ const Details: React.FC = () => {
             {consumerGroup.data?.coordinator?.id}
           </Metrics.Indicator>
           <Metrics.Indicator label="Total lag">
-            {consumerGroup.data?.messagesBehind}
+            {consumerGroup.data?.consumerLag}
           </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>
@@ -121,7 +136,7 @@ const Details: React.FC = () => {
         <thead>
           <tr>
             <TableHeaderCell title="Topic" />
-            <TableHeaderCell title="Messages behind" />
+            <TableHeaderCell title="Consumer Lag" />
           </tr>
         </thead>
         <tbody>

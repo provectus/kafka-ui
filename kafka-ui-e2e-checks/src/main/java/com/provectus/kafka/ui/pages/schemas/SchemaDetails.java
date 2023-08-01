@@ -13,7 +13,7 @@ public class SchemaDetails extends BasePage {
   protected SelenideElement compatibilityField = $x("//h4[contains(text(),'Compatibility')]/../p");
   protected SelenideElement editSchemaBtn = $x("//button[contains(text(),'Edit Schema')]");
   protected SelenideElement removeBtn = $x("//*[contains(text(),'Remove')]");
-  protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
+  protected SelenideElement schemaConfirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
   protected SelenideElement schemaTypeField = $x("//h4[contains(text(),'Type')]/../p");
   protected SelenideElement latestVersionField = $x("//h4[contains(text(),'Latest version')]/../p");
   protected SelenideElement compareVersionBtn = $x("//button[text()='Compare Versions']");
@@ -62,8 +62,8 @@ public class SchemaDetails extends BasePage {
   public SchemaDetails removeSchema() {
     clickByJavaScript(dotMenuBtn);
     removeBtn.shouldBe(Condition.enabled).click();
-    confirmBtn.shouldBe(Condition.visible).click();
-    confirmBtn.shouldBe(Condition.disappear);
+    schemaConfirmBtn.shouldBe(Condition.visible).click();
+    schemaConfirmBtn.shouldBe(Condition.disappear);
     return this;
   }
 }

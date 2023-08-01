@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useContext } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import {
   accessErrorPage,
@@ -18,6 +18,7 @@ import { Toaster } from 'react-hot-toast';
 import GlobalCSS from 'components/globalCss';
 import * as S from 'components/App.styled';
 import ClusterConfigForm from 'widgets/ClusterConfigForm';
+import { ThemeModeContext } from 'components/contexts/ThemeModeContext';
 
 import ConfirmationModal from './common/ConfirmationModal/ConfirmationModal';
 import { ConfirmContextProvider } from './contexts/ConfirmContext';
@@ -30,6 +31,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       suspense: true,
+      networkMode: 'offlineFirst',
       onError(error) {
         showServerError(error as Response);
       },
@@ -42,7 +44,7 @@ const queryClient = new QueryClient({
   },
 });
 const App: React.FC = () => {
-  const [isDarkMode, setDarkMode] = React.useState<boolean>(false);
+  const { isDarkMode } = useContext(ThemeModeContext);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -53,7 +55,7 @@ const App: React.FC = () => {
               <ConfirmContextProvider>
                 <GlobalCSS />
                 <S.Layout>
-                  <PageContainer setDarkMode={setDarkMode}>
+                  <PageContainer>
                     <Routes>
                       {['/', '/ui', '/ui/clusters'].map((path) => (
                         <Route

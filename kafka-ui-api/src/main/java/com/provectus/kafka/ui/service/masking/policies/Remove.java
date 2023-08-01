@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.util.List;
+
 
 class Remove extends MaskingPolicy {
 
-  Remove(List<String> fieldNames) {
-    super(fieldNames);
+  Remove(FieldsSelector fieldsSelector) {
+    super(fieldsSelector);
   }
 
   @Override

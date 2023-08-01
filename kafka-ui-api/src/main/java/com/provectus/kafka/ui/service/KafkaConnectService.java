@@ -24,7 +24,6 @@ import com.provectus.kafka.ui.model.NewConnectorDTO;
 import com.provectus.kafka.ui.model.TaskDTO;
 import com.provectus.kafka.ui.model.connect.InternalConnectInfo;
 import com.provectus.kafka.ui.util.ReactiveFailover;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -109,6 +108,7 @@ public class KafkaConnectService {
   private Stream<String> getStringsForSearch(FullConnectorInfoDTO fullConnectorInfo) {
     return Stream.of(
         fullConnectorInfo.getName(),
+        fullConnectorInfo.getConnect(),
         fullConnectorInfo.getStatus().getState().getValue(),
         fullConnectorInfo.getType().getValue());
   }
@@ -175,19 +175,14 @@ public class KafkaConnectService {
                         e -> emptyStatus(connectorName))
                     .map(connectorStatus -> {
                       var status = connectorStatus.getConnector();
-                      final Map<String, Object> obfuscatedConfig = connector.getConfig().entrySet()
-                          .stream()
-                          .collect(Collectors.toMap(
-                              Map.Entry::getKey,
-                              e -> kafkaConfigSanitizer.sanitize(e.getKey(), e.getValue())
-                          ));
-                      ConnectorDTO result = (ConnectorDTO) new ConnectorDTO()
+                      var sanitizedConfig = kafkaConfigSanitizer.sanitizeConnectorConfig(connector.getConfig());
+                      ConnectorDTO result = new ConnectorDTO()
                           .connect(connectName)
                           .status(kafkaConnectMapper.fromClient(status))
                           .type(connector.getType())
                           .tasks(connector.getTasks())
                           .name(connector.getName())
-                          .config(obfuscatedConfig);
+                          .config(sanitizedConfig);
 
                       if (connectorStatus.getTasks() != null) {
                         boolean isAnyTaskFailed = connectorStatus.getTasks().stream()
@@ -216,12 +211,7 @@ public class KafkaConnectService {
                                                       String connectorName) {
     return api(cluster, connectName)
         .mono(c -> c.getConnectorConfig(connectorName))
-        .map(connectorConfig -> {
-          final Map<String, Object> obfuscatedMap = new HashMap<>();
-          connectorConfig.forEach((key, value) ->
-              obfuscatedMap.put(key, kafkaConfigSanitizer.sanitize(key, value)));
-          return obfuscatedMap;
-        });
+        .map(kafkaConfigSanitizer::sanitizeConnectorConfig);
   }
 
   public Mono<ConnectorDTO> setConnectorConfig(KafkaCluster cluster, String connectName,

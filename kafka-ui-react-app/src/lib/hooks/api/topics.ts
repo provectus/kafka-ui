@@ -122,9 +122,6 @@ export function useCreateTopicMutation(clusterName: ClusterName) {
       }),
     {
       onSuccess: () => {
-        showSuccessAlert({
-          message: `Topic successfully created.`,
-        });
         client.invalidateQueries(topicKeys.all(clusterName));
       },
     }
@@ -307,6 +304,11 @@ export function useTopicAnalysis(
       useErrorBoundary: true,
       retry: false,
       suspense: false,
+      onError: (error: Response) => {
+        if (error.status !== 404) {
+          showServerError(error as Response);
+        }
+      },
     }
   );
 }

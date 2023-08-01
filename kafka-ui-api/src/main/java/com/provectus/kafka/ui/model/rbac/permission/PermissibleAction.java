@@ -1,4 +1,8 @@
 package com.provectus.kafka.ui.model.rbac.permission;
 
-public interface PermissibleAction {
+public sealed interface PermissibleAction permits
+    AclAction, ApplicationConfigAction,
+    ConsumerGroupAction, SchemaAction,
+    ConnectAction, ClusterConfigAction,
+    KsqlAction, TopicAction, AuditAction {
 }

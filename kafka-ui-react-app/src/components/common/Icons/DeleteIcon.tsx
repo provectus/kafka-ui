@@ -1,13 +1,14 @@
 import React from 'react';
 import { useTheme } from 'styled-components';
 
-const DeleteIcon: React.FC = () => {
+const DeleteIcon: React.FC<{ fill?: string }> = ({ fill }) => {
   const theme = useTheme();
+  const curentFill = fill || theme.editFilter.deleteIconColor;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 448 512"
-      fill={theme.editFilter.deleteIconColor}
+      fill={curentFill}
       width="14"
       height="14"
     >
