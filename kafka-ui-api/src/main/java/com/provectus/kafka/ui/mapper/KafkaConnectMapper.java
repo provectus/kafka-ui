@@ -34,7 +34,7 @@ public interface KafkaConnectMapper {
       com.provectus.kafka.ui.connect.model.ConnectorPluginConfigValidationResponse
           connectorPluginConfigValidationResponse);
 
-  default FullConnectorInfoDTO fullConnectorInfoFromTuple(InternalConnectInfo connectInfo) {
+  default FullConnectorInfoDTO fullConnectorInfo(InternalConnectInfo connectInfo) {
     ConnectorDTO connector = connectInfo.getConnector();
     List<TaskDTO> tasks = connectInfo.getTasks();
     int failedTasksCount = (int) tasks.stream()
