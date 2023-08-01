@@ -97,6 +97,19 @@ public class AccessControlService {
       return Mono.empty();
     }
 
+    var accessDeniedException = new AccessDeniedException("Access denied");
+
+    if (CollectionUtils.isNotEmpty(context.getApplicationConfigActions())) {
+      return getUser()
+          .doOnNext(user -> {
+            boolean accessGranted = isApplicationConfigAccessible(context, user);
+
+            if (!accessGranted) {
+              throw accessDeniedException;
+            }
+          }).then();
+    }
+
     return getUser()
         .doOnNext(user -> {
           boolean accessGranted =
@@ -113,7 +126,7 @@ public class AccessControlService {
                   && isAuditAccessible(context, user);
 
           if (!accessGranted) {
-            throw new AccessDeniedException("Access denied");
+            throw accessDeniedException;
           }
         })
         .then();
