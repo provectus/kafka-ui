@@ -51,7 +51,8 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class AccessControlService {
 
-  public static final String ACCESS_DENIED = "Access denied";
+  private static final String ACCESS_DENIED = "Access denied";
+
   @Nullable
   private final InMemoryReactiveClientRegistrationRepository clientRegistrationRepository;
   private final RoleBasedAccessControlProperties properties;
