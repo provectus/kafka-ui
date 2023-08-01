@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +38,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuples;
 
 @Service
 @Slf4j
@@ -61,39 +59,22 @@ public class KafkaConnectService {
   public Flux<FullConnectorInfoDTO> getAllConnectors(final KafkaCluster cluster,
                                                      @Nullable final String search) {
     return getConnects(cluster)
-        .flatMap(connect -> getConnectorNames(cluster, connect.getName()).map(cn -> Tuples.of(connect.getName(), cn)))
-        .flatMap(pair -> getConnector(cluster, pair.getT1(), pair.getT2()))
-        .flatMap(connector ->
-            getConnectorConfig(cluster, connector.getConnect(), connector.getName())
-                .map(config -> InternalConnectInfo.builder()
-                    .connector(connector)
-                    .config(config)
-                    .build()
-                )
-        )
-        .flatMap(connectInfo -> {
-          ConnectorDTO connector = connectInfo.getConnector();
-          return getConnectorTasks(cluster, connector.getConnect(), connector.getName())
-              .collectList()
-              .map(tasks -> InternalConnectInfo.builder()
-                  .connector(connector)
-                  .config(connectInfo.getConfig())
-                  .tasks(tasks)
-                  .build()
-              );
-        })
-        .flatMap(connectInfo -> {
-          ConnectorDTO connector = connectInfo.getConnector();
-          return getConnectorTopics(cluster, connector.getConnect(), connector.getName())
-              .map(ct -> InternalConnectInfo.builder()
-                  .connector(connector)
-                  .config(connectInfo.getConfig())
-                  .tasks(connectInfo.getTasks())
-                  .topics(ct.getTopics())
-                  .build()
-              );
-        })
-        .map(kafkaConnectMapper::fullConnectorInfoFromTuple)
+        .flatMap(connect ->
+            getConnectorNamesWithErrorsSuppress(cluster, connect.getName())
+                .flatMap(connectorName ->
+                    Mono.zip(
+                        getConnector(cluster, connect.getName(), connectorName),
+                        getConnectorConfig(cluster, connect.getName(), connectorName),
+                        getConnectorTasks(cluster, connect.getName(), connectorName).collectList(),
+                        getConnectorTopics(cluster, connect.getName(), connectorName)
+                    ).map(tuple ->
+                        InternalConnectInfo.builder()
+                            .connector(tuple.getT1())
+                            .config(tuple.getT2())
+                            .tasks(tuple.getT3())
+                            .topics(tuple.getT4().getTopics())
+                            .build())))
+        .map(kafkaConnectMapper::fullConnectorInfo)
         .filter(matchesSearchTerm(search));
   }
 
@@ -130,6 +111,11 @@ public class KafkaConnectService {
         .collectList().map(e -> e.get(0))
         .map(this::parseConnectorsNamesStringToList)
         .flatMapMany(Flux::fromIterable);
+  }
+
+  // returns empty flux if there was an error communicating with Connect
+  public Flux<String> getConnectorNamesWithErrorsSuppress(KafkaCluster cluster, String connectName) {
+    return getConnectorNames(cluster, connectName).onErrorComplete();
   }
 
   @SneakyThrows

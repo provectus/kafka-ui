@@ -77,6 +77,8 @@ public abstract class AbstractIntegrationTest {
       System.setProperty("kafka.clusters.0.kafkaConnect.0.userName", "kafka-connect");
       System.setProperty("kafka.clusters.0.kafkaConnect.0.password", "kafka-connect");
       System.setProperty("kafka.clusters.0.kafkaConnect.0.address", kafkaConnect.getTarget());
+      System.setProperty("kafka.clusters.0.kafkaConnect.1.name", "notavailable");
+      System.setProperty("kafka.clusters.0.kafkaConnect.1.address", "http://notavailable:6666");
       System.setProperty("kafka.clusters.0.masking.0.type", "REPLACE");
       System.setProperty("kafka.clusters.0.masking.0.replacement", "***");
       System.setProperty("kafka.clusters.0.masking.0.topicValuesPattern", "masking-test-.*");
