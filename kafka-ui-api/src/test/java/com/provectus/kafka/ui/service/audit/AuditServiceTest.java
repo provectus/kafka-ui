@@ -81,7 +81,7 @@ class AuditServiceTest {
 
     @Test
     void noWriterIfNoAuditPropsSet() {
-      var maybeWriter = createAuditWriter(cluster, adminClientMock, producerSupplierMock);
+      var maybeWriter = createAuditWriter(cluster, () -> adminClientMock, producerSupplierMock);
       assertThat(maybeWriter).isEmpty();
     }
 
@@ -91,7 +91,7 @@ class AuditServiceTest {
       auditProps.setConsoleAuditEnabled(true);
       clustersProperties.setAudit(auditProps);
 
-      var maybeWriter = createAuditWriter(cluster, adminClientMock, producerSupplierMock);
+      var maybeWriter = createAuditWriter(cluster, () -> adminClientMock, producerSupplierMock);
       assertThat(maybeWriter).isPresent();
 
       var writer = maybeWriter.get();
@@ -116,7 +116,7 @@ class AuditServiceTest {
         when(adminClientMock.listTopics(true))
             .thenReturn(Mono.just(Set.of("test_audit_topic")));
 
-        var maybeWriter = createAuditWriter(cluster, adminClientMock, producerSupplierMock);
+        var maybeWriter = createAuditWriter(cluster, () -> adminClientMock, producerSupplierMock);
         assertThat(maybeWriter).isPresent();
 
         //checking there was no topic creation request
@@ -136,7 +136,7 @@ class AuditServiceTest {
         when(adminClientMock.createTopic(eq("test_audit_topic"), eq(3), eq(null), anyMap()))
             .thenReturn(Mono.empty());
 
-        var maybeWriter = createAuditWriter(cluster, adminClientMock, producerSupplierMock);
+        var maybeWriter = createAuditWriter(cluster, () -> adminClientMock, producerSupplierMock);
         assertThat(maybeWriter).isPresent();
 
         //verifying topic created
