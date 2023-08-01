@@ -3,11 +3,8 @@ package com.provectus.kafka.ui.emitter;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.RateLimiter;
 import com.provectus.kafka.ui.config.ClustersProperties;
-import com.provectus.kafka.ui.util.ConsumerRecordsUtil;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.common.utils.Bytes;
 
 @Slf4j
 public class PollingThrottler {
@@ -36,18 +33,17 @@ public class PollingThrottler {
     return new PollingThrottler("noop", RateLimiter.create(Long.MAX_VALUE));
   }
 
-  public void throttleAfterPoll(int polledBytes) {
+  //returns true if polling was throttled
+  public boolean throttleAfterPoll(int polledBytes) {
     if (polledBytes > 0) {
       double sleptSeconds = rateLimiter.acquire(polledBytes);
       if (!throttled && sleptSeconds > 0.0) {
         throttled = true;
         log.debug("Polling throttling enabled for cluster {} at rate {} bytes/sec", clusterName, rateLimiter.getRate());
+        return true;
       }
     }
-  }
-
-  public void throttleAfterPoll(ConsumerRecords<Bytes, Bytes> polled) {
-    throttleAfterPoll(ConsumerRecordsUtil.calculatePolledSize(polled));
+    return false;
   }
 
 }
