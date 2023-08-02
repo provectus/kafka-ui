@@ -12,7 +12,7 @@ import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.serdes.PropertyResolverImpl;
 import com.provectus.kafka.ui.serdes.builtin.StringSerde;
 import com.provectus.kafka.ui.service.PollingCursorsStorage;
-import java.io.Serializable;
+import com.provectus.kafka.ui.util.ApplicationMetrics;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -20,11 +20,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.serialization.BytesDeserializer;
-import org.apache.kafka.common.utils.Bytes;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -172,17 +169,12 @@ class CursorTest extends AbstractIntegrationTest {
     );
   }
 
-  private KafkaConsumer<Bytes, Bytes> createConsumer() {
-    final Map<String, ? extends Serializable> map = Map.of(
-        ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers(),
-        ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString(),
-        ConsumerConfig.MAX_POLL_RECORDS_CONFIG, PAGE_SIZE - 1, // to check multiple polls
-        ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class,
-        ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class
-    );
+  private EnhancedConsumer createConsumer() {
     Properties props = new Properties();
-    props.putAll(map);
-    return new KafkaConsumer<>(props);
+    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers());
+    props.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
+    props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, PAGE_SIZE - 1); // to check multiple polls
+    return new EnhancedConsumer(props, PollingThrottler.noop(), ApplicationMetrics.noop());
   }
 
   private static ConsumerRecordDeserializer createRecordsDeserializer() {
