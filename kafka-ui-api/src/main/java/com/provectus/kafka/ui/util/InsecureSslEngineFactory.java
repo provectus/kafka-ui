@@ -17,7 +17,7 @@ public class InsecureSslEngineFactory implements SslEngineFactory {
 
   @Override
   public SSLEngine createClientSslEngine(String peerHost, int peerPort, String endpointIdentification) {
-    var trustManagers =  InsecureTrustManagerFactory.INSTANCE.getTrustManagers();
+    var trustManagers = InsecureTrustManagerFactory.INSTANCE.getTrustManagers();
     try {
       this.sslContext = SSLContext.getInstance("SSL");
       sslContext.init(null, trustManagers, new SecureRandom());
