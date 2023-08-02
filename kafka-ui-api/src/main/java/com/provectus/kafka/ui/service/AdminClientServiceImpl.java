@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.util.SslPropertiesUtil;
+import com.provectus.kafka.ui.util.KafkaClientSslPropertiesUtil;
 import java.io.Closeable;
 import java.time.Instant;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class AdminClientServiceImpl implements AdminClientService, Closeable {
   private Mono<ReactiveAdminClient> createAdminClient(KafkaCluster cluster) {
     return Mono.fromSupplier(() -> {
       Properties properties = new Properties();
-      SslPropertiesUtil.addKafkaSslProperties(cluster.getOriginalProperties().getSsl(), properties);
+      KafkaClientSslPropertiesUtil.addKafkaSslProperties(cluster.getOriginalProperties().getSsl(), properties);
       properties.putAll(cluster.getProperties());
       properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
       properties.putIfAbsent(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);

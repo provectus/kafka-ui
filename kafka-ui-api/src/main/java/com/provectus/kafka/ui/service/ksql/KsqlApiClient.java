@@ -130,8 +130,8 @@ public class KsqlApiClient {
    * Some version of ksqldb (?..0.24) can cut off json streaming without respect proper array ending like <p/>
    * <code>[{"header":{"queryId":"...","schema":"..."}}, ]</code>
    * which will cause json parsing error and will be propagated to UI.
-   * This is a know issue(https://github.com/confluentinc/ksql/issues/8746), but we don't know when it will be fixed.
-   * To workaround this we need to check DecodingException err msg.
+   * This is a know issue(<a href="https://github.com/confluentinc/ksql/issues/8746">...</a>), but we don't know when it will be fixed.
+   * To work around this we need to check DecodingException err msg.
    */
   private boolean isUnexpectedJsonArrayEndCharException(Throwable th) {
     return th instanceof DecodingException

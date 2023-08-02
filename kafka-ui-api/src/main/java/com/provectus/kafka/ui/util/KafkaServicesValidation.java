@@ -65,7 +65,7 @@ public final class KafkaServicesValidation {
                                                                                  @Nullable
                                                                                  TruststoreConfig ssl) {
     Properties properties = new Properties();
-    SslPropertiesUtil.addKafkaSslProperties(ssl, properties);
+    KafkaClientSslPropertiesUtil.addKafkaSslProperties(ssl, properties);
     properties.putAll(clusterProps);
     properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     // editing properties to make validation faster

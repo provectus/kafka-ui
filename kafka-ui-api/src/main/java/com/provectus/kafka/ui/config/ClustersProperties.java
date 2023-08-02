@@ -35,22 +35,30 @@ public class ClustersProperties {
   public static class Cluster {
     String name;
     String bootstrapServers;
+
+    TruststoreConfig ssl;
+
     String schemaRegistry;
     SchemaRegistryAuth schemaRegistryAuth;
     KeystoreConfig schemaRegistrySsl;
+
     String ksqldbServer;
     KsqldbServerAuth ksqldbServerAuth;
     KeystoreConfig ksqldbServerSsl;
+
     List<ConnectCluster> kafkaConnect;
-    MetricsConfigData metrics;
-    Map<String, Object> properties;
-    boolean readOnly = false;
+
     List<SerdeConfig> serde;
     String defaultKeySerde;
     String defaultValueSerde;
-    List<Masking> masking;
+
+    MetricsConfigData metrics;
+    Map<String, Object> properties;
+    boolean readOnly = false;
     Long pollingThrottleRate;
-    TruststoreConfig ssl;
+
+    List<Masking> masking;
+
     AuditProperties audit;
   }
 
@@ -101,6 +109,16 @@ public class ClustersProperties {
   public static class TruststoreConfig {
     String truststoreLocation;
     String truststorePassword;
+    boolean verifySSL = true;
+  }
+
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @ToString(exclude = {"keystorePassword"})
+  public static class KeystoreConfig {
+    String keystoreLocation;
+    String keystorePassword;
   }
 
   @Data
@@ -118,15 +136,6 @@ public class ClustersProperties {
   public static class KsqldbServerAuth {
     String username;
     String password;
-  }
-
-  @Data
-  @NoArgsConstructor
-  @AllArgsConstructor
-  @ToString(exclude = {"keystorePassword"})
-  public static class KeystoreConfig {
-    String keystoreLocation;
-    String keystorePassword;
   }
 
   @Data
@@ -178,6 +187,7 @@ public class ClustersProperties {
     }
   }
 
+  @SuppressWarnings("unchecked")
   private Map<String, Object> flattenClusterProperties(@Nullable String prefix,
                                                        @Nullable Map<String, Object> propertiesMap) {
     Map<String, Object> flattened = new HashMap<>();

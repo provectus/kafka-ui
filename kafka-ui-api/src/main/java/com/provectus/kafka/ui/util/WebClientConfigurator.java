@@ -7,6 +7,7 @@ import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.exception.ValidationException;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.util.function.Consumer;
@@ -45,6 +46,10 @@ public class WebClientConfigurator {
 
   public WebClientConfigurator configureSsl(@Nullable ClustersProperties.TruststoreConfig truststoreConfig,
                                             @Nullable ClustersProperties.KeystoreConfig keystoreConfig) {
+    if (truststoreConfig != null && !truststoreConfig.isVerifySSL()) {
+      return configureNoSSL();
+    }
+
     return configureSsl(
         keystoreConfig != null ? keystoreConfig.getKeystoreLocation() : null,
         keystoreConfig != null ? keystoreConfig.getKeystorePassword() : null,
@@ -91,6 +96,17 @@ public class WebClientConfigurator {
     }
 
     // Create webclient
+    SslContext context = contextBuilder.build();
+
+    httpClient = httpClient.secure(t -> t.sslContext(context));
+    return this;
+  }
+
+  @SneakyThrows
+  public WebClientConfigurator configureNoSSL() {
+    var contextBuilder = SslContextBuilder.forClient();
+    contextBuilder.trustManager(InsecureTrustManagerFactory.INSTANCE);
+
     SslContext context = contextBuilder.build();
 
     httpClient = httpClient.secure(t -> t.sslContext(context));
