@@ -26,17 +26,17 @@
         <assertj.version>3.19.0</assertj.version>
         <avro.version>1.11.1</avro.version>
         <byte-buddy.version>1.12.19</byte-buddy.version>
-        <confluent.version>7.3.3</confluent.version>
+        <confluent.version>7.4.0</confluent.version>
         <datasketches-java.version>3.1.0</datasketches-java.version>
         <groovy.version>3.0.13</groovy.version>
         <jackson.version>2.14.0</jackson.version>
-        <kafka-clients.version>3.3.1</kafka-clients.version>
+        <kafka-clients.version>3.5.0</kafka-clients.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.24</org.projectlombok.version>
         <protobuf-java.version>3.23.3</protobuf-java.version>
         <scala-lang.library.version>2.13.9</scala-lang.library.version>
         <snakeyaml.version>2.0</snakeyaml.version>
-        <spring-boot.version>3.0.6</spring-boot.version>
+        <spring-boot.version>3.1.1</spring-boot.version>
         <kafka-ui-serde-api.version>1.0.0</kafka-ui-serde-api.version>
         <odd-oddrn-generator.version>0.1.17</odd-oddrn-generator.version>
         <odd-oddrn-client.version>0.1.23</odd-oddrn-client.version>

@@ -8,6 +8,9 @@ on:
     paths:
       - "kafka-ui-api/**"
       - "pom.xml"
+permissions:
+  checks: write
+  pull-requests: write
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -29,7 +32,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Build and analyze pull request target
-        if: ${{ github.event_name == 'pull_request_target' }}
+        if: ${{ github.event_name == 'pull_request' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACKEND }}

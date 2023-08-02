@@ -24,6 +24,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.ReactiveAuthenticationManagerAdapter;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
@@ -126,21 +127,15 @@ public class LdapSecurityConfig {
       log.info("Active Directory support for LDAP has been enabled.");
     }
 
-    return http
-        .authorizeExchange()
-        .pathMatchers(AUTH_WHITELIST)
-        .permitAll()
-        .anyExchange()
-        .authenticated()
-
-        .and()
-        .formLogin()
-
-        .and()
-        .logout()
-
-        .and()
-        .csrf().disable()
+    return http.authorizeExchange(spec -> spec
+            .pathMatchers(AUTH_WHITELIST)
+            .permitAll()
+            .anyExchange()
+            .authenticated()
+        )
+        .formLogin(Customizer.withDefaults())
+        .logout(Customizer.withDefaults())
+        .csrf(ServerHttpSecurity.CsrfSpec::disable)
         .build();
   }
 

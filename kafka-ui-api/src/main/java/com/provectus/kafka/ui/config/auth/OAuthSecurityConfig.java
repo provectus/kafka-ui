@@ -12,10 +12,11 @@ import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
-import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientPropertiesRegistrationAdapter;
+import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientPropertiesMapper;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -49,21 +50,15 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
   public SecurityWebFilterChain configure(ServerHttpSecurity http, OAuthLogoutSuccessHandler logoutHandler) {
     log.info("Configuring OAUTH2 authentication.");
 
-    return http.authorizeExchange()
-        .pathMatchers(AUTH_WHITELIST)
-        .permitAll()
-        .anyExchange()
-        .authenticated()
-
-        .and()
-        .oauth2Login()
-
-        .and()
-        .logout()
-        .logoutSuccessHandler(logoutHandler)
-
-        .and()
-        .csrf().disable()
+    return http.authorizeExchange(spec -> spec
+            .pathMatchers(AUTH_WHITELIST)
+            .permitAll()
+            .anyExchange()
+            .authenticated()
+        )
+        .oauth2Login(Customizer.withDefaults())
+        .logout(spec -> spec.logoutSuccessHandler(logoutHandler))
+        .csrf(ServerHttpSecurity.CsrfSpec::disable)
         .build();
   }
 
@@ -103,7 +98,7 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
   public InMemoryReactiveClientRegistrationRepository clientRegistrationRepository() {
     final OAuth2ClientProperties props = OAuthPropertiesConverter.convertProperties(properties);
     final List<ClientRegistration> registrations =
-        new ArrayList<>(OAuth2ClientPropertiesRegistrationAdapter.getClientRegistrations(props).values());
+        new ArrayList<>(new OAuth2ClientPropertiesMapper(props).asClientRegistrations().values());
     if (registrations.isEmpty()) {
       throw new IllegalArgumentException("OAuth2 authentication is enabled but no providers specified.");
     }

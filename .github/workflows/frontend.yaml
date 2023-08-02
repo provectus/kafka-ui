@@ -8,6 +8,9 @@ on:
     paths:
       - "kafka-ui-contract/**"
       - "kafka-ui-react-app/**"
+permissions:
+  checks: write
+  pull-requests: write
 jobs:
   build-and-test:
     env:
@@ -24,7 +27,7 @@ jobs:
         with:
           version: 7.4.0
       - name: Install node
-        uses: actions/setup-node@v3.6.0
+        uses: actions/setup-node@v3.7.0
         with:
           node-version: "16.15.0"
           cache: "pnpm"
