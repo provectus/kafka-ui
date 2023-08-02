@@ -1,8 +1,6 @@
 package com.provectus.kafka.ui.serdes.builtin;
 
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
-import com.provectus.kafka.ui.serde.api.PropertyResolver;
-import com.provectus.kafka.ui.serde.api.RecordHeaders;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import java.util.Base64;
@@ -14,12 +12,6 @@ public class Base64Serde implements BuiltInSerde {
 
   public static String name() {
     return "Base64";
-  }
-
-  @Override
-  public void configure(PropertyResolver serdeProperties,
-                        PropertyResolver kafkaClusterProperties,
-                        PropertyResolver globalProperties) {
   }
 
   @Override
@@ -44,31 +36,25 @@ public class Base64Serde implements BuiltInSerde {
 
   @Override
   public Serializer serializer(String topic, Target type) {
-    return new Serializer() {
-      @Override
-      public byte[] serialize(String input) {
-        input = input.trim();
-        // it is actually a hack to provide ability to sent empty array as a key/value
-        if (input.length() == 0) {
-          return new byte[]{};
-        }
-        return Base64.getDecoder().decode(input);
+    var decoder = Base64.getDecoder();
+    return inputString -> {
+      inputString = inputString.trim();
+      // it is actually a hack to provide ability to sent empty array as a key/value
+      if (inputString.length() == 0) {
+        return new byte[] {};
       }
+      return decoder.decode(inputString);
     };
   }
 
   @Override
   public Deserializer deserializer(String topic, Target type) {
     var encoder = Base64.getEncoder();
-    return new Deserializer() {
-      @Override
-      public DeserializeResult deserialize(RecordHeaders headers, byte[] data) {
-        return new DeserializeResult(
+    return (headers, data) ->
+        new DeserializeResult(
             encoder.encodeToString(data),
             DeserializeResult.Type.STRING,
             Map.of()
         );
-      }
-    };
   }
 }

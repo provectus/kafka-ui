@@ -3,10 +3,7 @@ package com.provectus.kafka.ui.emitter;
 import com.provectus.kafka.ui.model.TopicMessageConsumingDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicMessageNextPageCursorDTO;
-import com.provectus.kafka.ui.util.ConsumerRecordsUtil;
 import javax.annotation.Nullable;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
 
 class ConsumingStats {
@@ -15,23 +12,17 @@ class ConsumingStats {
   private int records = 0;
   private long elapsed = 0;
 
-  /**
-   * returns bytes polled.
-   */
-  int sendConsumingEvt(FluxSink<TopicMessageEventDTO> sink,
-                       ConsumerRecords<Bytes, Bytes> polledRecords,
-                       long elapsed,
-                       int filterApplyErrors) {
-    int polledBytes = ConsumerRecordsUtil.calculatePolledSize(polledRecords);
-    bytes += polledBytes;
+  void sendConsumingEvt(FluxSink<TopicMessageEventDTO> sink,
+                        PolledRecords polledRecords,
+                        int filterApplyErrors) {
+    bytes += polledRecords.bytes();
     this.records += polledRecords.count();
-    this.elapsed += elapsed;
+    this.elapsed += polledRecords.elapsed().toMillis();
     sink.next(
         new TopicMessageEventDTO()
             .type(TopicMessageEventDTO.TypeEnum.CONSUMING)
             .consuming(createConsumingStats(sink, filterApplyErrors))
     );
-    return polledBytes;
   }
 
   void sendFinishEvent(FluxSink<TopicMessageEventDTO> sink, int filterApplyErrors, @Nullable Cursor.Tracking cursor) {

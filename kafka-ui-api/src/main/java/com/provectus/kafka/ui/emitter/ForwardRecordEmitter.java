@@ -13,14 +13,16 @@ import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
 
 @Slf4j
-public class ForwardRecordEmitter extends AbstractEmitter {
+public class ForwardRecordEmitter
+    extends AbstractEmitter
+    implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
 
-  private final Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier;
+  private final Supplier<EnhancedConsumer> consumerSupplier;
   private final ConsumerPosition position;
   private final Cursor.Tracking cursor;
 
   public ForwardRecordEmitter(
-      Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
+      Supplier<EnhancedConsumer> consumerSupplier,
       ConsumerPosition position,
       MessagesProcessing messagesProcessing,
       PollingSettings pollingSettings,
@@ -34,7 +36,7 @@ public class ForwardRecordEmitter extends AbstractEmitter {
   @Override
   public void accept(FluxSink<TopicMessageEventDTO> sink) {
     log.debug("Starting forward polling for {}", position);
-    try (KafkaConsumer<Bytes, Bytes> consumer = consumerSupplier.get()) {
+    try (EnhancedConsumer consumer = consumerSupplier.get()) {
       sendPhase(sink, "Assigning partitions");
       var seekOperations = SeekOperations.create(consumer, position);
       seekOperations.assignAndSeek();
@@ -47,8 +49,9 @@ public class ForwardRecordEmitter extends AbstractEmitter {
           && !emptyPolls.noDataEmptyPollsReached()) {
 
         sendPhase(sink, "Polling");
-        ConsumerRecords<Bytes, Bytes> records = poll(sink, consumer);
-        emptyPolls.count(records);
+        var records = poll(sink, consumer);
+        emptyPolls.count(records.count());
+
         log.debug("{} records polled", records.count());
 
         for (TopicPartition tp : records.partitions()) {

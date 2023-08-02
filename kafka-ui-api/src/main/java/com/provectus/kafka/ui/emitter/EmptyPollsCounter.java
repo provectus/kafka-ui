@@ -17,8 +17,8 @@ public class EmptyPollsCounter {
     this.maxEmptyPolls = maxEmptyPolls;
   }
 
-  public void count(ConsumerRecords<?, ?> polled) {
-    emptyPolls = polled.isEmpty() ? emptyPolls + 1 : 0;
+  public void count(int polledCount) {
+    emptyPolls = polledCount == 0 ? emptyPolls + 1 : 0;
   }
 
   public boolean noDataEmptyPollsReached() {
