@@ -46,8 +46,8 @@ public class WebClientConfigurator {
 
   public WebClientConfigurator configureSsl(@Nullable ClustersProperties.TruststoreConfig truststoreConfig,
                                             @Nullable ClustersProperties.KeystoreConfig keystoreConfig) {
-    if (truststoreConfig != null && !truststoreConfig.isVerifySSL()) {
-      return configureNoSSL();
+    if (truststoreConfig != null && !truststoreConfig.isVerifySsl()) {
+      return configureNoSsl();
     }
 
     return configureSsl(
@@ -103,7 +103,7 @@ public class WebClientConfigurator {
   }
 
   @SneakyThrows
-  public WebClientConfigurator configureNoSSL() {
+  public WebClientConfigurator configureNoSsl() {
     var contextBuilder = SslContextBuilder.forClient();
     contextBuilder.trustManager(InsecureTrustManagerFactory.INSTANCE);
 

@@ -109,7 +109,7 @@ public class ClustersProperties {
   public static class TruststoreConfig {
     String truststoreLocation;
     String truststorePassword;
-    boolean verifySSL = true;
+    boolean verifySsl = true;
   }
 
   @Data

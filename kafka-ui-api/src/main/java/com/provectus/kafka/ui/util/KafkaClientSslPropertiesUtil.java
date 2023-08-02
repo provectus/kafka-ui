@@ -18,7 +18,7 @@ public final class KafkaClientSslPropertiesUtil {
       return;
     }
 
-    if (!truststoreConfig.isVerifySSL()) {
+    if (!truststoreConfig.isVerifySsl()) {
       sink.put(SSL_ENGINE_FACTORY_CLASS_CONFIG, InsecureSslEngineFactory.class);
       return;
     }
