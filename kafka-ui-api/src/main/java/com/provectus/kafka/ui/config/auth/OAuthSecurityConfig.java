@@ -99,6 +99,9 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
     final OAuth2ClientProperties props = OAuthPropertiesConverter.convertProperties(properties);
     final List<ClientRegistration> registrations =
         new ArrayList<>(new OAuth2ClientPropertiesMapper(props).asClientRegistrations().values());
+    if (registrations.isEmpty()) {
+      throw new IllegalArgumentException("OAuth2 authentication is enabled but no providers specified.");
+    }
     return new InMemoryReactiveClientRegistrationRepository(registrations);
   }
 
