@@ -87,26 +87,21 @@ public class BackwardRecordEmitter
 
   private List<ConsumerRecord<Bytes, Bytes>> partitionPollIteration(
       TopicPartition tp,
-      long fromOffset,
-      long toOffset,
+      long fromOffset, //inclusive
+      long toOffset, //exclusive
       EnhancedConsumer consumer,
       FluxSink<TopicMessageEventDTO> sink
   ) {
     consumer.assign(Collections.singleton(tp));
     consumer.seek(tp, fromOffset);
     sendPhase(sink, String.format("Polling partition: %s from offset %s", tp, fromOffset));
-    int desiredMsgsToPoll = (int) (toOffset - fromOffset);
 
     var recordsToSend = new ArrayList<ConsumerRecord<Bytes, Bytes>>();
-
-    EmptyPollsCounter emptyPolls = pollingSettings.createEmptyPollsCounter();
     while (!sink.isCancelled()
         && !sendLimitReached()
-        && recordsToSend.size() < desiredMsgsToPoll
-        && !emptyPolls.noDataEmptyPollsReached()) {
-      var polledRecords = poll(sink, consumer, pollingSettings.getPartitionPollTimeout());
-      emptyPolls.count(polledRecords.count());
+        && consumer.position(tp) < toOffset) {
 
+      var polledRecords = poll(sink, consumer, pollingSettings.getPartitionPollTimeout());
       log.debug("{} records polled from {}", polledRecords.count(), tp);
 
       var filteredRecords = polledRecords.records(tp).stream()
