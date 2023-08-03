@@ -73,13 +73,13 @@ const BrokersList: React.FC = () => {
         header: 'Broker ID',
         accessorKey: 'brokerId',
         // eslint-disable-next-line react/no-unstable-nested-components
-        cell: ({ row: { id }, getValue }) => (
+        cell: ({ getValue }) => (
           <S.RowCell>
             <LinkCell
               value={`${getValue<string | number>()}`}
               to={encodeURIComponent(`${getValue<string | number>()}`)}
             />
-            {id === String(activeControllers) && (
+            {getValue<string | number>() === activeControllers && (
               <Tooltip
                 value={<CheckMarkRoundIcon />}
                 content="Active Controller"
