@@ -16,16 +16,12 @@ public class HexSerdeTest {
   private static final byte[] TEST_BYTES = "hello world".getBytes();
   private static final String TEST_BYTES_HEX_ENCODED = "68 65 6C 6C 6F 20 77 6F 72 6C 64";
 
-  private Serde hexSerde;
+  private HexSerde hexSerde;
 
   @BeforeEach
   void init() {
     hexSerde = new HexSerde();
-    hexSerde.configure(
-        PropertyResolverImpl.empty(),
-        PropertyResolverImpl.empty(),
-        PropertyResolverImpl.empty()
-    );
+    hexSerde.autoConfigure(PropertyResolverImpl.empty(), PropertyResolverImpl.empty());
   }
 
 

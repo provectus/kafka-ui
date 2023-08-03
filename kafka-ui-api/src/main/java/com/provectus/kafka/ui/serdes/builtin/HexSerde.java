@@ -17,11 +17,20 @@ public class HexSerde implements BuiltInSerde {
   }
 
   @Override
+  public void autoConfigure(PropertyResolver kafkaClusterProperties, PropertyResolver globalProperties) {
+    configure(" ", true);
+  }
+
+  @Override
   public void configure(PropertyResolver serdeProperties,
                         PropertyResolver kafkaClusterProperties,
                         PropertyResolver globalProperties) {
     String delim = serdeProperties.getProperty("delimiter", String.class).orElse(" ");
     boolean uppercase = serdeProperties.getProperty("uppercase", Boolean.class).orElse(true);
+    configure(delim, uppercase);
+  }
+
+  private void configure(String delim, boolean uppercase) {
     deserializeHexFormat = HexFormat.ofDelimiter(delim);
     if (uppercase) {
       deserializeHexFormat = deserializeHexFormat.withUpperCase();
