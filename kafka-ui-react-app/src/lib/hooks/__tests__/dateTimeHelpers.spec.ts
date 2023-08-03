@@ -17,13 +17,7 @@ describe('dateTimeHelpers', () => {
 
       const expected = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}, ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
       expect(formattedDate).toBe(expected);
-      expect(formattedTimestamp).toBe(expected); const date = new Date();
-      expect(formatTimestamp(date)).toBe(
-        date.toLocaleString([], { hour12: false })
-      );
-      expect(formatTimestamp(date.getTime())).toBe(
-        date.toLocaleString([], { hour12: false })
-      );
+      expect(formattedTimestamp).toBe(expected);
     });
   });
 });
