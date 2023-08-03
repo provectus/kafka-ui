@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service.integration.odd.schema;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.provectus.kafka.ui.sr.model.SchemaSubject;
+import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.opendatadiscovery.client.model.DataSetField;
@@ -15,8 +15,7 @@ class AvroExtractorTest {
   @ValueSource(booleans = {true, false})
   void test(boolean isKey) {
     var list = AvroExtractor.extract(
-        new SchemaSubject()
-            .schema("""
+        new AvroSchema("""
                 {
                     "type": "record",
                     "name": "Message",

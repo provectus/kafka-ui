@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui;
 
 import com.provectus.kafka.ui.container.KafkaConnectContainer;
+import com.provectus.kafka.ui.container.KsqlDbContainer;
 import com.provectus.kafka.ui.container.SchemaRegistryContainer;
 import java.nio.file.Path;
 import java.util.List;
@@ -32,7 +33,7 @@ public abstract class AbstractIntegrationTest {
   public static final String LOCAL = "local";
   public static final String SECOND_LOCAL = "secondLocal";
 
-  private static final String CONFLUENT_PLATFORM_VERSION = "5.5.0";
+  private static final String CONFLUENT_PLATFORM_VERSION = "7.2.1"; // Append ".arm64" for a local run
 
   public static final KafkaContainer kafka = new KafkaContainer(
       DockerImageName.parse("confluentinc/cp-kafka").withTag(CONFLUENT_PLATFORM_VERSION))
@@ -48,6 +49,11 @@ public abstract class AbstractIntegrationTest {
           .withKafka(kafka)
           .dependsOn(kafka)
           .dependsOn(schemaRegistry);
+
+  protected static final KsqlDbContainer KSQL_DB = new KsqlDbContainer(
+      DockerImageName.parse("confluentinc/cp-ksqldb-server")
+          .withTag(CONFLUENT_PLATFORM_VERSION))
+      .withKafka(kafka);
 
   @TempDir
   public static Path tmpDir;
@@ -71,9 +77,13 @@ public abstract class AbstractIntegrationTest {
       System.setProperty("kafka.clusters.0.kafkaConnect.0.userName", "kafka-connect");
       System.setProperty("kafka.clusters.0.kafkaConnect.0.password", "kafka-connect");
       System.setProperty("kafka.clusters.0.kafkaConnect.0.address", kafkaConnect.getTarget());
+      System.setProperty("kafka.clusters.0.kafkaConnect.1.name", "notavailable");
+      System.setProperty("kafka.clusters.0.kafkaConnect.1.address", "http://notavailable:6666");
       System.setProperty("kafka.clusters.0.masking.0.type", "REPLACE");
       System.setProperty("kafka.clusters.0.masking.0.replacement", "***");
       System.setProperty("kafka.clusters.0.masking.0.topicValuesPattern", "masking-test-.*");
+      System.setProperty("kafka.clusters.0.audit.topicAuditEnabled", "true");
+      System.setProperty("kafka.clusters.0.audit.consoleAuditEnabled", "true");
 
       System.setProperty("kafka.clusters.1.name", SECOND_LOCAL);
       System.setProperty("kafka.clusters.1.readOnly", "true");

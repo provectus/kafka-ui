@@ -16,7 +16,7 @@ public class AccessControlServiceMock {
     when(mock.validateAccess(any())).thenReturn(Mono.empty());
     when(mock.isSchemaAccessible(anyString(), anyString())).thenReturn(Mono.just(true));
 
-    when(mock.isTopicAccessible(any(), anyString())).thenReturn(Mono.just(true));
+    when(mock.filterViewableTopics(any(), any())).then(invocation -> Mono.just(invocation.getArgument(0)));
 
     return mock;
   }

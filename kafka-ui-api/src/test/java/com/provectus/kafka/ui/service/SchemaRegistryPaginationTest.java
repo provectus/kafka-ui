@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import com.provectus.kafka.ui.controller.SchemasController;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SchemaSubjectDTO;
+import com.provectus.kafka.ui.service.audit.AuditService;
 import com.provectus.kafka.ui.sr.model.Compatibility;
 import com.provectus.kafka.ui.sr.model.SchemaSubject;
 import com.provectus.kafka.ui.util.AccessControlServiceMock;
@@ -41,7 +42,8 @@ public class SchemaRegistryPaginationTest {
                 new SchemaRegistryService.SubjectWithCompatibilityLevel(
                     new SchemaSubject().subject(a.getArgument(1)), Compatibility.FULL)));
 
-    this.controller = new SchemasController(schemaRegistryService, new AccessControlServiceMock().getMock());
+    this.controller = new SchemasController(schemaRegistryService, new AccessControlServiceMock().getMock(),
+        mock(AuditService.class));
     this.controller.setClustersStorage(clustersStorage);
   }
 

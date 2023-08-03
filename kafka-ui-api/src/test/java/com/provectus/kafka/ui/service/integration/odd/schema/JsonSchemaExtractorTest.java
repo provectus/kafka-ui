@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service.integration.odd.schema;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.provectus.kafka.ui.sr.model.SchemaSubject;
+import io.confluent.kafka.schemaregistry.json.JsonSchema;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +40,7 @@ class JsonSchemaExtractorTest {
         }
         """;
     var fields = JsonSchemaExtractor.extract(
-        new SchemaSubject().schema(jsonSchema),
+        new JsonSchema(jsonSchema),
         KafkaPath.builder()
             .cluster("localhost:9092")
             .topic("someTopic")

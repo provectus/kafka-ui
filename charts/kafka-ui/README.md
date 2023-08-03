@@ -1,1 +1,0 @@
-Please refer to our [documentation](https://docs.kafka-ui.provectus.io/configuration/helm-charts) to get some info on our helm charts.

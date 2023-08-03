@@ -12,7 +12,8 @@ public enum Resource {
   SCHEMA,
   CONNECT,
   KSQL,
-  ACL;
+  ACL,
+  AUDIT;
 
   @Nullable
   public static Resource fromString(String name) {

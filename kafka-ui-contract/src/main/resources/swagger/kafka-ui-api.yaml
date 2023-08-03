@@ -625,6 +625,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/TopicSerdeSuggestion'
 
+  /api/smartfilters/testexecutions:
+    put:
+      tags:
+        - Messages
+      summary: executeSmartFilterTest
+      operationId: executeSmartFilterTest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SmartFilterTestExecution'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SmartFilterTestExecutionResult'
+
 
   /api/clusters/{clusterName}/topics/{topicName}/messages:
     get:
@@ -1849,6 +1868,69 @@ paths:
         404:
           description: Acl not found
 
+  /api/clusters/{clusterName}/acl/consumer:
+    post:
+      tags:
+        - Acls
+      summary: createConsumerAcl
+      operationId: createConsumerAcl
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateConsumerAcl'
+      responses:
+        200:
+          description: OK
+
+  /api/clusters/{clusterName}/acl/producer:
+    post:
+      tags:
+        - Acls
+      summary: createProducerAcl
+      operationId: createProducerAcl
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProducerAcl'
+      responses:
+        200:
+          description: OK
+
+  /api/clusters/{clusterName}/acl/streamApp:
+    post:
+      tags:
+        - Acls
+      summary: createStreamAppAcl
+      operationId: createStreamAppAcl
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateStreamAppAcl'
+      responses:
+        200:
+          description: OK
+
   /api/authorization:
     get:
       tags:
@@ -2584,6 +2666,37 @@ components:
           items:
             $ref: '#/components/schemas/ConsumerGroup'
 
+    SmartFilterTestExecution:
+      type: object
+      required: [filterCode]
+      properties:
+        filterCode:
+          type: string
+        key:
+          type: string
+        value:
+          type: string
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+        partition:
+          type: integer
+        offset:
+          type: integer
+          format: int64
+        timestampMs:
+          type: integer
+          format: int64
+
+    SmartFilterTestExecutionResult:
+      type: object
+      properties:
+        result:
+          type: boolean
+        error:
+          type: string
+
     CreateTopicMessage:
       type: object
       properties:
@@ -2866,6 +2979,10 @@ components:
           type: string
         schemaType:
           $ref: '#/components/schemas/SchemaType'
+        references:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchemaReference'
       required:
         - id
         - subject
@@ -2883,12 +3000,29 @@ components:
         schema:
           type: string
         schemaType:
-          $ref: '#/components/schemas/SchemaType'
-          # upon updating a schema, the type of existing schema can't be changed
+          $ref: '#/components/schemas/SchemaType' # upon updating a schema, the type of existing schema can't be changed
+        references:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchemaReference'
       required:
         - subject
         - schema
         - schemaType
+
+    SchemaReference:
+      type: object
+      properties:
+        name:
+          type: string
+        subject:
+          type: string
+        version:
+          type: integer
+      required:
+        - name
+        - subject
+        - version
 
     CompatibilityLevel:
       type: object
@@ -3465,6 +3599,7 @@ components:
         - CONNECT
         - KSQL
         - ACL
+        - AUDIT
 
     KafkaAcl:
       type: object
@@ -3479,7 +3614,7 @@ components:
         principal:
           type: string
         host:
-          type: string  # "*" if acl can be applied to any resource of given type
+          type: string
         operation:
           type: string
           enum:
@@ -3502,6 +3637,69 @@ components:
           enum:
             - ALLOW
             - DENY
+
+    CreateConsumerAcl:
+      type: object
+      required: [principal, host]
+      properties:
+        principal:
+          type: string
+        host:
+          type: string
+        topics:
+          type: array
+          items:
+            type: string
+        topicsPrefix:
+          type: string
+        consumerGroups:
+          type: array
+          items:
+            type: string
+        consumerGroupsPrefix:
+          type: string
+
+    CreateProducerAcl:
+      type: object
+      required: [principal, host]
+      properties:
+        principal:
+          type: string
+        host:
+          type: string
+        topics:
+          type: array
+          items:
+            type: string
+        topicsPrefix:
+          type: string
+        transactionalId:
+          type: string
+        transactionsIdPrefix:
+          type: string
+        idempotent:
+          type: boolean
+          default: false
+
+    CreateStreamAppAcl:
+      type: object
+      required: [principal, host, applicationId, inputTopics, outputTopics]
+      properties:
+        principal:
+          type: string
+        host:
+          type: string
+        inputTopics:
+          type: array
+          items:
+            type: string
+        outputTopics:
+          type: array
+          items:
+            type: string
+        applicationId:
+          nullable: false
+          type: string
 
     KafkaAclResourceType:
       type: string
@@ -3825,3 +4023,18 @@ components:
                       pollingThrottleRate:
                         type: integer
                         format: int64
+                      audit:
+                        type: object
+                        properties:
+                          topic:
+                            type: string
+                          auditTopicsPartitions:
+                            type: integer
+                          topicAuditEnabled:
+                            type: boolean
+                          consoleAuditEnabled:
+                            type: boolean
+                          auditTopicProperties:
+                            type: object
+                            additionalProperties:
+                              type: string

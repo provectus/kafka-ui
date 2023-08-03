@@ -2,12 +2,14 @@ package com.provectus.kafka.ui.service;
 
 import com.google.common.collect.Streams;
 import com.google.common.collect.Table;
+import com.provectus.kafka.ui.emitter.EnhancedConsumer;
 import com.provectus.kafka.ui.model.ConsumerGroupOrderingDTO;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.InternalTopicConsumerGroup;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
+import com.provectus.kafka.ui.util.ApplicationMetrics;
 import com.provectus.kafka.ui.util.SslPropertiesUtil;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,11 +28,8 @@ import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.ConsumerGroupState;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.serialization.BytesDeserializer;
-import org.apache.kafka.common.utils.Bytes;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -248,25 +247,27 @@ public class ConsumerGroupService {
         .flatMap(adminClient -> adminClient.deleteConsumerGroups(List.of(groupId)));
   }
 
-  public KafkaConsumer<Bytes, Bytes> createConsumer(KafkaCluster cluster) {
+  public EnhancedConsumer createConsumer(KafkaCluster cluster) {
     return createConsumer(cluster, Map.of());
   }
 
-  public KafkaConsumer<Bytes, Bytes> createConsumer(KafkaCluster cluster,
-                                                    Map<String, Object> properties) {
+  public EnhancedConsumer createConsumer(KafkaCluster cluster,
+                                         Map<String, Object> properties) {
     Properties props = new Properties();
     SslPropertiesUtil.addKafkaSslProperties(cluster.getOriginalProperties().getSsl(), props);
     props.putAll(cluster.getProperties());
     props.put(ConsumerConfig.CLIENT_ID_CONFIG, "kafka-ui-consumer-" + System.currentTimeMillis());
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
-    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
-    props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
     props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
     props.put(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG, "false");
     props.putAll(properties);
 
-    return new KafkaConsumer<>(props);
+    return new EnhancedConsumer(
+        props,
+        cluster.getPollingSettings().getPollingThrottler(),
+        ApplicationMetrics.forCluster(cluster)
+    );
   }
 
 }
