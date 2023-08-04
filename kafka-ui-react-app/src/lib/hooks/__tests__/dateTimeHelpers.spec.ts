@@ -15,7 +15,15 @@ describe('dateTimeHelpers', () => {
       const formattedDate = formatTimestamp(date);
       const formattedTimestamp = formatTimestamp(date.getTime());
 
-      const expected = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}, ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+      const expected = `${
+        date.getMonth() + 1
+      }/${date.getDate()}/${date.getFullYear()}, ${date
+        .getHours()
+        .toString()
+        .padStart(2, '0')}:${date
+        .getMinutes()
+        .toString()
+        .padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
       expect(formattedDate).toBe(expected);
       expect(formattedTimestamp).toBe(expected);
     });
