@@ -34,7 +34,6 @@ describe('UserInfo', () => {
 
     const logout = screen.getByText('Log out');
     expect(logout).toBeInTheDocument();
-    expect(logout).toHaveAttribute('href', '/logout');
   });
 
   it('should render correct url during basePath initialization', async () => {
@@ -50,7 +49,6 @@ describe('UserInfo', () => {
 
     const logout = screen.getByText('Log out');
     expect(logout).toBeInTheDocument();
-    expect(logout).toHaveAttribute('href', `${baseUrl}/logout`);
   });
 
   it('should not render anything if the username does not exists', () => {

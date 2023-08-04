@@ -1,4 +1,4 @@
-name: Separate environment create
+name: "Infra: Feature Testing Public: Init env"
 on:
   workflow_dispatch:
     inputs:

@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.smokesuite.brokers;
 
 import static com.provectus.kafka.ui.pages.brokers.BrokersDetails.DetailsTab.CONFIGS;
+import static com.provectus.kafka.ui.utilities.StringUtils.getMixedCase;
 import static com.provectus.kafka.ui.variables.Expected.BROKER_SOURCE_INFO_TOOLTIP;
 
 import com.codeborne.selenide.Condition;
@@ -8,6 +9,7 @@ import com.provectus.kafka.ui.BaseTest;
 import com.provectus.kafka.ui.pages.brokers.BrokersConfigTab;
 import io.qameta.allure.Issue;
 import io.qase.api.annotation.QaseId;
+import java.util.List;
 import org.testng.Assert;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
@@ -98,6 +100,38 @@ public class BrokersTest extends BaseTest {
             .map(BrokersConfigTab.BrokersConfigItem::getKey)
             .toList().contains(anyConfigKeySecondPage),
         String.format("getAllConfigs().contains(%s)", anyConfigKeySecondPage));
+  }
+
+  @Ignore
+  @Issue("https://github.com/provectus/kafka-ui/issues/3347")
+  @QaseId(348)
+  @Test
+  public void brokersConfigCaseInsensitiveSearchCheck() {
+    navigateToBrokersAndOpenDetails(DEFAULT_BROKER_ID);
+    brokersDetails
+        .openDetailsTab(CONFIGS);
+    String anyConfigKeyFirstPage = brokersConfigTab
+        .getAllConfigs().stream()
+        .findAny().orElseThrow()
+        .getKey();
+    brokersConfigTab
+        .clickNextButton();
+    Assert.assertFalse(brokersConfigTab.getAllConfigs().stream()
+            .map(BrokersConfigTab.BrokersConfigItem::getKey)
+            .toList().contains(anyConfigKeyFirstPage),
+        String.format("getAllConfigs().contains(%s)", anyConfigKeyFirstPage));
+    SoftAssert softly = new SoftAssert();
+    List.of(anyConfigKeyFirstPage.toLowerCase(), anyConfigKeyFirstPage.toUpperCase(),
+            getMixedCase(anyConfigKeyFirstPage))
+        .forEach(configCase -> {
+          brokersConfigTab
+              .searchConfig(configCase);
+          softly.assertTrue(brokersConfigTab.getAllConfigs().stream()
+                  .map(BrokersConfigTab.BrokersConfigItem::getKey)
+                  .toList().contains(anyConfigKeyFirstPage),
+              String.format("getAllConfigs().contains(%s)", configCase));
+        });
+    softly.assertAll();
   }
 
   @QaseId(331)
