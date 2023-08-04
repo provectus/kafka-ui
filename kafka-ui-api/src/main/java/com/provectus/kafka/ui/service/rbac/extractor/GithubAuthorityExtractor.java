@@ -5,6 +5,8 @@ import static com.provectus.kafka.ui.model.rbac.provider.Provider.Name.GITHUB;
 import com.provectus.kafka.ui.model.rbac.Role;
 import com.provectus.kafka.ui.model.rbac.provider.Provider;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,8 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
   private static final String ORGANIZATION_ATTRIBUTE_NAME = "organizations_url";
   private static final String USERNAME_ATTRIBUTE_NAME = "login";
   private static final String ORGANIZATION_NAME = "login";
+  private static final String ORGANIZATION = "organization";
+  private static final String TEAM_NAME = "slug";
   private static final String GITHUB_ACCEPT_HEADER = "application/vnd.github+json";
   private static final String DUMMY = "dummy";
   // The number of results (max 100) per page of list organizations for authenticated user.
@@ -62,12 +66,6 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
           .forEach(groupsByUsername::add);
     }
 
-    String organization = principal.getAttribute(ORGANIZATION_ATTRIBUTE_NAME);
-    if (organization == null) {
-      log.debug("Github organization param is not present");
-      return Mono.just(groupsByUsername);
-    }
-
     OAuth2UserRequest req = (OAuth2UserRequest) additionalParams.get("request");
     String infoEndpoint = req.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri();
 
@@ -80,8 +78,25 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
           .getUserInfoEndpoint()
           .getUri();
     }
-
     WebClient webClient = WebClient.create(infoEndpoint);
+
+    Mono<Set<String>> groupsByOrganization = getOrganizationRoles(principal, additionalParams, acs, webClient);
+    Mono<Set<String>> groupsByTeams = getTeamRoles(webClient, additionalParams, acs);
+    // groupsByUsername
+
+    return Mono.zip(groupsByOrganization, groupsByTeams)
+        .map((t) -> Stream.of(t.getT1(), t.getT2(), groupsByUsername)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toSet()));
+  }
+
+  private Mono<Set<String>> getOrganizationRoles(DefaultOAuth2User principal, Map<String, Object> additionalParams,
+                                                 AccessControlService acs, WebClient webClient) {
+    String organization = principal.getAttribute(ORGANIZATION_ATTRIBUTE_NAME);
+    if (organization == null) {
+      log.debug("Github organization param is not present");
+      return Mono.just(Collections.emptySet());
+    }
 
     final Mono<List<Map<String, Object>>> userOrganizations = webClient
         .get()
@@ -99,22 +114,78 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
     //@formatter:on
 
     return userOrganizations
-        .map(orgsMap -> {
-          var groupsByOrg = acs.getRoles()
-              .stream()
-              .filter(role -> role.getSubjects()
-                  .stream()
-                  .filter(s -> s.getProvider().equals(Provider.OAUTH_GITHUB))
-                  .filter(s -> s.getType().equals("organization"))
-                  .anyMatch(subject -> orgsMap.stream()
-                      .map(org -> org.get(ORGANIZATION_NAME).toString())
-                      .distinct()
-                      .anyMatch(orgName -> orgName.equalsIgnoreCase(subject.getValue()))
-                  ))
-              .map(Role::getName);
+        .map(orgsMap -> acs.getRoles()
+            .stream()
+            .filter(role -> role.getSubjects()
+                .stream()
+                .filter(s -> s.getProvider().equals(Provider.OAUTH_GITHUB))
+                .filter(s -> s.getType().equals("organization"))
+                .anyMatch(subject -> orgsMap.stream()
+                    .map(org -> org.get(ORGANIZATION_NAME).toString())
+                    .distinct()
+                    .anyMatch(orgName -> orgName.equalsIgnoreCase(subject.getValue()))
+                ))
+            .map(Role::getName)
+            .collect(Collectors.toSet()));
+  }
 
-          return Stream.concat(groupsByOrg, groupsByUsername.stream()).collect(Collectors.toSet());
-        });
+  @SuppressWarnings("unchecked")
+  private Mono<Set<String>> getTeamRoles(WebClient webClient, Map<String, Object> additionalParams,
+                                         AccessControlService acs) {
+
+    var requestedTeams = acs.getRoles()
+        .stream()
+        .filter(r -> r.getSubjects()
+            .stream()
+            .filter(s -> s.getProvider().equals(Provider.OAUTH_GITHUB))
+            .anyMatch(s -> s.getType().equals("team")))
+        .collect(Collectors.toSet());
+
+    if (requestedTeams.isEmpty()) {
+      log.debug("No roles with github teams found, skipping");
+      return Mono.just(Collections.emptySet());
+    }
+
+    final Mono<List<Map<String, Object>>> rawTeams = webClient
+        .get()
+        .uri(uriBuilder -> uriBuilder.path("/teams")
+            .queryParam("per_page", ORGANIZATIONS_PER_PAGE)
+            .build())
+        .headers(headers -> {
+          headers.set(HttpHeaders.ACCEPT, GITHUB_ACCEPT_HEADER);
+          OAuth2UserRequest request = (OAuth2UserRequest) additionalParams.get("request");
+          headers.setBearerAuth(request.getAccessToken().getTokenValue());
+        })
+        .retrieve()
+        //@formatter:off
+        .bodyToMono(new ParameterizedTypeReference<>() {});
+    //@formatter:on
+
+    var mappedTeams = rawTeams
+        .map(teams -> teams.stream()
+            .map(teamInfo -> {
+              var name = teamInfo.get(TEAM_NAME);
+              var orgInfo = (Map<String, Object>) teamInfo.get(ORGANIZATION);
+              var orgName = orgInfo.get(ORGANIZATION_NAME);
+              return orgName + "/" + name;
+            })
+            .map(Object::toString)
+            .collect(Collectors.toList())
+        );
+
+    return mappedTeams
+        .map(teams -> acs.getRoles()
+            .stream()
+            .filter(role -> role.getSubjects()
+                .stream()
+                .filter(s -> s.getProvider().equals(Provider.OAUTH_GITHUB))
+                .filter(s -> s.getType().equals("team"))
+                .anyMatch(subject -> teams.stream()
+                    .distinct()
+                    .anyMatch(teamName -> teamName.equalsIgnoreCase(subject.getValue()))
+                ))
+            .map(Role::getName)
+            .collect(Collectors.toSet()));
   }
 
 }
