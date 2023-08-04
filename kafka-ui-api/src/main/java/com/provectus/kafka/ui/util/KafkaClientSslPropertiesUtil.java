@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.util;
 
-import static org.apache.kafka.common.config.SslConfigs.SSL_ENGINE_FACTORY_CLASS_CONFIG;
-
 import com.provectus.kafka.ui.config.ClustersProperties;
 import java.util.Properties;
 import javax.annotation.Nullable;
@@ -19,7 +17,7 @@ public final class KafkaClientSslPropertiesUtil {
     }
 
     if (!truststoreConfig.isVerifySsl()) {
-      sink.put(SSL_ENGINE_FACTORY_CLASS_CONFIG, InsecureSslEngineFactory.class);
+      sink.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
       return;
     }
 
