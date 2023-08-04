@@ -13,7 +13,7 @@ import lombok.SneakyThrows;
 public class ProtobufRawSerde implements BuiltInSerde {
 
   public static String name() {
-    return "ProtobufRaw";
+    return "ProtobufDecodeRaw";
   }
 
   @Override
