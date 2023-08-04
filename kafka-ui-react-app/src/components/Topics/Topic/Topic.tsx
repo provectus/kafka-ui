@@ -164,7 +164,7 @@ const Topic: React.FC = () => {
               <DropdownItemHint>
                 The topic deletion is restricted at the broker
                 <br />
-                configuration level (delete.topic.enable = false).
+                configuration level (delete.topic.enable = false)
               </DropdownItemHint>
             )}
           </ActionDropdownItem>
