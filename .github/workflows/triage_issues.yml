@@ -1,4 +1,4 @@
-name: Add triage label to new issues
+name: "Infra: Triage: Apply triage label for issues"
 on:
   issues:
     types:

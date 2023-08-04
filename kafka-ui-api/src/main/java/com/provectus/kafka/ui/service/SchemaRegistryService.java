@@ -14,8 +14,7 @@ import com.provectus.kafka.ui.sr.model.CompatibilityLevelChange;
 import com.provectus.kafka.ui.sr.model.NewSubject;
 import com.provectus.kafka.ui.sr.model.SchemaSubject;
 import com.provectus.kafka.ui.util.ReactiveFailover;
-import com.provectus.kafka.ui.util.WebClientConfigurator;
-import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -92,7 +91,7 @@ public class SchemaRegistryService {
   private Mono<SubjectWithCompatibilityLevel> getSchemaSubject(KafkaCluster cluster, String schemaName,
                                                                String version) {
     return api(cluster)
-        .mono(c -> c.getSubjectVersion(schemaName, version))
+        .mono(c -> c.getSubjectVersion(schemaName, version, false))
         .zipWith(getSchemaCompatibilityInfoOrGlobal(cluster, schemaName))
         .map(t -> new SubjectWithCompatibilityLevel(t.getT1(), t.getT2()))
         .onErrorResume(WebClientResponseException.NotFound.class, th -> Mono.error(new SchemaNotFoundException()));
@@ -126,7 +125,7 @@ public class SchemaRegistryService {
         .onErrorMap(WebClientResponseException.Conflict.class,
             th -> new SchemaCompatibilityException())
         .onErrorMap(WebClientResponseException.UnprocessableEntity.class,
-            th -> new ValidationException("Invalid schema"))
+            th -> new ValidationException("Invalid schema. Error from registry: " + th.getResponseBodyAsString()))
         .then(getLatestSchemaVersionBySubject(cluster, subject));
   }
 

@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.utils.Bytes;
@@ -22,12 +20,12 @@ public class BackwardRecordEmitter
     extends AbstractEmitter
     implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
 
-  private final Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier;
+  private final Supplier<EnhancedConsumer> consumerSupplier;
   private final ConsumerPosition consumerPosition;
   private final int messagesPerPage;
 
   public BackwardRecordEmitter(
-      Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
+      Supplier<EnhancedConsumer> consumerSupplier,
       ConsumerPosition consumerPosition,
       int messagesPerPage,
       MessagesProcessing messagesProcessing,
@@ -41,7 +39,7 @@ public class BackwardRecordEmitter
   @Override
   public void accept(FluxSink<TopicMessageEventDTO> sink) {
     log.debug("Starting backward polling for {}", consumerPosition);
-    try (KafkaConsumer<Bytes, Bytes> consumer = consumerSupplier.get()) {
+    try (EnhancedConsumer consumer = consumerSupplier.get()) {
       sendPhase(sink, "Created consumer");
 
       var seekOperations = SeekOperations.create(consumer, consumerPosition);
@@ -91,7 +89,7 @@ public class BackwardRecordEmitter
       TopicPartition tp,
       long fromOffset,
       long toOffset,
-      Consumer<Bytes, Bytes> consumer,
+      EnhancedConsumer consumer,
       FluxSink<TopicMessageEventDTO> sink
   ) {
     consumer.assign(Collections.singleton(tp));
@@ -101,13 +99,13 @@ public class BackwardRecordEmitter
 
     var recordsToSend = new ArrayList<ConsumerRecord<Bytes, Bytes>>();
 
-    EmptyPollsCounter emptyPolls  = pollingSettings.createEmptyPollsCounter();
+    EmptyPollsCounter emptyPolls = pollingSettings.createEmptyPollsCounter();
     while (!sink.isCancelled()
         && !sendLimitReached()
         && recordsToSend.size() < desiredMsgsToPoll
         && !emptyPolls.noDataEmptyPollsReached()) {
       var polledRecords = poll(sink, consumer, pollingSettings.getPartitionPollTimeout());
-      emptyPolls.count(polledRecords);
+      emptyPolls.count(polledRecords.count());
 
       log.debug("{} records polled from {}", polledRecords.count(), tp);
 
@@ -115,7 +113,7 @@ public class BackwardRecordEmitter
           .filter(r -> r.offset() < toOffset)
           .toList();
 
-      if (!polledRecords.isEmpty() && filteredRecords.isEmpty()) {
+      if (polledRecords.count() > 0 && filteredRecords.isEmpty()) {
         // we already read all messages in target offsets interval
         break;
       }

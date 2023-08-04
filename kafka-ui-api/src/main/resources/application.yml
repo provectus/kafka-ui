@@ -10,7 +10,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: "info,health"
+        include: "info,health,prometheus"
 
 logging:
   level:
