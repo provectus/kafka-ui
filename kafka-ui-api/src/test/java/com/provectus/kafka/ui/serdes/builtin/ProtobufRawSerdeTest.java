@@ -8,6 +8,7 @@ import com.google.protobuf.Descriptors;
 import com.google.protobuf.DynamicMessage;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.serde.api.Serde;
+import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,28 +26,14 @@ class ProtobufRawSerdeTest {
 
   @SneakyThrows
   Descriptors.Descriptor getDescriptor() {
-    DescriptorProtos.FileDescriptorProto fileDescriptorProto = DescriptorProtos.FileDescriptorProto
-        .newBuilder()
-        .setSyntax("proto3")
-        .setName("test.proto")
-        .addMessageType(
-            DescriptorProtos.DescriptorProto.newBuilder()
-                .setName("MyMessage")
-                .addField(
-                    DescriptorProtos.FieldDescriptorProto.newBuilder()
-                        .setName("my_field")
-                        .setNumber(1)
-                        .setType(DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32)
-                        .build()
-                )
-            .build()
-        )
-        .build();
-
-    Descriptors.FileDescriptor fileDescriptor = Descriptors.FileDescriptor.buildFrom(
-        fileDescriptorProto, new Descriptors.FileDescriptor[0]);
-
-    return fileDescriptor.findMessageTypeByName("MyMessage");
+    return new ProtobufSchema(
+        """
+          syntax = "proto3";
+          message MyMessage {
+            int32 my_field = 1;
+          }
+        """
+        ).toDescriptor("MyMessage");
   }
 
   @SneakyThrows
