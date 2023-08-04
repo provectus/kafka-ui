@@ -50,7 +50,7 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
       throw new RuntimeException();
     }
 
-    Set<String> groupsByUsername = new HashSet<>();
+    Set<String> rolesByUsername = new HashSet<>();
     String username = principal.getAttribute(USERNAME_ATTRIBUTE_NAME);
     if (username == null) {
       log.debug("Github username param is not present");
@@ -63,7 +63,7 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
               .filter(s -> s.getType().equals("user"))
               .anyMatch(s -> s.getValue().equals(username)))
           .map(Role::getName)
-          .forEach(groupsByUsername::add);
+          .forEach(rolesByUsername::add);
     }
 
     OAuth2UserRequest req = (OAuth2UserRequest) additionalParams.get("request");
@@ -80,12 +80,11 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
     }
     WebClient webClient = WebClient.create(infoEndpoint);
 
-    Mono<Set<String>> groupsByOrganization = getOrganizationRoles(principal, additionalParams, acs, webClient);
-    Mono<Set<String>> groupsByTeams = getTeamRoles(webClient, additionalParams, acs);
-    // groupsByUsername
+    Mono<Set<String>> rolesByOrganization = getOrganizationRoles(principal, additionalParams, acs, webClient);
+    Mono<Set<String>> rolesByTeams = getTeamRoles(webClient, additionalParams, acs);
 
-    return Mono.zip(groupsByOrganization, groupsByTeams)
-        .map((t) -> Stream.of(t.getT1(), t.getT2(), groupsByUsername)
+    return Mono.zip(rolesByOrganization, rolesByTeams)
+        .map((t) -> Stream.of(t.getT1(), t.getT2(), rolesByUsername)
             .flatMap(Collection::stream)
             .collect(Collectors.toSet()));
   }
