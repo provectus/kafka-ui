@@ -22,7 +22,7 @@ public class DescribeLogDirsMapper {
         mapEntry -> mapEntry.getValue().entrySet().stream()
             .map(e -> toBrokerLogDirs(mapEntry.getKey(), e.getKey(), e.getValue()))
             .toList()
-    ).flatMap(Collection::stream).toList();
+    ).flatMap(Collection::stream).collect(Collectors.toList());
   }
 
   private BrokersLogdirsDTO toBrokerLogDirs(Integer broker, String dirName,
