@@ -61,19 +61,19 @@ public class SeekOperations {
    */
   @VisibleForTesting
   static Map<TopicPartition, Long> getOffsetsForSeek(Consumer<?, ?> consumer,
-                                                             OffsetsInfo offsetsInfo,
-                                                             SeekTypeDTO seekType,
-                                                             @Nullable Map<TopicPartition, Long> seekTo) {
+                                                     OffsetsInfo offsetsInfo,
+                                                     SeekTypeDTO seekType,
+                                                     @Nullable Map<TopicPartition, Long> seekTo) {
     switch (seekType) {
       case LATEST:
         return consumer.endOffsets(offsetsInfo.getNonEmptyPartitions());
       case BEGINNING:
         return consumer.beginningOffsets(offsetsInfo.getNonEmptyPartitions());
       case OFFSET:
-        Preconditions.checkNotNull(offsetsInfo);
+        Preconditions.checkNotNull(seekTo);
         return fixOffsets(offsetsInfo, seekTo);
       case TIMESTAMP:
-        Preconditions.checkNotNull(offsetsInfo);
+        Preconditions.checkNotNull(seekTo);
         return offsetsForTimestamp(consumer, offsetsInfo, seekTo);
       default:
         throw new IllegalStateException();
