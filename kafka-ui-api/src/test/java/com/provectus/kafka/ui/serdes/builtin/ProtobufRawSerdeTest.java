@@ -25,20 +25,20 @@ class ProtobufRawSerdeTest {
   }
 
   @SneakyThrows
-  Descriptors.Descriptor getDescriptor() {
+  ProtobufSchema getSampleSchema() {
     return new ProtobufSchema(
         """
           syntax = "proto3";
-          message MyMessage {
+          message Message1 {
             int32 my_field = 1;
           }
         """
-        ).toDescriptor("MyMessage");
+    );
   }
 
   @SneakyThrows
   private byte[] getProtobufMessage() {
-    DynamicMessage.Builder builder = DynamicMessage.newBuilder(getDescriptor());
+    DynamicMessage.Builder builder = DynamicMessage.newBuilder(getSampleSchema().toDescriptor("Message1"));
     builder.setField(builder.getDescriptorForType().findFieldByName("my_field"), 5);
     return builder.build().toByteArray();
   }
@@ -73,55 +73,26 @@ class ProtobufRawSerdeTest {
         .hasMessageContaining("Cannot read the array length");
   }
 
+  ProtobufSchema getSampleNestedSchema() {
+    return new ProtobufSchema(
+      """
+        syntax = "proto3";
+        message Message2 {
+          int32 my_nested_field = 1;
+        }
+        message Message1 {
+          int32 my_field = 1;
+          Message2 my_nested_message = 2;
+        }
+      """
+    );
+  }
+
   @SneakyThrows
   private byte[] getComplexProtobufMessage() {
-    DescriptorProtos.FileDescriptorProto fileDescriptorProto = DescriptorProtos.FileDescriptorProto
-        .newBuilder()
-        .setSyntax("proto3")
-        .setName("test.proto")
-        .addMessageType(
-            DescriptorProtos.DescriptorProto.newBuilder()
-                .setName("MyMessage")
-                .addField(
-                    DescriptorProtos.FieldDescriptorProto.newBuilder()
-                        .setName("my_field")
-                        .setNumber(1)
-                        .setType(DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32)
-                        .build()
-                )
-                .addField(
-                    DescriptorProtos.FieldDescriptorProto.newBuilder()
-                        .setName("my_nested_message")
-                        .setNumber(2)
-                        .setType(DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE)
-                        .setTypeName("MyNestedMessage")
-                        .build()
-                )
-                .build()
-        )
-        .addMessageType(
-            DescriptorProtos.DescriptorProto.newBuilder()
-                .setName("MyNestedMessage")
-                .addField(
-                    DescriptorProtos.FieldDescriptorProto.newBuilder()
-                        .setName("my_nested_field")
-                        .setNumber(1)
-                        .setType(DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32)
-                        .build()
-                )
-                .build()
-        )
-        .build();
-
-    Descriptors.FileDescriptor fileDescriptor = Descriptors.FileDescriptor.buildFrom(
-        fileDescriptorProto, new Descriptors.FileDescriptor[0]);
-
-    Descriptors.Descriptor descriptor = fileDescriptor.findMessageTypeByName("MyMessage");
-    Descriptors.Descriptor nestedDescriptor = fileDescriptor.findMessageTypeByName("MyNestedMessage");
-
-    DynamicMessage.Builder builder = DynamicMessage.newBuilder(descriptor);
+    DynamicMessage.Builder builder = DynamicMessage.newBuilder(getSampleNestedSchema().toDescriptor("Message1"));
     builder.setField(builder.getDescriptorForType().findFieldByName("my_field"), 5);
-    DynamicMessage.Builder nestedBuilder = DynamicMessage.newBuilder(nestedDescriptor);
+    DynamicMessage.Builder nestedBuilder = DynamicMessage.newBuilder(getSampleNestedSchema().toDescriptor("Message2"));
     nestedBuilder.setField(nestedBuilder.getDescriptorForType().findFieldByName("my_nested_field"), 10);
     builder.setField(builder.getDescriptorForType().findFieldByName("my_nested_message"), nestedBuilder.build());
 
