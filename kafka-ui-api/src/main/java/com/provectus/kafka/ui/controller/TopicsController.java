@@ -147,7 +147,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
             .map(lst -> lst.stream()
                 .map(InternalTopicConfig::from)
                 .map(clusterMapper::toTopicConfig)
-                .collect(toList()))
+                .toList())
             .map(Flux::fromIterable)
             .map(ResponseEntity::ok)
     ).doOnEach(sig -> auditService.audit(context, sig));
@@ -211,7 +211,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
           return topicsService.loadTopics(getCluster(clusterName), topicsPage)
               .map(topicsToRender ->
                   new TopicsResponseDTO()
-                      .topics(topicsToRender.stream().map(clusterMapper::toTopic).collect(toList()))
+                      .topics(topicsToRender.stream().map(clusterMapper::toTopic).toList())
                       .pageCount(totalPages));
         })
         .map(ResponseEntity::ok)
