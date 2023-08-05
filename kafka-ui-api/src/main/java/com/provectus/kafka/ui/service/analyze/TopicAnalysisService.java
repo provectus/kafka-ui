@@ -1,14 +1,12 @@
 package com.provectus.kafka.ui.service.analyze;
 
-import com.provectus.kafka.ui.emitter.EmptyPollsCounter;
+import static com.provectus.kafka.ui.model.SeekTypeDTO.BEGINNING;
+
 import com.provectus.kafka.ui.emitter.EnhancedConsumer;
-import com.provectus.kafka.ui.emitter.OffsetsInfo;
-import com.provectus.kafka.ui.emitter.PollingSettings;
 import com.provectus.kafka.ui.emitter.SeekOperations;
 import com.provectus.kafka.ui.exception.TopicAnalysisException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.SeekTypeDTO;
 import com.provectus.kafka.ui.model.TopicAnalysisDTO;
 import com.provectus.kafka.ui.service.ConsumerGroupService;
 import com.provectus.kafka.ui.service.TopicsService;
@@ -18,16 +16,14 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.errors.WakeupException;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 
@@ -35,6 +31,14 @@ import reactor.core.scheduler.Schedulers;
 @Component
 @RequiredArgsConstructor
 public class TopicAnalysisService {
+
+  private static final Scheduler SCHEDULER = Schedulers.newBoundedElastic(
+      Schedulers.DEFAULT_BOUNDED_ELASTIC_SIZE,
+      Schedulers.DEFAULT_BOUNDED_ELASTIC_QUEUESIZE,
+      "topic-analysis-tasks",
+      10, //ttl for idle threads (in sec)
+      true //daemon
+  );
 
   private final AnalysisTasksStore analysisTasksStore = new AnalysisTasksStore();
 
@@ -64,7 +68,7 @@ public class TopicAnalysisService {
     }
     var task = new AnalysisTask(cluster, topicId, approxNumberOfMsgs);
     analysisTasksStore.registerNewTask(topicId, task);
-    Schedulers.boundedElastic().schedule(task);
+    SCHEDULER.schedule(task);
   }
 
   public void cancelAnalysis(KafkaCluster cluster, String topicName) {
@@ -109,10 +113,10 @@ public class TopicAnalysisService {
     public void run() {
       try {
         log.info("Starting {} topic analysis", topicId);
-        var seekOperations = SeekOperations.create(
-            consumer,
-            new ConsumerPosition(SeekTypeDTO.BEGINNING, topicId.topicName, null)
-        );
+        consumer.partitionsFor(topicId.topicName)
+            .forEach(i -> partitionStats.put(i.partition(), new TopicAnalysisStats()));
+
+        var seekOperations = SeekOperations.create(consumer, new ConsumerPosition(BEGINNING, topicId.topicName, null));
         seekOperations.assignAndSeekNonEmptyPartitions();
 
         while (!seekOperations.assignedPartitionsFullyPolled()) {
@@ -121,7 +125,7 @@ public class TopicAnalysisService {
             totalStats.apply(r);
             partitionStats.get(r.partition()).apply(r);
           });
-          updateProgress();
+          updateProgress(seekOperations);
         }
         analysisTasksStore.setAnalysisResult(topicId, startedAt, totalStats, partitionStats);
         log.info("{} topic analysis finished", topicId);
@@ -137,13 +141,14 @@ public class TopicAnalysisService {
       }
     }
 
-    private void updateProgress() {
-      if (totalStats.totalMsgs > 0 && approxNumberOfMsgs != 0) {
+    private void updateProgress(SeekOperations seekOperations) {
+      long processedOffsets = seekOperations.offsetsProcessedFromSeek();
+      if (processedOffsets > 0 && approxNumberOfMsgs != 0) {
         analysisTasksStore.updateProgress(
             topicId,
             totalStats.totalMsgs,
             totalStats.keysSize.sum + totalStats.valuesSize.sum,
-            Math.min(100.0, (((double) totalStats.totalMsgs) / approxNumberOfMsgs) * 100)
+            Math.min(100.0, (((double) processedOffsets) / approxNumberOfMsgs) * 100)
         );
       }
     }

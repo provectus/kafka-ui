@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.mutable.MutableLong;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
 
@@ -49,6 +50,13 @@ public class SeekOperations {
 
   public boolean assignedPartitionsFullyPolled() {
     return offsetsInfo.assignedPartitionsFullyPolled();
+  }
+
+  //TODO: document
+  public long offsetsProcessedFromSeek() {
+    MutableLong count = new MutableLong();
+    offsetsForSeek.forEach((tp, initialOffset) -> count.add(consumer.position(tp) - initialOffset));
+    return count.getValue();
   }
 
   // Get offsets to seek to. NOTE: offsets do not contain empty partitions offsets
@@ -100,7 +108,7 @@ public class SeekOperations {
   }
 
   private static Map<TopicPartition, Long> offsetsForTimestamp(Consumer<?, ?> consumer, OffsetsInfo offsetsInfo,
-                                                        Map<TopicPartition, Long> timestamps) {
+                                                               Map<TopicPartition, Long> timestamps) {
     timestamps = new HashMap<>(timestamps);
     timestamps.keySet().retainAll(offsetsInfo.getNonEmptyPartitions());
 
