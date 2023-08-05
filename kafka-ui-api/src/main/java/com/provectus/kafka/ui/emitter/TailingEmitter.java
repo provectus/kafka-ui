@@ -9,8 +9,7 @@ import org.apache.kafka.common.errors.InterruptException;
 import reactor.core.publisher.FluxSink;
 
 @Slf4j
-public class TailingEmitter extends AbstractEmitter
-    implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
+public class TailingEmitter extends AbstractEmitter {
 
   private final Supplier<EnhancedConsumer> consumerSupplier;
   private final ConsumerPosition consumerPosition;

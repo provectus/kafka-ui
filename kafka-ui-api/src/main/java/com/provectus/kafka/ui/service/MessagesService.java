@@ -2,11 +2,13 @@ package com.provectus.kafka.ui.service;
 
 import com.google.common.util.concurrent.RateLimiter;
 import com.provectus.kafka.ui.config.ClustersProperties;
+import com.provectus.kafka.ui.emitter.AbstractEmitter;
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.MessageFilters;
 import com.provectus.kafka.ui.emitter.MessagesProcessing;
 import com.provectus.kafka.ui.emitter.TailingEmitter;
+import com.provectus.kafka.ui.emitter.TimestampsSortedMessageProcessing;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
@@ -231,37 +233,29 @@ public class MessagesService {
                                                       @Nullable String keySerde,
                                                       @Nullable String valueSerde) {
 
-    java.util.function.Consumer<? super FluxSink<TopicMessageEventDTO>> emitter;
-
-    var processing = new MessagesProcessing(
-        deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde),
-        getMsgFilter(query, filterQueryType),
-        seekDirection == SeekDirectionDTO.TAILING ? null : limit
-    );
-
-    if (seekDirection.equals(SeekDirectionDTO.FORWARD)) {
-      emitter = new ForwardRecordEmitter(
+    var deserializer = deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde);
+    var filter = getMsgFilter(query, filterQueryType);
+    AbstractEmitter emitter = switch (seekDirection) {
+      case FORWARD -> new ForwardRecordEmitter(
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition,
-          processing,
+          new MessagesProcessing(deserializer, filter, limit),
           cluster.getPollingSettings()
       );
-    } else if (seekDirection.equals(SeekDirectionDTO.BACKWARD)) {
-      emitter = new BackwardRecordEmitter(
+      case BACKWARD -> new BackwardRecordEmitter(
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition,
           limit,
-          processing,
+          new TimestampsSortedMessageProcessing(deserializer, filter, limit),
           cluster.getPollingSettings()
       );
-    } else {
-      emitter = new TailingEmitter(
+      case TAILING -> new TailingEmitter(
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition,
-          processing,
+          new MessagesProcessing(deserializer, filter, null),
           cluster.getPollingSettings()
       );
-    }
+    };
     return Flux.create(emitter)
         .map(getDataMasker(cluster, topic))
         .map(throttleUiPublish(seekDirection));

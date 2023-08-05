@@ -14,13 +14,13 @@ import reactor.core.publisher.FluxSink;
 @Slf4j
 public class MessagesProcessing {
 
-  private final ConsumingStats consumingStats = new ConsumingStats();
-  private long sentMessages = 0;
-  private int filterApplyErrors = 0;
+  protected final ConsumingStats consumingStats = new ConsumingStats();
+  protected long sentMessages = 0;
+  protected int filterApplyErrors = 0;
 
-  private final ConsumerRecordDeserializer deserializer;
-  private final Predicate<TopicMessageDTO> filter;
-  private final @Nullable Integer limit;
+  protected final ConsumerRecordDeserializer deserializer;
+  protected final Predicate<TopicMessageDTO> filter;
+  protected final @Nullable Integer limit;
 
   public MessagesProcessing(ConsumerRecordDeserializer deserializer,
                             Predicate<TopicMessageDTO> filter,

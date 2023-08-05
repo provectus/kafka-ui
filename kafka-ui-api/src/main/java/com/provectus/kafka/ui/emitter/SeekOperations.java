@@ -14,13 +14,13 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-class SeekOperations {
+public class SeekOperations {
 
   private final Consumer<?, ?> consumer;
   private final OffsetsInfo offsetsInfo;
   private final Map<TopicPartition, Long> offsetsForSeek; //only contains non-empty partitions!
 
-  static SeekOperations create(Consumer<?, ?> consumer, ConsumerPosition consumerPosition) {
+  public static SeekOperations create(Consumer<?, ?> consumer, ConsumerPosition consumerPosition) {
     OffsetsInfo offsetsInfo;
     if (consumerPosition.getSeekTo() == null) {
       offsetsInfo = new OffsetsInfo(consumer, consumerPosition.getTopic());
@@ -34,25 +34,25 @@ class SeekOperations {
     );
   }
 
-  void assignAndSeekNonEmptyPartitions() {
+  public void assignAndSeekNonEmptyPartitions() {
     consumer.assign(offsetsForSeek.keySet());
     offsetsForSeek.forEach(consumer::seek);
   }
 
-  Map<TopicPartition, Long> getBeginOffsets() {
+  public Map<TopicPartition, Long> getBeginOffsets() {
     return offsetsInfo.getBeginOffsets();
   }
 
-  Map<TopicPartition, Long> getEndOffsets() {
+  public Map<TopicPartition, Long> getEndOffsets() {
     return offsetsInfo.getEndOffsets();
   }
 
-  boolean assignedPartitionsFullyPolled() {
+  public boolean assignedPartitionsFullyPolled() {
     return offsetsInfo.assignedPartitionsFullyPolled();
   }
 
   // Get offsets to seek to. NOTE: offsets do not contain empty partitions offsets
-  Map<TopicPartition, Long> getOffsetsForSeek() {
+  public Map<TopicPartition, Long> getOffsetsForSeek() {
     return offsetsForSeek;
   }
 

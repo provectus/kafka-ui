@@ -4,8 +4,11 @@ import com.provectus.kafka.ui.emitter.EmptyPollsCounter;
 import com.provectus.kafka.ui.emitter.EnhancedConsumer;
 import com.provectus.kafka.ui.emitter.OffsetsInfo;
 import com.provectus.kafka.ui.emitter.PollingSettings;
+import com.provectus.kafka.ui.emitter.SeekOperations;
 import com.provectus.kafka.ui.exception.TopicAnalysisException;
+import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.SeekTypeDTO;
 import com.provectus.kafka.ui.model.TopicAnalysisDTO;
 import com.provectus.kafka.ui.service.ConsumerGroupService;
 import com.provectus.kafka.ui.service.TopicsService;
@@ -44,7 +47,6 @@ public class TopicAnalysisService {
             startAnalysis(
                 cluster,
                 topicName,
-                topic.getPartitionCount(),
                 topic.getPartitions().values()
                     .stream()
                     .mapToLong(p -> p.getOffsetMax() - p.getOffsetMin())
@@ -55,13 +57,12 @@ public class TopicAnalysisService {
 
   private synchronized void startAnalysis(KafkaCluster cluster,
                                           String topic,
-                                          int partitionsCnt,
                                           long approxNumberOfMsgs) {
     var topicId = new TopicIdentity(cluster, topic);
     if (analysisTasksStore.isAnalysisInProgress(topicId)) {
       throw new TopicAnalysisException("Topic is already analyzing");
     }
-    var task = new AnalysisTask(cluster, topicId, partitionsCnt, approxNumberOfMsgs, cluster.getPollingSettings());
+    var task = new AnalysisTask(cluster, topicId, approxNumberOfMsgs);
     analysisTasksStore.registerNewTask(topicId, task);
     Schedulers.boundedElastic().schedule(task);
   }
@@ -79,20 +80,16 @@ public class TopicAnalysisService {
     private final Instant startedAt = Instant.now();
 
     private final TopicIdentity topicId;
-    private final int partitionsCnt;
     private final long approxNumberOfMsgs;
-    private final EmptyPollsCounter emptyPollsCounter;
 
     private final TopicAnalysisStats totalStats = new TopicAnalysisStats();
     private final Map<Integer, TopicAnalysisStats> partitionStats = new HashMap<>();
 
     private final EnhancedConsumer consumer;
 
-    AnalysisTask(KafkaCluster cluster, TopicIdentity topicId, int partitionsCnt,
-                 long approxNumberOfMsgs, PollingSettings pollingSettings) {
+    AnalysisTask(KafkaCluster cluster, TopicIdentity topicId, long approxNumberOfMsgs) {
       this.topicId = topicId;
       this.approxNumberOfMsgs = approxNumberOfMsgs;
-      this.partitionsCnt = partitionsCnt;
       this.consumer = consumerGroupService.createConsumer(
           cluster,
           // to improve polling throughput
@@ -101,7 +98,6 @@ public class TopicAnalysisService {
               ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "100000"
           )
       );
-      this.emptyPollsCounter = pollingSettings.createEmptyPollsCounter();
     }
 
     @Override
@@ -113,18 +109,14 @@ public class TopicAnalysisService {
     public void run() {
       try {
         log.info("Starting {} topic analysis", topicId);
-        var topicPartitions = IntStream.range(0, partitionsCnt)
-            .peek(i -> partitionStats.put(i, new TopicAnalysisStats()))
-            .mapToObj(i -> new TopicPartition(topicId.topicName, i))
-            .collect(Collectors.toList());
+        var seekOperations = SeekOperations.create(
+            consumer,
+            new ConsumerPosition(SeekTypeDTO.BEGINNING, topicId.topicName, null)
+        );
+        seekOperations.assignAndSeekNonEmptyPartitions();
 
-        consumer.assign(topicPartitions);
-        consumer.seekToBeginning(topicPartitions);
-
-        var offsetsInfo = new OffsetsInfo(consumer, topicId.topicName);
-        while (!offsetsInfo.assignedPartitionsFullyPolled() && !emptyPollsCounter.noDataEmptyPollsReached()) {
+        while (!seekOperations.assignedPartitionsFullyPolled()) {
           var polled = consumer.pollEnhanced(Duration.ofSeconds(3));
-          emptyPollsCounter.count(polled.count());
           polled.forEach(r -> {
             totalStats.apply(r);
             partitionStats.get(r.partition()).apply(r);

@@ -16,21 +16,22 @@ import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
 
 @Slf4j
-public class BackwardRecordEmitter
-    extends AbstractEmitter
-    implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
+public class BackwardRecordEmitter extends AbstractEmitter {
 
   private final Supplier<EnhancedConsumer> consumerSupplier;
   private final ConsumerPosition consumerPosition;
   private final int messagesPerPage;
 
+  private final TimestampsSortedMessageProcessing messagesProcessing;
+
   public BackwardRecordEmitter(
       Supplier<EnhancedConsumer> consumerSupplier,
       ConsumerPosition consumerPosition,
       int messagesPerPage,
-      MessagesProcessing messagesProcessing,
+      TimestampsSortedMessageProcessing messagesProcessing,
       PollingSettings pollingSettings) {
     super(messagesProcessing, pollingSettings);
+    this.messagesProcessing = messagesProcessing;
     this.consumerPosition = consumerPosition;
     this.messagesPerPage = messagesPerPage;
     this.consumerSupplier = consumerSupplier;
@@ -73,6 +74,7 @@ public class BackwardRecordEmitter
         } else if (sink.isCancelled()) {
           log.debug("sink is cancelled after partitions poll iteration");
         }
+        messagesProcessing.flush(sink);
       }
       sendFinishStatsAndCompleteSink(sink);
       log.debug("Polling finished");
@@ -108,14 +110,9 @@ public class BackwardRecordEmitter
           .filter(r -> r.offset() < toOffset)
           .toList();
 
-      if (polledRecords.count() > 0 && filteredRecords.isEmpty()) {
-        // we already read all messages in target offsets interval
-        break;
-      }
       recordsToSend.addAll(filteredRecords);
     }
     log.debug("{} records to send", recordsToSend.size());
-    Collections.reverse(recordsToSend);
     return recordsToSend;
   }
 }

@@ -13,6 +13,7 @@ import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.MessagesProcessing;
 import com.provectus.kafka.ui.emitter.PollingSettings;
 import com.provectus.kafka.ui.emitter.PollingThrottler;
+import com.provectus.kafka.ui.emitter.TimestampsSortedMessageProcessing;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
@@ -126,7 +127,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(BEGINNING, EMPTY_TOPIC, null),
         100,
-        createMessagesProcessing(),
+        new TimestampsSortedMessageProcessing(RECORD_DESERIALIZER, msg -> true, null),
         PollingSettings.createDefault()
     );
 
@@ -156,7 +157,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(LATEST, TOPIC, null),
         PARTITIONS * MSGS_PER_PARTITION,
-        createMessagesProcessing(),
+        new TimestampsSortedMessageProcessing(RECORD_DESERIALIZER, msg -> true, null),
         PollingSettings.createDefault()
     );
 
@@ -185,7 +186,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(OFFSET, TOPIC, targetOffsets),
         PARTITIONS * MSGS_PER_PARTITION,
-        createMessagesProcessing(),
+        new TimestampsSortedMessageProcessing(RECORD_DESERIALIZER, msg -> true, null),
         PollingSettings.createDefault()
     );
 
@@ -230,7 +231,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(TIMESTAMP, TOPIC, targetTimestamps),
         PARTITIONS * MSGS_PER_PARTITION,
-        createMessagesProcessing(),
+        new TimestampsSortedMessageProcessing(RECORD_DESERIALIZER, msg -> true, null),
         PollingSettings.createDefault()
     );
 
@@ -261,7 +262,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(OFFSET, TOPIC, targetOffsets),
         numMessages,
-        createMessagesProcessing(),
+        new TimestampsSortedMessageProcessing(RECORD_DESERIALIZER, msg -> true, null),
         PollingSettings.createDefault()
     );
 
@@ -287,7 +288,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(OFFSET, TOPIC, offsets),
         100,
-        createMessagesProcessing(),
+        new TimestampsSortedMessageProcessing(RECORD_DESERIALIZER, msg -> true, null),
         PollingSettings.createDefault()
     );
 
