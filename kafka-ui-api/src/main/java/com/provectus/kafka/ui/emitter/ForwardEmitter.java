@@ -2,37 +2,40 @@ package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
-import java.util.ArrayList;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import lombok.Lombok;
 import org.apache.kafka.common.TopicPartition;
 
-public class ForwardPartitionsEmitterImpl extends AbstractPartitionsEmitter {
+public class ForwardEmitter extends PerPartitionEmitter {
 
-  public ForwardPartitionsEmitterImpl(
-      Supplier<EnhancedConsumer> consumerSupplier,
-      ConsumerPosition consumerPosition,
-      int messagesPerPage,
-      MessagesProcessing messagesProcessing,
-      PollingSettings pollingSettings
-  ) {
-    super(consumerSupplier, consumerPosition, messagesPerPage, messagesProcessing, pollingSettings);
+  public ForwardEmitter(Supplier<EnhancedConsumer> consumerSupplier,
+                        ConsumerPosition consumerPosition,
+                        int messagesPerPage,
+                        ConsumerRecordDeserializer deserializer,
+                        Predicate<TopicMessageDTO> filter,
+                        PollingSettings pollingSettings) {
+    super(
+        consumerSupplier,
+        consumerPosition,
+        messagesPerPage,
+        new MessagesProcessing(
+            deserializer,
+            filter,
+            true,
+            messagesPerPage
+        ),
+        pollingSettings
+    );
   }
 
   @Override
-  protected Comparator<TopicMessageDTO> sortBeforeSend() {
-    return (m1, m2) -> 0;
-  }
-
-  @Override
-  protected TreeMap<TopicPartition, FromToOffset> nexPollingRange(EnhancedConsumer consumer,
-                                                                  TreeMap<TopicPartition, FromToOffset> prevRange,
-                                                                  SeekOperations seekOperations) {
+  protected TreeMap<TopicPartition, FromToOffset> nextPollingRange(TreeMap<TopicPartition, FromToOffset> prevRange,
+                                                                   SeekOperations seekOperations) {
     TreeMap<TopicPartition, Long> readFromOffsets = new TreeMap<>(Comparator.comparingInt(TopicPartition::partition));
     if (prevRange.isEmpty()) {
       readFromOffsets.putAll(seekOperations.getOffsetsForSeek());

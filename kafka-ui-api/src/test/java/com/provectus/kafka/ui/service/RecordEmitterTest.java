@@ -7,14 +7,13 @@ import static com.provectus.kafka.ui.model.SeekTypeDTO.TIMESTAMP;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractIntegrationTest;
-import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
+import com.provectus.kafka.ui.emitter.BackwardEmitter;
 import com.provectus.kafka.ui.emitter.EnhancedConsumer;
-import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
-import com.provectus.kafka.ui.emitter.MessagesProcessing;
+import com.provectus.kafka.ui.emitter.ForwardEmitter;
 import com.provectus.kafka.ui.emitter.PollingSettings;
 import com.provectus.kafka.ui.emitter.PollingThrottler;
-import com.provectus.kafka.ui.emitter.TimestampsSortedMessageProcessing;
 import com.provectus.kafka.ui.model.ConsumerPosition;
+import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
 import com.provectus.kafka.ui.serde.api.Serde;
@@ -32,16 +31,15 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.internals.RecordHeader;
-import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -59,6 +57,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
   static final String EMPTY_TOPIC = TOPIC + "_empty";
   static final List<Record> SENT_RECORDS = new ArrayList<>();
   static final ConsumerRecordDeserializer RECORD_DESERIALIZER = createRecordsDeserializer();
+  static final Predicate<TopicMessageDTO> NOOP_FILTER = m -> true;
 
   @BeforeAll
   static void generateMsgs() throws Exception {
@@ -110,24 +109,23 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     );
   }
 
-  private MessagesProcessing createMessagesProcessing() {
-    return new MessagesProcessing(RECORD_DESERIALIZER, msg -> true, null);
-  }
-
   @Test
   void pollNothingOnEmptyTopic() {
-    var forwardEmitter = new ForwardRecordEmitter(
-        this::createConsumer,
-        new ConsumerPosition(BEGINNING, EMPTY_TOPIC, null),
-        createMessagesProcessing(),
-        PollingSettings.createDefault()
-    );
-
-    var backwardEmitter = new BackwardRecordEmitter(
+    var forwardEmitter = new ForwardEmitter(
         this::createConsumer,
         new ConsumerPosition(BEGINNING, EMPTY_TOPIC, null),
         100,
-        new TimestampsSortedMessageProcessing(RECORD_DESERIALIZER, msg -> true, null),
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
+        PollingSettings.createDefault()
+    );
+
+    var backwardEmitter = new BackwardEmitter(
+        this::createConsumer,
+        new ConsumerPosition(BEGINNING, EMPTY_TOPIC, null),
+        100,
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault()
     );
 
@@ -146,18 +144,21 @@ class RecordEmitterTest extends AbstractIntegrationTest {
 
   @Test
   void pollFullTopicFromBeginning() {
-    var forwardEmitter = new ForwardRecordEmitter(
+    var forwardEmitter = new ForwardEmitter(
         this::createConsumer,
         new ConsumerPosition(BEGINNING, TOPIC, null),
-        createMessagesProcessing(),
+        PARTITIONS * MSGS_PER_PARTITION,
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault()
     );
 
-    var backwardEmitter = new BackwardRecordEmitter(
+    var backwardEmitter = new BackwardEmitter(
         this::createConsumer,
         new ConsumerPosition(LATEST, TOPIC, null),
         PARTITIONS * MSGS_PER_PARTITION,
-        new TimestampsSortedMessageProcessing(RECORD_DESERIALIZER, msg -> true, null),
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault()
     );
 
@@ -175,18 +176,21 @@ class RecordEmitterTest extends AbstractIntegrationTest {
       targetOffsets.put(new TopicPartition(TOPIC, i), offset);
     }
 
-    var forwardEmitter = new ForwardRecordEmitter(
-        this::createConsumer,
-        new ConsumerPosition(OFFSET, TOPIC, targetOffsets),
-        createMessagesProcessing(),
-        PollingSettings.createDefault()
-    );
-
-    var backwardEmitter = new BackwardRecordEmitter(
+    var forwardEmitter = new ForwardEmitter(
         this::createConsumer,
         new ConsumerPosition(OFFSET, TOPIC, targetOffsets),
         PARTITIONS * MSGS_PER_PARTITION,
-        new TimestampsSortedMessageProcessing(RECORD_DESERIALIZER, msg -> true, null),
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
+        PollingSettings.createDefault()
+    );
+
+    var backwardEmitter = new BackwardEmitter(
+        this::createConsumer,
+        new ConsumerPosition(OFFSET, TOPIC, targetOffsets),
+        PARTITIONS * MSGS_PER_PARTITION,
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault()
     );
 
@@ -220,18 +224,21 @@ class RecordEmitterTest extends AbstractIntegrationTest {
       );
     }
 
-    var forwardEmitter = new ForwardRecordEmitter(
-        this::createConsumer,
-        new ConsumerPosition(TIMESTAMP, TOPIC, targetTimestamps),
-        createMessagesProcessing(),
-        PollingSettings.createDefault()
-    );
-
-    var backwardEmitter = new BackwardRecordEmitter(
+    var forwardEmitter = new ForwardEmitter(
         this::createConsumer,
         new ConsumerPosition(TIMESTAMP, TOPIC, targetTimestamps),
         PARTITIONS * MSGS_PER_PARTITION,
-        new TimestampsSortedMessageProcessing(RECORD_DESERIALIZER, msg -> true, null),
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
+        PollingSettings.createDefault()
+    );
+
+    var backwardEmitter = new BackwardEmitter(
+        this::createConsumer,
+        new ConsumerPosition(TIMESTAMP, TOPIC, targetTimestamps),
+        PARTITIONS * MSGS_PER_PARTITION,
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault()
     );
 
@@ -258,11 +265,12 @@ class RecordEmitterTest extends AbstractIntegrationTest {
       targetOffsets.put(new TopicPartition(TOPIC, i), (long) MSGS_PER_PARTITION);
     }
 
-    var backwardEmitter = new BackwardRecordEmitter(
+    var backwardEmitter = new BackwardEmitter(
         this::createConsumer,
         new ConsumerPosition(OFFSET, TOPIC, targetOffsets),
         numMessages,
-        new TimestampsSortedMessageProcessing(RECORD_DESERIALIZER, msg -> true, null),
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault()
     );
 
@@ -284,11 +292,12 @@ class RecordEmitterTest extends AbstractIntegrationTest {
       offsets.put(new TopicPartition(TOPIC, i), 0L);
     }
 
-    var backwardEmitter = new BackwardRecordEmitter(
+    var backwardEmitter = new BackwardEmitter(
         this::createConsumer,
         new ConsumerPosition(OFFSET, TOPIC, offsets),
         100,
-        new TimestampsSortedMessageProcessing(RECORD_DESERIALIZER, msg -> true, null),
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault()
     );
 

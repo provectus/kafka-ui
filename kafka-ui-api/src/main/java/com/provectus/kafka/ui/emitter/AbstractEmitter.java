@@ -1,15 +1,17 @@
 package com.provectus.kafka.ui.emitter;
 
+import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import java.time.Duration;
+import java.util.Comparator;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
 
 public abstract class AbstractEmitter implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
 
-  protected final MessagesProcessing messagesProcessing;
-  protected final PollingSettings pollingSettings;
+  private final MessagesProcessing messagesProcessing;
+  private final PollingSettings pollingSettings;
 
   protected AbstractEmitter(MessagesProcessing messagesProcessing, PollingSettings pollingSettings) {
     this.messagesProcessing = messagesProcessing;
@@ -20,10 +22,26 @@ public abstract class AbstractEmitter implements java.util.function.Consumer<Flu
     return poll(sink, consumer, pollingSettings.getPollTimeout());
   }
 
-  protected PolledRecords poll(FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer, Duration timeout) {
+  protected PolledRecords pollSinglePartition(FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer) {
+    return poll(sink, consumer, pollingSettings.getPartitionPollTimeout());
+  }
+
+  private PolledRecords poll(FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer, Duration timeout) {
     var records = consumer.pollEnhanced(timeout);
     sendConsuming(sink, records);
     return records;
+  }
+
+  protected void buffer(ConsumerRecord<Bytes, Bytes> rec) {
+    messagesProcessing.buffer(rec);
+  }
+
+  protected void flushBuffer(FluxSink<TopicMessageEventDTO> sink) {
+    messagesProcessing.flush(sink);
+  }
+
+  protected void sendWithoutBuffer(FluxSink<TopicMessageEventDTO> sink, ConsumerRecord<Bytes, Bytes> rec) {
+    messagesProcessing.sendWithoutBuffer(sink, rec);
   }
 
   protected boolean sendLimitReached() {

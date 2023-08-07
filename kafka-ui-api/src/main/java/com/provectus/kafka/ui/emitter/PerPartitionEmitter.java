@@ -4,8 +4,6 @@ import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Supplier;
@@ -17,17 +15,17 @@ import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
 
 @Slf4j
-public abstract class AbstractPartitionsEmitter extends AbstractEmitter {
+public abstract class PerPartitionEmitter extends AbstractEmitter {
 
   private final Supplier<EnhancedConsumer> consumerSupplier;
   protected final ConsumerPosition consumerPosition;
   protected final int messagesPerPage;
 
-  public AbstractPartitionsEmitter(Supplier<EnhancedConsumer> consumerSupplier,
-                                   ConsumerPosition consumerPosition,
-                                   int messagesPerPage,
-                                   MessagesProcessing messagesProcessing,
-                                   PollingSettings pollingSettings) {
+  protected PerPartitionEmitter(Supplier<EnhancedConsumer> consumerSupplier,
+                                ConsumerPosition consumerPosition,
+                                int messagesPerPage,
+                                MessagesProcessing messagesProcessing,
+                                PollingSettings pollingSettings) {
     super(messagesProcessing, pollingSettings);
     this.consumerPosition = consumerPosition;
     this.messagesPerPage = messagesPerPage;
@@ -35,41 +33,34 @@ public abstract class AbstractPartitionsEmitter extends AbstractEmitter {
   }
 
   // from inclusive, to exclusive
-  protected record FromToOffset(long from, long to) {
+  protected record FromToOffset(/*inclusive*/ long from, /*exclusive*/ long to) {
   }
 
   //should return empty map if polling should be stopped
-  protected abstract TreeMap<TopicPartition, FromToOffset> nexPollingRange(
-      EnhancedConsumer consumer,
+  protected abstract TreeMap<TopicPartition, FromToOffset> nextPollingRange(
       TreeMap<TopicPartition, FromToOffset> prevRange, //empty on start
       SeekOperations seekOperations
   );
-
-  protected abstract Comparator<TopicMessageDTO> sortBeforeSend();
-
-  private void logReadRange(TreeMap<TopicPartition, FromToOffset> range) {
-    log.debug("Polling offsets range {}", range);
-  }
 
   @Override
   public void accept(FluxSink<TopicMessageEventDTO> sink) {
     log.debug("Starting polling for {}", consumerPosition);
     try (EnhancedConsumer consumer = consumerSupplier.get()) {
       sendPhase(sink, "Consumer created");
-
       var seekOperations = SeekOperations.create(consumer, consumerPosition);
-      TreeMap<TopicPartition, FromToOffset> readRange = nexPollingRange(consumer, new TreeMap<>(), seekOperations);
-      logReadRange(readRange);
+      TreeMap<TopicPartition, FromToOffset> readRange = nextPollingRange(new TreeMap<>(), seekOperations);
+      log.debug("Starting from offsets {}", readRange);
+
       while (!sink.isCancelled() && !readRange.isEmpty() && !sendLimitReached()) {
         readRange.forEach((tp, fromTo) -> {
           if (sink.isCancelled()) {
             return; //fast return in case of sink cancellation
           }
           partitionPollIteration(tp, fromTo.from, fromTo.to, consumer, sink)
-              .forEach(messagesProcessing::buffer);
+              .forEach(this::buffer);
         });
-        messagesProcessing.flush(sink, sortBeforeSend());
-        readRange = nexPollingRange(consumer, readRange, seekOperations);
+        flushBuffer(sink);
+        readRange = nextPollingRange(readRange, seekOperations);
       }
       if (sink.isCancelled()) {
         log.debug("Polling finished due to sink cancellation");
@@ -99,7 +90,7 @@ public abstract class AbstractPartitionsEmitter extends AbstractEmitter {
         && !sendLimitReached()
         && consumer.position(tp) < toOffset) {
 
-      var polledRecords = poll(sink, consumer, pollingSettings.getPartitionPollTimeout());
+      var polledRecords = pollSinglePartition(sink, consumer);
       log.debug("{} records polled from {}", polledRecords.count(), tp);
 
       polledRecords.records(tp).stream()

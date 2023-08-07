@@ -3,10 +3,9 @@ package com.provectus.kafka.ui.service;
 import com.google.common.util.concurrent.RateLimiter;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.emitter.AbstractEmitter;
-import com.provectus.kafka.ui.emitter.BackwardPartitionsEmitterImpl;
-import com.provectus.kafka.ui.emitter.ForwardPartitionsEmitterImpl;
+import com.provectus.kafka.ui.emitter.BackwardEmitter;
+import com.provectus.kafka.ui.emitter.ForwardEmitter;
 import com.provectus.kafka.ui.emitter.MessageFilters;
-import com.provectus.kafka.ui.emitter.MessagesProcessing;
 import com.provectus.kafka.ui.emitter.TailingEmitter;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
@@ -234,25 +233,17 @@ public class MessagesService {
     var deserializer = deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde);
     var filter = getMsgFilter(query, filterQueryType);
     AbstractEmitter emitter = switch (seekDirection) {
-      case FORWARD -> new ForwardPartitionsEmitterImpl(
+      case FORWARD -> new ForwardEmitter(
           () -> consumerGroupService.createConsumer(cluster),
-          consumerPosition,
-          limit,
-          new MessagesProcessing(deserializer, filter, limit),
-          cluster.getPollingSettings()
+          consumerPosition, limit, deserializer, filter, cluster.getPollingSettings()
       );
-      case BACKWARD -> new BackwardPartitionsEmitterImpl(
+      case BACKWARD -> new BackwardEmitter(
           () -> consumerGroupService.createConsumer(cluster),
-          consumerPosition,
-          limit,
-          new MessagesProcessing(deserializer, filter, limit),
-          cluster.getPollingSettings()
+          consumerPosition, limit, deserializer, filter, cluster.getPollingSettings()
       );
       case TAILING -> new TailingEmitter(
           () -> consumerGroupService.createConsumer(cluster),
-          consumerPosition,
-          new MessagesProcessing(deserializer, filter, null),
-          cluster.getPollingSettings()
+          consumerPosition, deserializer, filter, cluster.getPollingSettings()
       );
     };
     return Flux.create(emitter)
