@@ -47,26 +47,16 @@ public class TopicAnalysisService {
 
   public Mono<Void> analyze(KafkaCluster cluster, String topicName) {
     return topicsService.getTopicDetails(cluster, topicName)
-        .doOnNext(topic ->
-            startAnalysis(
-                cluster,
-                topicName,
-                topic.getPartitions().values()
-                    .stream()
-                    .mapToLong(p -> p.getOffsetMax() - p.getOffsetMin())
-                    .sum()
-            )
-        ).then();
+        .doOnNext(topic -> startAnalysis(cluster, topicName))
+        .then();
   }
 
-  private synchronized void startAnalysis(KafkaCluster cluster,
-                                          String topic,
-                                          long approxNumberOfMsgs) {
+  private synchronized void startAnalysis(KafkaCluster cluster, String topic) {
     var topicId = new TopicIdentity(cluster, topic);
     if (analysisTasksStore.isAnalysisInProgress(topicId)) {
       throw new TopicAnalysisException("Topic is already analyzing");
     }
-    var task = new AnalysisTask(cluster, topicId, approxNumberOfMsgs);
+    var task = new AnalysisTask(cluster, topicId);
     analysisTasksStore.registerNewTask(topicId, task);
     SCHEDULER.schedule(task);
   }
@@ -84,16 +74,14 @@ public class TopicAnalysisService {
     private final Instant startedAt = Instant.now();
 
     private final TopicIdentity topicId;
-    private final long approxNumberOfMsgs;
 
     private final TopicAnalysisStats totalStats = new TopicAnalysisStats();
     private final Map<Integer, TopicAnalysisStats> partitionStats = new HashMap<>();
 
     private final EnhancedConsumer consumer;
 
-    AnalysisTask(KafkaCluster cluster, TopicIdentity topicId, long approxNumberOfMsgs) {
+    AnalysisTask(KafkaCluster cluster, TopicIdentity topicId) {
       this.topicId = topicId;
-      this.approxNumberOfMsgs = approxNumberOfMsgs;
       this.consumer = consumerGroupService.createConsumer(
           cluster,
           // to improve polling throughput
@@ -114,9 +102,10 @@ public class TopicAnalysisService {
       try {
         log.info("Starting {} topic analysis", topicId);
         consumer.partitionsFor(topicId.topicName)
-            .forEach(i -> partitionStats.put(i.partition(), new TopicAnalysisStats()));
+            .forEach(tp -> partitionStats.put(tp.partition(), new TopicAnalysisStats()));
 
         var seekOperations = SeekOperations.create(consumer, new ConsumerPosition(BEGINNING, topicId.topicName, null));
+        long summaryOffsetsRange = seekOperations.summaryOffsetsRange();
         seekOperations.assignAndSeekNonEmptyPartitions();
 
         while (!seekOperations.assignedPartitionsFullyPolled()) {
@@ -125,7 +114,7 @@ public class TopicAnalysisService {
             totalStats.apply(r);
             partitionStats.get(r.partition()).apply(r);
           });
-          updateProgress(seekOperations);
+          updateProgress(seekOperations.offsetsProcessedFromSeek(), summaryOffsetsRange);
         }
         analysisTasksStore.setAnalysisResult(topicId, startedAt, totalStats, partitionStats);
         log.info("{} topic analysis finished", topicId);
@@ -141,14 +130,13 @@ public class TopicAnalysisService {
       }
     }
 
-    private void updateProgress(SeekOperations seekOperations) {
-      long processedOffsets = seekOperations.offsetsProcessedFromSeek();
-      if (processedOffsets > 0 && approxNumberOfMsgs != 0) {
+    private void updateProgress(long processedOffsets, long summaryOffsetsRange) {
+      if (processedOffsets > 0 && summaryOffsetsRange != 0) {
         analysisTasksStore.updateProgress(
             topicId,
             totalStats.totalMsgs,
             totalStats.keysSize.sum + totalStats.valuesSize.sum,
-            Math.min(100.0, (((double) processedOffsets) / approxNumberOfMsgs) * 100)
+            Math.min(100.0, (((double) processedOffsets) / summaryOffsetsRange) * 100)
         );
       }
     }

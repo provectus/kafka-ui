@@ -52,7 +52,12 @@ public class SeekOperations {
     return offsetsInfo.assignedPartitionsFullyPolled();
   }
 
-  //TODO: document
+  // sum of (end - start) offsets for all partitions
+  public long summaryOffsetsRange() {
+    return offsetsInfo.summaryOffsetsRange();
+  }
+
+  // sum of differences between initial consumer seek and current consumer position (across all partitions)
   public long offsetsProcessedFromSeek() {
     MutableLong count = new MutableLong();
     offsetsForSeek.forEach((tp, initialOffset) -> count.add(consumer.position(tp) - initialOffset));
