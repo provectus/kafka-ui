@@ -85,6 +85,7 @@ public abstract class RangePollingEmitter extends AbstractEmitter {
             .filter(r -> r.offset() < fromTo.to)
             .forEach(result::add);
 
+        //next position is out of target range -> pausing partition
         if (consumer.position(tp) >= fromTo.to) {
           consumer.pause(List.of(tp));
         }

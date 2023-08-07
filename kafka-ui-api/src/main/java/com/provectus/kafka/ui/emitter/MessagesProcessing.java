@@ -13,9 +13,9 @@ import com.provectus.kafka.ui.model.TopicMessagePhaseDTO;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,30 +40,34 @@ class MessagesProcessing {
     return limit != null && sentMessages >= limit;
   }
 
+  /*
+   * Sorting by timestamps, BUT requesting that records within same partitions should be ordered by offsets.
+   */
   @VisibleForTesting
-  static Iterable<ConsumerRecord<Bytes, Bytes>> sorted(Iterable<ConsumerRecord<Bytes, Bytes>> records, boolean asc) {
+  static Iterable<ConsumerRecord<Bytes, Bytes>> sortForSending(Iterable<ConsumerRecord<Bytes, Bytes>> records,
+                                                               boolean asc) {
     Comparator<ConsumerRecord> offsetComparator = asc
         ? Comparator.comparingLong(ConsumerRecord::offset)
         : Comparator.<ConsumerRecord>comparingLong(ConsumerRecord::offset).reversed();
+
+    // partition -> sorted by offsets records
+    Map<Integer, List<ConsumerRecord<Bytes, Bytes>>> perPartition = Streams.stream(records)
+        .collect(
+            groupingBy(
+                ConsumerRecord::partition,
+                TreeMap::new,
+                collectingAndThen(toList(), lst -> lst.stream().sorted(offsetComparator).toList())));
 
     Comparator<ConsumerRecord> tsComparator = asc
         ? Comparator.comparing(ConsumerRecord::timestamp)
         : Comparator.<ConsumerRecord>comparingLong(ConsumerRecord::timestamp).reversed();
 
-    TreeMap<Integer, List<ConsumerRecord<Bytes, Bytes>>> perPartition = Streams.stream(records)
-        .collect(
-            groupingBy(
-                ConsumerRecord::partition,
-                TreeMap::new,
-                collectingAndThen(
-                    toList(),
-                    lst -> lst.stream().sorted(offsetComparator).toList())));
-
+    // merge-sorting records from partitions one by one using timestamp comparator
     return Iterables.mergeSorted(perPartition.values(), tsComparator);
   }
 
   void send(FluxSink<TopicMessageEventDTO> sink, Iterable<ConsumerRecord<Bytes, Bytes>> polled) {
-    sorted(polled, ascendingSortBeforeSend)
+    sortForSending(polled, ascendingSortBeforeSend)
         .forEach(rec -> {
           if (!limitReached() && !sink.isCancelled()) {
             TopicMessageDTO topicMessage = deserializer.deserialize(rec);

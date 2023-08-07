@@ -1,8 +1,6 @@
 package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import java.time.Duration;
-import java.util.List;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
@@ -17,14 +15,10 @@ public abstract class AbstractEmitter implements java.util.function.Consumer<Flu
     this.pollingSettings = pollingSettings;
   }
 
-  private PolledRecords poll(FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer, Duration timeout) {
-    var records = consumer.pollEnhanced(timeout);
+  protected PolledRecords poll(FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer) {
+    var records = consumer.pollEnhanced(pollingSettings.getPollTimeout());
     sendConsuming(sink, records);
     return records;
-  }
-
-  protected PolledRecords poll(FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer) {
-    return poll(sink, consumer, pollingSettings.getPollTimeout());
   }
 
   protected boolean sendLimitReached() {

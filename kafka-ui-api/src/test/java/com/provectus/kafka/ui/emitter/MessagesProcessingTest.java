@@ -33,7 +33,7 @@ class MessagesProcessingTest {
     var shuffled = new ArrayList<>(messagesInOrder);
     Collections.shuffle(shuffled);
 
-    var sortedList = MessagesProcessing.sorted(shuffled, true);
+    var sortedList = MessagesProcessing.sortForSending(shuffled, true);
     assertThat(sortedList).containsExactlyElementsOf(messagesInOrder);
   }
 
@@ -54,7 +54,7 @@ class MessagesProcessingTest {
     var shuffled = new ArrayList<>(messagesInOrder);
     Collections.shuffle(shuffled);
 
-    var sortedList = MessagesProcessing.sorted(shuffled, false);
+    var sortedList = MessagesProcessing.sortForSending(shuffled, false);
     assertThat(sortedList).containsExactlyElementsOf(messagesInOrder);
   }
 
