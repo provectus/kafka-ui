@@ -52,9 +52,9 @@ public class ForwardRecordEmitter extends AbstractEmitter {
 
         log.debug("{} records polled", records.count());
 
-        for (ConsumerRecord<Bytes, Bytes> msg : records) {
-          sendMessage(sink, msg);
-        }
+//        for (ConsumerRecord<Bytes, Bytes> msg : records) {
+//          sendMessage(sink, msg);
+//        }
       }
       sendFinishStatsAndCompleteSink(sink);
       log.debug("Polling finished");

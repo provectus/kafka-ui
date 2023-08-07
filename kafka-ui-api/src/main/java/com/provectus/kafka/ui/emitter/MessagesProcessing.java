@@ -4,6 +4,9 @@ import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicMessagePhaseDTO;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
@@ -14,13 +17,14 @@ import reactor.core.publisher.FluxSink;
 @Slf4j
 public class MessagesProcessing {
 
-  protected final ConsumingStats consumingStats = new ConsumingStats();
-  protected long sentMessages = 0;
-  protected int filterApplyErrors = 0;
+  private final ConsumingStats consumingStats = new ConsumingStats();
+  private final List<TopicMessageDTO> buffer = new ArrayList<>();
 
-  protected final ConsumerRecordDeserializer deserializer;
-  protected final Predicate<TopicMessageDTO> filter;
-  protected final @Nullable Integer limit;
+  private long sentMessages = 0;
+  private int filterApplyErrors = 0;
+  private final ConsumerRecordDeserializer deserializer;
+  private final Predicate<TopicMessageDTO> filter;
+  private final @Nullable Integer limit;
 
   public MessagesProcessing(ConsumerRecordDeserializer deserializer,
                             Predicate<TopicMessageDTO> filter,
@@ -34,16 +38,12 @@ public class MessagesProcessing {
     return limit != null && sentMessages >= limit;
   }
 
-  void sendMsg(FluxSink<TopicMessageEventDTO> sink, ConsumerRecord<Bytes, Bytes> rec) {
-    if (!sink.isCancelled() && !limitReached()) {
+  void buffer(ConsumerRecord<Bytes, Bytes> rec) {
+    if (!limitReached()) {
       TopicMessageDTO topicMessage = deserializer.deserialize(rec);
       try {
         if (filter.test(topicMessage)) {
-          sink.next(
-              new TopicMessageEventDTO()
-                  .type(TopicMessageEventDTO.TypeEnum.MESSAGE)
-                  .message(topicMessage)
-          );
+          buffer.add(topicMessage);
           sentMessages++;
         }
       } catch (Exception e) {
@@ -51,6 +51,25 @@ public class MessagesProcessing {
         log.trace("Error applying filter for message {}", topicMessage);
       }
     }
+  }
+
+  void flush(FluxSink<TopicMessageEventDTO> sink, Comparator<TopicMessageDTO> sortBeforeSend) {
+    while (!sink.isCancelled()) {
+      buffer.sort(sortBeforeSend);
+      for (TopicMessageDTO topicMessage : buffer) {
+        sink.next(
+            new TopicMessageEventDTO()
+                .type(TopicMessageEventDTO.TypeEnum.MESSAGE)
+                .message(topicMessage)
+        );
+      }
+    }
+    buffer.clear();
+  }
+
+  void sendWithoutBuffer(FluxSink<TopicMessageEventDTO> sink, ConsumerRecord<Bytes, Bytes> rec) {
+    buffer(rec);
+    flush(sink, (m1, m2) -> 0);
   }
 
   void sentConsumingInfo(FluxSink<TopicMessageEventDTO> sink, PolledRecords polledRecords) {

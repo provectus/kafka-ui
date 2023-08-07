@@ -22,13 +22,13 @@ public class BackwardRecordEmitter extends AbstractEmitter {
   private final ConsumerPosition consumerPosition;
   private final int messagesPerPage;
 
-  private final TimestampsSortedMessageProcessing messagesProcessing;
+  private final MessagesProcessing messagesProcessing;
 
   public BackwardRecordEmitter(
       Supplier<EnhancedConsumer> consumerSupplier,
       ConsumerPosition consumerPosition,
       int messagesPerPage,
-      TimestampsSortedMessageProcessing messagesProcessing,
+      MessagesProcessing messagesProcessing,
       PollingSettings pollingSettings) {
     super(messagesProcessing, pollingSettings);
     this.messagesProcessing = messagesProcessing;
@@ -39,52 +39,52 @@ public class BackwardRecordEmitter extends AbstractEmitter {
 
   @Override
   public void accept(FluxSink<TopicMessageEventDTO> sink) {
-    log.debug("Starting backward polling for {}", consumerPosition);
-    try (EnhancedConsumer consumer = consumerSupplier.get()) {
-      sendPhase(sink, "Created consumer");
-
-      var seekOperations = SeekOperations.create(consumer, consumerPosition);
-      var readUntilOffsets = new TreeMap<TopicPartition, Long>(Comparator.comparingInt(TopicPartition::partition));
-      readUntilOffsets.putAll(seekOperations.getOffsetsForSeek());
-
-      int msgsToPollPerPartition = (int) Math.ceil((double) messagesPerPage / readUntilOffsets.size());
-      log.debug("'Until' offsets for polling: {}", readUntilOffsets);
-
-      while (!sink.isCancelled() && !readUntilOffsets.isEmpty() && !sendLimitReached()) {
-        new TreeMap<>(readUntilOffsets).forEach((tp, readToOffset) -> {
-          if (sink.isCancelled()) {
-            return; //fast return in case of sink cancellation
-          }
-          long beginOffset = seekOperations.getBeginOffsets().get(tp);
-          long readFromOffset = Math.max(beginOffset, readToOffset - msgsToPollPerPartition);
-
-          partitionPollIteration(tp, readFromOffset, readToOffset, consumer, sink)
-              .forEach(r -> sendMessage(sink, r));
-
-          if (beginOffset == readFromOffset) {
-            // we fully read this partition -> removing it from polling iterations
-            readUntilOffsets.remove(tp);
-          } else {
-            // updating 'to' offset for next polling iteration
-            readUntilOffsets.put(tp, readFromOffset);
-          }
-        });
-        if (readUntilOffsets.isEmpty()) {
-          log.debug("begin reached after partitions poll iteration");
-        } else if (sink.isCancelled()) {
-          log.debug("sink is cancelled after partitions poll iteration");
-        }
-        messagesProcessing.flush(sink);
-      }
-      sendFinishStatsAndCompleteSink(sink);
-      log.debug("Polling finished");
-    } catch (InterruptException kafkaInterruptException) {
-      log.debug("Polling finished due to thread interruption");
-      sink.complete();
-    } catch (Exception e) {
-      log.error("Error occurred while consuming records", e);
-      sink.error(e);
-    }
+//    log.debug("Starting backward polling for {}", consumerPosition);
+//    try (EnhancedConsumer consumer = consumerSupplier.get()) {
+//      sendPhase(sink, "Created consumer");
+//
+//      var seekOperations = SeekOperations.create(consumer, consumerPosition);
+//      var readUntilOffsets = new TreeMap<TopicPartition, Long>(Comparator.comparingInt(TopicPartition::partition));
+//      readUntilOffsets.putAll(seekOperations.getOffsetsForSeek());
+//
+//      int msgsToPollPerPartition = (int) Math.ceil((double) messagesPerPage / readUntilOffsets.size());
+//      log.debug("'Until' offsets for polling: {}", readUntilOffsets);
+//
+//      while (!sink.isCancelled() && !readUntilOffsets.isEmpty() && !sendLimitReached()) {
+//        new TreeMap<>(readUntilOffsets).forEach((tp, readToOffset) -> {
+//          if (sink.isCancelled()) {
+//            return; //fast return in case of sink cancellation
+//          }
+//          long beginOffset = seekOperations.getBeginOffsets().get(tp);
+//          long readFromOffset = Math.max(beginOffset, readToOffset - msgsToPollPerPartition);
+//
+//          partitionPollIteration(tp, readFromOffset, readToOffset, consumer, sink)
+//              .forEach(r -> sendMessage(sink, r));
+//
+//          if (beginOffset == readFromOffset) {
+//            // we fully read this partition -> removing it from polling iterations
+//            readUntilOffsets.remove(tp);
+//          } else {
+//            // updating 'to' offset for next polling iteration
+//            readUntilOffsets.put(tp, readFromOffset);
+//          }
+//        });
+//        if (readUntilOffsets.isEmpty()) {
+//          log.debug("begin reached after partitions poll iteration");
+//        } else if (sink.isCancelled()) {
+//          log.debug("sink is cancelled after partitions poll iteration");
+//        }
+//        messagesProcessing.flush(sink);
+//      }
+//      sendFinishStatsAndCompleteSink(sink);
+//      log.debug("Polling finished");
+//    } catch (InterruptException kafkaInterruptException) {
+//      log.debug("Polling finished due to thread interruption");
+//      sink.complete();
+//    } catch (Exception e) {
+//      log.error("Error occurred while consuming records", e);
+//      sink.error(e);
+//    }
   }
 
   private List<ConsumerRecord<Bytes, Bytes>> partitionPollIteration(

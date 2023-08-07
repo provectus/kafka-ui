@@ -8,7 +8,7 @@ import reactor.core.publisher.FluxSink;
 
 public abstract class AbstractEmitter implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
 
-  private final MessagesProcessing messagesProcessing;
+  protected final MessagesProcessing messagesProcessing;
   protected final PollingSettings pollingSettings;
 
   protected AbstractEmitter(MessagesProcessing messagesProcessing, PollingSettings pollingSettings) {
@@ -16,8 +16,7 @@ public abstract class AbstractEmitter implements java.util.function.Consumer<Flu
     this.pollingSettings = pollingSettings;
   }
 
-  protected PolledRecords poll(
-      FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer) {
+  protected PolledRecords poll(FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer) {
     return poll(sink, consumer, pollingSettings.getPollTimeout());
   }
 
@@ -29,11 +28,6 @@ public abstract class AbstractEmitter implements java.util.function.Consumer<Flu
 
   protected boolean sendLimitReached() {
     return messagesProcessing.limitReached();
-  }
-
-  protected void sendMessage(FluxSink<TopicMessageEventDTO> sink,
-                             ConsumerRecord<Bytes, Bytes> msg) {
-    messagesProcessing.sendMsg(sink, msg);
   }
 
   protected void sendPhase(FluxSink<TopicMessageEventDTO> sink, String name) {

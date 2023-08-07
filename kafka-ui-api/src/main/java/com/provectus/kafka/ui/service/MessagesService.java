@@ -3,12 +3,11 @@ package com.provectus.kafka.ui.service;
 import com.google.common.util.concurrent.RateLimiter;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.emitter.AbstractEmitter;
-import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
-import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
+import com.provectus.kafka.ui.emitter.BackwardPartitionsEmitterImpl;
+import com.provectus.kafka.ui.emitter.ForwardPartitionsEmitterImpl;
 import com.provectus.kafka.ui.emitter.MessageFilters;
 import com.provectus.kafka.ui.emitter.MessagesProcessing;
 import com.provectus.kafka.ui.emitter.TailingEmitter;
-import com.provectus.kafka.ui.emitter.TimestampsSortedMessageProcessing;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
@@ -47,7 +46,6 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -236,17 +234,18 @@ public class MessagesService {
     var deserializer = deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde);
     var filter = getMsgFilter(query, filterQueryType);
     AbstractEmitter emitter = switch (seekDirection) {
-      case FORWARD -> new ForwardRecordEmitter(
-          () -> consumerGroupService.createConsumer(cluster),
-          consumerPosition,
-          new MessagesProcessing(deserializer, filter, limit),
-          cluster.getPollingSettings()
-      );
-      case BACKWARD -> new BackwardRecordEmitter(
+      case FORWARD -> new ForwardPartitionsEmitterImpl(
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition,
           limit,
-          new TimestampsSortedMessageProcessing(deserializer, filter, limit),
+          new MessagesProcessing(deserializer, filter, limit),
+          cluster.getPollingSettings()
+      );
+      case BACKWARD -> new BackwardPartitionsEmitterImpl(
+          () -> consumerGroupService.createConsumer(cluster),
+          consumerPosition,
+          limit,
+          new MessagesProcessing(deserializer, filter, limit),
           cluster.getPollingSettings()
       );
       case TAILING -> new TailingEmitter(
