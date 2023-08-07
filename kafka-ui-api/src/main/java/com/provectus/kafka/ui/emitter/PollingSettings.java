@@ -13,7 +13,6 @@ public class PollingSettings {
 
   private final Duration pollTimeout;
   private final Duration partitionPollTimeout;
-  private final int notDataEmptyPolls; //see EmptyPollsCounter docs
 
   private final Supplier<PollingThrottler> throttlerSupplier;
 
@@ -37,7 +36,6 @@ public class PollingSettings {
     return new PollingSettings(
         pollTimeout,
         partitionPollTimeout,
-        noDataEmptyPolls,
         PollingThrottler.throttlerSupplier(cluster)
     );
   }
@@ -46,23 +44,16 @@ public class PollingSettings {
     return new PollingSettings(
         DEFAULT_POLL_TIMEOUT,
         DEFAULT_PARTITION_POLL_TIMEOUT,
-        DEFAULT_NO_DATA_EMPTY_POLLS,
         PollingThrottler::noop
     );
   }
 
   private PollingSettings(Duration pollTimeout,
                           Duration partitionPollTimeout,
-                          int notDataEmptyPolls,
                           Supplier<PollingThrottler> throttlerSupplier) {
     this.pollTimeout = pollTimeout;
     this.partitionPollTimeout = partitionPollTimeout;
-    this.notDataEmptyPolls = notDataEmptyPolls;
     this.throttlerSupplier = throttlerSupplier;
-  }
-
-  public EmptyPollsCounter createEmptyPollsCounter() {
-    return new EmptyPollsCounter(notDataEmptyPolls);
   }
 
   public Duration getPollTimeout() {

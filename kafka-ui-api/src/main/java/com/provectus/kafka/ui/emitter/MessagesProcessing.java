@@ -41,19 +41,30 @@ class MessagesProcessing {
     return limit != null && sentMessages >= limit;
   }
 
-  void buffer(ConsumerRecord<Bytes, Bytes> rec) {
-    if (!limitReached()) {
-      TopicMessageDTO topicMessage = deserializer.deserialize(rec);
-      try {
-        if (filter.test(topicMessage)) {
-          buffer.add(topicMessage);
-          sentMessages++;
-        }
-      } catch (Exception e) {
-        filterApplyErrors++;
-        log.trace("Error applying filter for message {}", topicMessage);
-      }
-    }
+  void buffer(Iterable<ConsumerRecord<Bytes, Bytes>> recs) {
+    Streams.stream(recs)
+        .sorted(
+            Comparator.<ConsumerRecord>comparingInt(ConsumerRecord::partition)
+                .thenComparing(
+                    ascendingSortBeforeSend
+                        ? Comparator.comparingLong(ConsumerRecord::offset)
+                        : Comparator.<ConsumerRecord>comparingLong(ConsumerRecord::offset).reversed()
+                )
+        )
+        .forEach(rec -> {
+          if (!limitReached()) {
+            TopicMessageDTO topicMessage = deserializer.deserialize(rec);
+            try {
+              if (filter.test(topicMessage)) {
+                buffer.add(topicMessage);
+                sentMessages++;
+              }
+            } catch (Exception e) {
+              filterApplyErrors++;
+              log.trace("Error applying filter for message {}", topicMessage);
+            }
+          }
+        });
   }
 
   @VisibleForTesting

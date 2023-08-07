@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.ConsumerPosition;
-import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,8 +55,8 @@ public abstract class PerPartitionEmitter extends AbstractEmitter {
           if (sink.isCancelled()) {
             return; //fast return in case of sink cancellation
           }
-          partitionPollIteration(tp, fromTo.from, fromTo.to, consumer, sink)
-              .forEach(this::buffer);
+          var polled = partitionPollIteration(tp, fromTo.from, fromTo.to, consumer, sink);
+          buffer(polled);
         });
         flushBuffer(sink);
         readRange = nextPollingRange(readRange, seekOperations);

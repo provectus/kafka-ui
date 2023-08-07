@@ -32,8 +32,8 @@ public abstract class AbstractEmitter implements java.util.function.Consumer<Flu
     return poll(sink, consumer, pollingSettings.getPartitionPollTimeout());
   }
 
-  protected void buffer(ConsumerRecord<Bytes, Bytes> rec) {
-    messagesProcessing.buffer(rec);
+  protected void buffer(Iterable<ConsumerRecord<Bytes, Bytes>> recs) {
+    messagesProcessing.buffer(recs);
   }
 
   protected void flushBuffer(FluxSink<TopicMessageEventDTO> sink) {
