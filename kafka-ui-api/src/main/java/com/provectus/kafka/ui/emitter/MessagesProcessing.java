@@ -29,7 +29,6 @@ class MessagesProcessing {
 
   private final ConsumingStats consumingStats = new ConsumingStats();
   private long sentMessages = 0;
-  private int filterApplyErrors = 0;
 
   private final ConsumerRecordDeserializer deserializer;
   private final Predicate<TopicMessageDTO> filter;
@@ -38,6 +37,50 @@ class MessagesProcessing {
 
   boolean limitReached() {
     return limit != null && sentMessages >= limit;
+  }
+
+  void send(FluxSink<TopicMessageEventDTO> sink, Iterable<ConsumerRecord<Bytes, Bytes>> polled) {
+    sortForSending(polled, ascendingSortBeforeSend)
+        .forEach(rec -> {
+          if (!limitReached() && !sink.isCancelled()) {
+            TopicMessageDTO topicMessage = deserializer.deserialize(rec);
+            try {
+              if (filter.test(topicMessage)) {
+                sink.next(
+                    new TopicMessageEventDTO()
+                        .type(TopicMessageEventDTO.TypeEnum.MESSAGE)
+                        .message(topicMessage)
+                );
+                sentMessages++;
+              }
+            } catch (Exception e) {
+              consumingStats.incFilterApplyError();
+              log.trace("Error applying filter for message {}", topicMessage);
+            }
+          }
+        });
+  }
+
+  void sentConsumingInfo(FluxSink<TopicMessageEventDTO> sink, PolledRecords polledRecords) {
+    if (!sink.isCancelled()) {
+      consumingStats.sendConsumingEvt(sink, polledRecords);
+    }
+  }
+
+  void sendFinishEvent(FluxSink<TopicMessageEventDTO> sink) {
+    if (!sink.isCancelled()) {
+      consumingStats.sendFinishEvent(sink);
+    }
+  }
+
+  void sendPhase(FluxSink<TopicMessageEventDTO> sink, String name) {
+    if (!sink.isCancelled()) {
+      sink.next(
+          new TopicMessageEventDTO()
+              .type(TopicMessageEventDTO.TypeEnum.PHASE)
+              .phase(new TopicMessagePhaseDTO().name(name))
+      );
+    }
   }
 
   /*
@@ -64,50 +107,6 @@ class MessagesProcessing {
 
     // merge-sorting records from partitions one by one using timestamp comparator
     return Iterables.mergeSorted(perPartition.values(), tsComparator);
-  }
-
-  void send(FluxSink<TopicMessageEventDTO> sink, Iterable<ConsumerRecord<Bytes, Bytes>> polled) {
-    sortForSending(polled, ascendingSortBeforeSend)
-        .forEach(rec -> {
-          if (!limitReached() && !sink.isCancelled()) {
-            TopicMessageDTO topicMessage = deserializer.deserialize(rec);
-            try {
-              if (filter.test(topicMessage)) {
-                sink.next(
-                    new TopicMessageEventDTO()
-                        .type(TopicMessageEventDTO.TypeEnum.MESSAGE)
-                        .message(topicMessage)
-                );
-                sentMessages++;
-              }
-            } catch (Exception e) {
-              filterApplyErrors++;
-              log.trace("Error applying filter for message {}", topicMessage);
-            }
-          }
-        });
-  }
-
-  void sentConsumingInfo(FluxSink<TopicMessageEventDTO> sink, PolledRecords polledRecords) {
-    if (!sink.isCancelled()) {
-      consumingStats.sendConsumingEvt(sink, polledRecords, filterApplyErrors);
-    }
-  }
-
-  void sendFinishEvent(FluxSink<TopicMessageEventDTO> sink) {
-    if (!sink.isCancelled()) {
-      consumingStats.sendFinishEvent(sink, filterApplyErrors);
-    }
-  }
-
-  void sendPhase(FluxSink<TopicMessageEventDTO> sink, String name) {
-    if (!sink.isCancelled()) {
-      sink.next(
-          new TopicMessageEventDTO()
-              .type(TopicMessageEventDTO.TypeEnum.PHASE)
-              .phase(new TopicMessagePhaseDTO().name(name))
-      );
-    }
   }
 
 }
