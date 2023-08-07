@@ -18,18 +18,18 @@ public abstract class AbstractEmitter implements java.util.function.Consumer<Flu
     this.pollingSettings = pollingSettings;
   }
 
+  private PolledRecords poll(FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer, Duration timeout) {
+    var records = consumer.pollEnhanced(timeout);
+    sendConsuming(sink, records);
+    return records;
+  }
+
   protected PolledRecords poll(FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer) {
     return poll(sink, consumer, pollingSettings.getPollTimeout());
   }
 
   protected PolledRecords pollSinglePartition(FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer) {
     return poll(sink, consumer, pollingSettings.getPartitionPollTimeout());
-  }
-
-  private PolledRecords poll(FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer, Duration timeout) {
-    var records = consumer.pollEnhanced(timeout);
-    sendConsuming(sink, records);
-    return records;
   }
 
   protected void buffer(ConsumerRecord<Bytes, Bytes> rec) {
