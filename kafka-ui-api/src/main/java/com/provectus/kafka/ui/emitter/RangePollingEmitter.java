@@ -31,7 +31,6 @@ public abstract class RangePollingEmitter extends AbstractEmitter {
     this.consumerSupplier = consumerSupplier;
   }
 
-  // from inclusive, to exclusive
   protected record FromToOffset(/*inclusive*/ long from, /*exclusive*/ long to) {
   }
 
