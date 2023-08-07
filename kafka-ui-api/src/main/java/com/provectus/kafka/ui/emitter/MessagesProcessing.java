@@ -109,7 +109,7 @@ class MessagesProcessing {
   }
 
   void sendWithoutBuffer(FluxSink<TopicMessageEventDTO> sink, ConsumerRecord<Bytes, Bytes> rec) {
-    buffer(rec);
+    buffer(List.of(rec));
     flush(sink);
   }
 
