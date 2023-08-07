@@ -93,6 +93,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
   static void cleanup() {
     deleteTopic(TOPIC);
     deleteTopic(EMPTY_TOPIC);
+    SENT_RECORDS.clear();
   }
 
   private static ConsumerRecordDeserializer createRecordsDeserializer() {

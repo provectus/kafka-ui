@@ -35,7 +35,7 @@ public class TailingEmitter extends AbstractEmitter {
       while (!sink.isCancelled()) {
         sendPhase(sink, "Polling");
         var polled = poll(sink, consumer);
-        polled.forEach(r -> sendWithoutBuffer(sink, r));
+        send(sink, polled);
       }
       sink.complete();
       log.debug("Tailing finished");

@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.emitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Supplier;
@@ -15,13 +14,13 @@ import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
 
 @Slf4j
-public abstract class PerPartitionEmitter extends AbstractEmitter {
+public abstract class RangePollingEmitter extends AbstractEmitter {
 
   private final Supplier<EnhancedConsumer> consumerSupplier;
   protected final ConsumerPosition consumerPosition;
   protected final int messagesPerPage;
 
-  protected PerPartitionEmitter(Supplier<EnhancedConsumer> consumerSupplier,
+  protected RangePollingEmitter(Supplier<EnhancedConsumer> consumerSupplier,
                                 ConsumerPosition consumerPosition,
                                 int messagesPerPage,
                                 MessagesProcessing messagesProcessing,
@@ -48,19 +47,13 @@ public abstract class PerPartitionEmitter extends AbstractEmitter {
     try (EnhancedConsumer consumer = consumerSupplier.get()) {
       sendPhase(sink, "Consumer created");
       var seekOperations = SeekOperations.create(consumer, consumerPosition);
-      TreeMap<TopicPartition, FromToOffset> readRange = nextPollingRange(new TreeMap<>(), seekOperations);
-      log.debug("Starting from offsets {}", readRange);
+      TreeMap<TopicPartition, FromToOffset> pollRange = nextPollingRange(new TreeMap<>(), seekOperations);
+      log.debug("Starting from offsets {}", pollRange);
 
-      while (!sink.isCancelled() && !readRange.isEmpty() && !sendLimitReached()) {
-        readRange.forEach((tp, fromTo) -> {
-          if (sink.isCancelled()) {
-            return; //fast return in case of sink cancellation
-          }
-          var polled = partitionPollIteration(tp, fromTo.from, fromTo.to, consumer, sink);
-          buffer(polled);
-        });
-        flushBuffer(sink);
-        readRange = nextPollingRange(readRange, seekOperations);
+      while (!sink.isCancelled() && !pollRange.isEmpty() && !sendLimitReached()) {
+        var polled = poll(consumer, sink, pollRange);
+        send(sink, polled);
+        pollRange = nextPollingRange(pollRange, seekOperations);
       }
       if (sink.isCancelled()) {
         log.debug("Polling finished due to sink cancellation");
@@ -76,30 +69,29 @@ public abstract class PerPartitionEmitter extends AbstractEmitter {
     }
   }
 
-  private List<ConsumerRecord<Bytes, Bytes>> partitionPollIteration(TopicPartition tp,
-                                                                    long fromOffset, //inclusive
-                                                                    long toOffset, //exclusive
-                                                                    EnhancedConsumer consumer,
-                                                                    FluxSink<TopicMessageEventDTO> sink) {
-    consumer.assign(List.of(tp));
-    consumer.seek(tp, fromOffset);
-    sendPhase(sink, String.format("Polling partition: %s from offset %s", tp, fromOffset));
+  private List<ConsumerRecord<Bytes, Bytes>> poll(EnhancedConsumer consumer,
+                                                  FluxSink<TopicMessageEventDTO> sink,
+                                                  TreeMap<TopicPartition, FromToOffset> range) {
+    log.trace("Polling range {}", range);
 
-    var recordsToSend = new ArrayList<ConsumerRecord<Bytes, Bytes>>();
-    while (!sink.isCancelled()
-        && !sendLimitReached()
-        && consumer.position(tp) < toOffset) {
+    sendPhase(sink, String.format("Polling partitions: %s", range.keySet()));
+    consumer.assign(range.keySet());
+    range.forEach((tp, fromTo) -> consumer.seek(tp, fromTo.from));
 
-      var polledRecords = pollSinglePartition(sink, consumer);
-      log.debug("{} records polled from {}", polledRecords.count(), tp);
+    List<ConsumerRecord<Bytes, Bytes>> result = new ArrayList<>();
+    while (!sink.isCancelled() && consumer.paused().size() < range.size()) {
+      var polledRecords = poll(sink, consumer);
+      range.forEach((tp, fromTo) -> {
+        polledRecords.records(tp).stream()
+            .filter(r -> r.offset() < fromTo.to)
+            .forEach(result::add);
 
-      polledRecords.records(tp).stream()
-          .filter(r -> r.offset() < toOffset)
-          .forEach(recordsToSend::add);
+        if (consumer.position(tp) >= fromTo.to) {
+          consumer.pause(List.of(tp));
+        }
+      });
     }
-    if (descendingSendSorting()) {
-      Collections.reverse(recordsToSend);
-    }
-    return recordsToSend;
+    consumer.resume(consumer.paused());
+    return result;
   }
 }

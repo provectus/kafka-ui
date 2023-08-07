@@ -27,24 +27,12 @@ public abstract class AbstractEmitter implements java.util.function.Consumer<Flu
     return poll(sink, consumer, pollingSettings.getPollTimeout());
   }
 
-  protected PolledRecords pollSinglePartition(FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer) {
-    return poll(sink, consumer, pollingSettings.getPartitionPollTimeout());
-  }
-
-  protected void buffer(List<ConsumerRecord<Bytes, Bytes>> recs) {
-    messagesProcessing.buffer(recs);
-  }
-
-  protected void flushBuffer(FluxSink<TopicMessageEventDTO> sink) {
-    messagesProcessing.flush(sink);
-  }
-
-  protected void sendWithoutBuffer(FluxSink<TopicMessageEventDTO> sink, ConsumerRecord<Bytes, Bytes> rec) {
-    messagesProcessing.sendWithoutBuffer(sink, rec);
-  }
-
   protected boolean sendLimitReached() {
     return messagesProcessing.limitReached();
+  }
+
+  protected void send(FluxSink<TopicMessageEventDTO> sink, Iterable<ConsumerRecord<Bytes, Bytes>> records) {
+    messagesProcessing.send(sink, records);
   }
 
   protected void sendPhase(FluxSink<TopicMessageEventDTO> sink, String name) {
@@ -53,10 +41,6 @@ public abstract class AbstractEmitter implements java.util.function.Consumer<Flu
 
   protected void sendConsuming(FluxSink<TopicMessageEventDTO> sink, PolledRecords records) {
     messagesProcessing.sentConsumingInfo(sink, records);
-  }
-
-  protected boolean descendingSendSorting() {
-    return !messagesProcessing.isAscendingSortBeforeSend();
   }
 
   protected void sendFinishStatsAndCompleteSink(FluxSink<TopicMessageEventDTO> sink) {

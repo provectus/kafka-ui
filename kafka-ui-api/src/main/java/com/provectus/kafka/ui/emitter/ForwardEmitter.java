@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.apache.kafka.common.TopicPartition;
 
-public class ForwardEmitter extends PerPartitionEmitter {
+public class ForwardEmitter extends RangePollingEmitter {
 
   public ForwardEmitter(Supplier<EnhancedConsumer> consumerSupplier,
                         ConsumerPosition consumerPosition,
