@@ -33,16 +33,8 @@ class MessagesProcessingTest {
     var shuffled = new ArrayList<>(messagesInOrder);
     Collections.shuffle(shuffled);
 
-    var sortedList = MessagesProcessing.sorted(shuffled, true).toList();
+    var sortedList = MessagesProcessing.sorted(shuffled, true);
     assertThat(sortedList).containsExactlyElementsOf(messagesInOrder);
-  }
-
-  private ConsumerRecord<Bytes, Bytes> consumerRecord(int partition, long offset, String ts) {
-    return new ConsumerRecord<>(
-        "topic", partition, offset, OffsetDateTime.parse(ts).toInstant().toEpochMilli(),
-        TimestampType.CREATE_TIME,
-        0, 0, null, null, new RecordHeaders(), Optional.empty()
-    );
   }
 
   @RepeatedTest(5)
@@ -62,8 +54,16 @@ class MessagesProcessingTest {
     var shuffled = new ArrayList<>(messagesInOrder);
     Collections.shuffle(shuffled);
 
-    var sortedList = MessagesProcessing.sorted(shuffled, false).toList();
+    var sortedList = MessagesProcessing.sorted(shuffled, false);
     assertThat(sortedList).containsExactlyElementsOf(messagesInOrder);
+  }
+
+  private ConsumerRecord<Bytes, Bytes> consumerRecord(int partition, long offset, String ts) {
+    return new ConsumerRecord<>(
+        "topic", partition, offset, OffsetDateTime.parse(ts).toInstant().toEpochMilli(),
+        TimestampType.CREATE_TIME,
+        0, 0, null, null, new RecordHeaders(), Optional.empty()
+    );
   }
 
 }
