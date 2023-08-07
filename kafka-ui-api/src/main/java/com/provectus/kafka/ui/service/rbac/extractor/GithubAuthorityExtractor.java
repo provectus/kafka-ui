@@ -78,7 +78,7 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
           .getUserInfoEndpoint()
           .getUri();
     }
-    WebClient webClient = WebClient.create(infoEndpoint);
+    var webClient = WebClient.create(infoEndpoint);
 
     Mono<Set<String>> rolesByOrganization = getOrganizationRoles(principal, additionalParams, acs, webClient);
     Mono<Set<String>> rolesByTeams = getTeamRoles(webClient, additionalParams, acs);
@@ -118,10 +118,9 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
             .filter(role -> role.getSubjects()
                 .stream()
                 .filter(s -> s.getProvider().equals(Provider.OAUTH_GITHUB))
-                .filter(s -> s.getType().equals("organization"))
+                .filter(s -> s.getType().equals(ORGANIZATION))
                 .anyMatch(subject -> orgsMap.stream()
                     .map(org -> org.get(ORGANIZATION_NAME).toString())
-                    .distinct()
                     .anyMatch(orgName -> orgName.equalsIgnoreCase(subject.getValue()))
                 ))
             .map(Role::getName)
@@ -160,7 +159,7 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
         .bodyToMono(new ParameterizedTypeReference<>() {});
     //@formatter:on
 
-    var mappedTeams = rawTeams
+    final Mono<List<String>> mappedTeams = rawTeams
         .map(teams -> teams.stream()
             .map(teamInfo -> {
               var name = teamInfo.get(TEAM_NAME);
@@ -180,7 +179,6 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
                 .filter(s -> s.getProvider().equals(Provider.OAUTH_GITHUB))
                 .filter(s -> s.getType().equals("team"))
                 .anyMatch(subject -> teams.stream()
-                    .distinct()
                     .anyMatch(teamName -> teamName.equalsIgnoreCase(subject.getValue()))
                 ))
             .map(Role::getName)
