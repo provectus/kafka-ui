@@ -1,9 +1,8 @@
 package com.provectus.kafka.ui.emitter;
 
-import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import java.time.Duration;
-import java.util.Comparator;
+import java.util.List;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
@@ -32,7 +31,7 @@ public abstract class AbstractEmitter implements java.util.function.Consumer<Flu
     return poll(sink, consumer, pollingSettings.getPartitionPollTimeout());
   }
 
-  protected void buffer(Iterable<ConsumerRecord<Bytes, Bytes>> recs) {
+  protected void buffer(List<ConsumerRecord<Bytes, Bytes>> recs) {
     messagesProcessing.buffer(recs);
   }
 
@@ -54,6 +53,10 @@ public abstract class AbstractEmitter implements java.util.function.Consumer<Flu
 
   protected void sendConsuming(FluxSink<TopicMessageEventDTO> sink, PolledRecords records) {
     messagesProcessing.sentConsumingInfo(sink, records);
+  }
+
+  protected boolean descendingSendSorting() {
+    return !messagesProcessing.isAscendingSortBeforeSend();
   }
 
   protected void sendFinishStatsAndCompleteSink(FluxSink<TopicMessageEventDTO> sink) {

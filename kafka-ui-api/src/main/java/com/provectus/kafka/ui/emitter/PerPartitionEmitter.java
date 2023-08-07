@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.emitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Supplier;
@@ -95,6 +96,9 @@ public abstract class PerPartitionEmitter extends AbstractEmitter {
       polledRecords.records(tp).stream()
           .filter(r -> r.offset() < toOffset)
           .forEach(recordsToSend::add);
+    }
+    if (descendingSendSorting()) {
+      Collections.reverse(recordsToSend);
     }
     return recordsToSend;
   }
