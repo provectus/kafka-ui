@@ -16,11 +16,6 @@ public final class KafkaClientSslPropertiesUtil {
       return;
     }
 
-    if (!truststoreConfig.isVerifySsl()) {
-      sink.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
-      return;
-    }
-
     if (truststoreConfig.getTruststoreLocation() == null) {
       return;
     }
@@ -29,6 +24,10 @@ public final class KafkaClientSslPropertiesUtil {
 
     if (truststoreConfig.getTruststorePassword() != null) {
       sink.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, truststoreConfig.getTruststorePassword());
+    }
+
+    if (!truststoreConfig.isVerifySsl()) {
+      sink.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
     }
   }
 
