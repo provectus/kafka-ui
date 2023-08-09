@@ -80,6 +80,17 @@ class AuditServiceTest {
     }
 
     @Test
+    void logOnlyAlterOpsByDefault() {
+      var auditProps = new ClustersProperties.AuditProperties();
+      auditProps.setConsoleAuditEnabled(true);
+      clustersProperties.setAudit(auditProps);
+
+      var maybeWriter = createAuditWriter(cluster, () -> adminClientMock, producerSupplierMock);
+      assertThat(maybeWriter)
+          .hasValueSatisfying(w -> assertThat(w.logAlterOperationsOnly()).isTrue());
+    }
+
+    @Test
     void noWriterIfNoAuditPropsSet() {
       var maybeWriter = createAuditWriter(cluster, () -> adminClientMock, producerSupplierMock);
       assertThat(maybeWriter).isEmpty();
