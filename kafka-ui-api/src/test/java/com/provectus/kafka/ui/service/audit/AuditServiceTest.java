@@ -30,8 +30,8 @@ class AuditServiceTest {
   @Test
   void isAuditTopicChecksIfAuditIsEnabledForCluster() {
     Map<String, AuditWriter> writers = Map.of(
-        "c1", new AuditWriter("с1", "c1topic", null, null),
-        "c2", new AuditWriter("c2", "c2topic", mock(KafkaProducer.class), null)
+        "c1", new AuditWriter("с1", true, "c1topic", null, null),
+        "c2", new AuditWriter("c2", false, "c2topic", mock(KafkaProducer.class), null)
     );
 
     var auditService = new AuditService(writers);

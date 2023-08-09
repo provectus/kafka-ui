@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 
 @Slf4j
 record AuditWriter(String clusterName,
+                   boolean logAlterOperationsOnly,
                    @Nullable String targetTopic,
                    @Nullable KafkaProducer<byte[], byte[]> producer,
                    @Nullable Logger consoleLogger) implements Closeable {
@@ -39,6 +40,10 @@ record AuditWriter(String clusterName,
   }
 
   private void write(AuditRecord rec) {
+    if (logAlterOperationsOnly && rec.resources().stream().noneMatch(AuditResource::alter)) {
+      //we should only log alter operations, but this is read-only op
+      return;
+    }
     String json = rec.toJson();
     if (consoleLogger != null) {
       consoleLogger.info(json);

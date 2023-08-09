@@ -5,4 +5,9 @@ public sealed interface PermissibleAction permits
     ConsumerGroupAction, SchemaAction,
     ConnectAction, ClusterConfigAction,
     KsqlAction, TopicAction, AuditAction {
+
+  String name();
+
+  boolean isAlter();
+
 }
