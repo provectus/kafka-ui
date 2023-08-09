@@ -4026,6 +4026,9 @@ components:
                       audit:
                         type: object
                         properties:
+                          level:
+                            type: string
+                            enum: [ "ALL", "ALTER_ONLY" ]
                           topic:
                             type: string
                           auditTopicsPartitions:
