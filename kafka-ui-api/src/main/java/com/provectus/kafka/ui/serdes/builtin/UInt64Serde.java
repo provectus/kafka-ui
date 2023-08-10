@@ -1,10 +1,8 @@
 package com.provectus.kafka.ui.serdes.builtin;
 
 import com.google.common.primitives.Longs;
-import com.google.common.primitives.UnsignedInteger;
 import com.google.common.primitives.UnsignedLong;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
-import com.provectus.kafka.ui.serde.api.RecordHeaders;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import java.util.Map;
@@ -32,7 +30,7 @@ public class UInt64Serde implements BuiltInSerde {
                     + "  \"minimum\" : 0, "
                     + "  \"maximum\" : %s "
                     + "}",
-                UnsignedInteger.MAX_VALUE
+                UnsignedLong.MAX_VALUE
             ),
             Map.of()
         )
@@ -56,15 +54,11 @@ public class UInt64Serde implements BuiltInSerde {
 
   @Override
   public Deserializer deserializer(String topic, Target type) {
-    return new Deserializer() {
-      @Override
-      public DeserializeResult deserialize(RecordHeaders headers, byte[] data) {
-        return new DeserializeResult(
+    return (headers, data) ->
+        new DeserializeResult(
             UnsignedLong.fromLongBits(Longs.fromByteArray(data)).toString(),
             DeserializeResult.Type.JSON,
             Map.of()
         );
-      }
-    };
   }
 }
