@@ -34,37 +34,45 @@ class ClientQuotaServiceTest extends AbstractIntegrationTest {
       nullValues = "null"
   )
   void createUpdateDelete(String user, String clientId, String ip) {
+    var quotas = Map.of(
+        "producer_byte_rate", 123.0,
+        "consumer_byte_rate", 234.0,
+        "request_percentage", 10.0
+    );
+
     //creating new
     StepVerifier.create(
-            quotaService.upsert(cluster, user, clientId, ip,
-                Map.of(
-                    "producer_byte_rate", 123.0,
-                    "consumer_byte_rate", 234.0,
-                    "request_percentage", 10.0
-                )
-            )
+            quotaService.upsert(cluster, user, clientId, ip, quotas)
         )
         .assertNext(status -> assertThat(status.value()).isEqualTo(201))
         .verifyComplete();
 
+    assertThat(quotaRecordExisits(new ClientQuotaRecord(user, clientId, ip, quotas)))
+        .isTrue();
+
     //updating
     StepVerifier.create(
-            quotaService.upsert(cluster, user, clientId, ip,
-                Map.of(
-                    "producer_byte_rate", 111111.0,
-                    "consumer_byte_rate", 22222.0
-                )
-            )
+            quotaService.upsert(cluster, user, clientId, ip, Map.of("producer_byte_rate", 111111.0))
         )
         .assertNext(status -> assertThat(status.value()).isEqualTo(200))
         .verifyComplete();
 
-    //deleting just created record
+    assertThat(quotaRecordExisits(new ClientQuotaRecord(user, clientId, ip, Map.of("producer_byte_rate", 111111.0))))
+        .isTrue();
+
+    //deleting created record
     StepVerifier.create(
             quotaService.upsert(cluster, user, clientId, ip, Map.of())
         )
         .assertNext(status -> assertThat(status.value()).isEqualTo(204))
         .verifyComplete();
+
+    assertThat(quotaRecordExisits(new ClientQuotaRecord(user, clientId, ip, Map.of("producer_byte_rate", 111111.0))))
+        .isFalse();
+  }
+
+  private boolean quotaRecordExisits(ClientQuotaRecord rec) {
+    return quotaService.list(cluster).collectList().block().contains(rec);
   }
 
 }
