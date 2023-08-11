@@ -42,8 +42,9 @@ public class SchemaRegistryPaginationTest {
                 new SchemaRegistryService.SubjectWithCompatibilityLevel(
                     new SchemaSubject().subject(a.getArgument(1)), Compatibility.FULL)));
 
-    this.controller = new SchemasController(schemaRegistryService, new AccessControlServiceMock().getMock(),
-        mock(AuditService.class));
+    this.controller = new SchemasController(schemaRegistryService);
+    this.controller.setAccessControlService(new AccessControlServiceMock().getMock());
+    this.controller.setAuditService(mock(AuditService.class));
     this.controller.setClustersStorage(clustersStorage);
   }
 
