@@ -30,17 +30,13 @@ class ClientQuotaServiceTest extends AbstractIntegrationTest {
           "testUser, null, null ",
           "null, testUserId, null",
           "testUser2, testUserId2, null",
-          "null, null, 127.0.0.1"
       },
       nullValues = "null"
   )
-  void createsQuotaRecord(String user, String clientId, String ip) {
+  void createUpdateDelete(String user, String clientId, String ip) {
+    //creating new
     StepVerifier.create(
-            quotaService.upsert(
-                cluster,
-                user,
-                clientId,
-                ip,
+            quotaService.upsert(cluster, user, clientId, ip,
                 Map.of(
                     "producer_byte_rate", 123.0,
                     "consumer_byte_rate", 234.0,
@@ -49,6 +45,25 @@ class ClientQuotaServiceTest extends AbstractIntegrationTest {
             )
         )
         .assertNext(status -> assertThat(status.value()).isEqualTo(201))
+        .verifyComplete();
+
+    //updating
+    StepVerifier.create(
+            quotaService.upsert(cluster, user, clientId, ip,
+                Map.of(
+                    "producer_byte_rate", 111111.0,
+                    "consumer_byte_rate", 22222.0
+                )
+            )
+        )
+        .assertNext(status -> assertThat(status.value()).isEqualTo(200))
+        .verifyComplete();
+
+    //deleting just created record
+    StepVerifier.create(
+            quotaService.upsert(cluster, user, clientId, ip, Map.of())
+        )
+        .assertNext(status -> assertThat(status.value()).isEqualTo(204))
         .verifyComplete();
   }
 

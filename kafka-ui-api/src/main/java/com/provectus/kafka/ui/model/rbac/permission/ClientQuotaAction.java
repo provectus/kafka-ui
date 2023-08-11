@@ -11,6 +11,7 @@ public enum ClientQuotaAction implements PermissibleAction {
 
   public static final Set<ClientQuotaAction> ALTER_ACTIONS = Set.of(EDIT);
 
+  @Override
   public boolean isAlter() {
     return ALTER_ACTIONS.contains(this);
   }

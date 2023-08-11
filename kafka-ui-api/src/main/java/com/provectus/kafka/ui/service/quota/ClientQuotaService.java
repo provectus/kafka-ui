@@ -4,7 +4,6 @@ import static org.apache.kafka.common.quota.ClientQuotaEntity.CLIENT_ID;
 import static org.apache.kafka.common.quota.ClientQuotaEntity.IP;
 import static org.apache.kafka.common.quota.ClientQuotaEntity.USER;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -70,8 +69,7 @@ public class ClientQuotaService {
         );
   }
 
-  @VisibleForTesting
-  static ClientQuotaEntity quotaEntity(@Nullable String user, @Nullable String clientId, @Nullable String ip) {
+  private ClientQuotaEntity quotaEntity(@Nullable String user, @Nullable String clientId, @Nullable String ip) {
     if (Stream.of(user, clientId, ip).allMatch(Objects::isNull)) {
       throw new ValidationException("Quota entity id is not set");
     }

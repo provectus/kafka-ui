@@ -65,6 +65,8 @@ record AuditRecord(String timestamp,
           .forEach(a -> resources.add(create(a, Resource.ACL, null)));
       ctx.getAuditAction()
           .forEach(a -> resources.add(create(a, Resource.AUDIT, null)));
+      ctx.getClientQuotaActions()
+          .forEach(a -> resources.add(create(a, Resource.CLIENT_QUOTAS, null)));
       return resources;
     }
 

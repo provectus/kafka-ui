@@ -47,29 +47,32 @@ public class ClientQuotasController extends AbstractController implements Client
   public Mono<ResponseEntity<Void>> upsertClientQuotas(String clusterName,
                                                        Mono<ClientQuotasDTO> quotasDto,
                                                        ServerWebExchange exchange) {
-    var context = AccessContext.builder()
-        .cluster(clusterName)
-        .operationName("upsertClientQuotas")
-        .clientQuotaActions(ClientQuotaAction.EDIT)
-        .build();
+    return quotasDto.flatMap(
+        newQuotas -> {
+          var context = AccessContext.builder()
+              .cluster(clusterName)
+              .operationName("upsertClientQuotas")
+              .operationParams(Map.of("newQuotas", newQuotas))
+              .clientQuotaActions(ClientQuotaAction.EDIT)
+              .build();
 
-    Mono<ResponseEntity<Void>> operation = quotasDto.flatMap(
-        newQuotas ->
-            clientQuotaService.upsert(
-                getCluster(clusterName),
-                newQuotas.getUser(),
-                newQuotas.getClientId(),
-                newQuotas.getIp(),
-                Optional.ofNullable(newQuotas.getQuotas()).orElse(Map.of())
-                    .entrySet()
-                    .stream()
-                    .collect(toMap(Map.Entry::getKey, e -> e.getValue().doubleValue()))
-            )
-    ).map(statusCode -> ResponseEntity.status(statusCode).build());
+          Mono<ResponseEntity<Void>> operation = clientQuotaService.upsert(
+                  getCluster(clusterName),
+                  newQuotas.getUser(),
+                  newQuotas.getClientId(),
+                  newQuotas.getIp(),
+                  Optional.ofNullable(newQuotas.getQuotas()).orElse(Map.of())
+                      .entrySet()
+                      .stream()
+                      .collect(toMap(Map.Entry::getKey, e -> e.getValue().doubleValue()))
+              )
+              .map(statusCode -> ResponseEntity.status(statusCode).build());
 
-    return validateAccess(context)
-        .then(operation)
-        .doOnEach(sig -> audit(context, sig));
+          return validateAccess(context)
+              .then(operation)
+              .doOnEach(sig -> audit(context, sig));
+        }
+    );
   }
 
   private ClientQuotasDTO mapToDto(ClientQuotaRecord quotaRecord) {
