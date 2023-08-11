@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.model.rbac;
 import com.provectus.kafka.ui.model.rbac.permission.AclAction;
 import com.provectus.kafka.ui.model.rbac.permission.ApplicationConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.AuditAction;
+import com.provectus.kafka.ui.model.rbac.permission.ClientQuotaAction;
 import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
@@ -44,6 +45,8 @@ public class AccessContext {
 
   Collection<AuditAction> auditAction;
 
+  Collection<ClientQuotaAction> clientQuotaActions;
+
   String operationName;
   Object operationParams;
 
@@ -67,6 +70,7 @@ public class AccessContext {
     private Collection<KsqlAction> ksqlActions = Collections.emptySet();
     private Collection<AclAction> aclActions = Collections.emptySet();
     private Collection<AuditAction> auditActions = Collections.emptySet();
+    private Collection<ClientQuotaAction> clientQuotaActions = Collections.emptySet();
 
     private String operationName;
     private Object operationParams;
@@ -158,6 +162,12 @@ public class AccessContext {
       return this;
     }
 
+    public AccessContextBuilder clientQuotaActions(ClientQuotaAction... actions) {
+      Assert.isTrue(actions.length > 0, "actions not present");
+      this.clientQuotaActions = List.of(actions);
+      return this;
+    }
+
     public AccessContextBuilder operationName(String operationName) {
       this.operationName = operationName;
       return this;
@@ -182,7 +192,7 @@ public class AccessContext {
           connect, connectActions,
           connector,
           schema, schemaActions,
-          ksqlActions, aclActions, auditActions,
+          ksqlActions, aclActions, auditActions, clientQuotaActions,
           operationName, operationParams);
     }
   }

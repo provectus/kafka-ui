@@ -1936,6 +1936,9 @@ paths:
         - ClientQuotas
       summary: upsertClientQuotas
       operationId: upsertClientQuotas
+      description: |
+        - updates/creates client quota record if `quotas` field is non-empty
+        - deletes client quota record if `quotas` field is null or empty
       parameters:
         - name: clusterName
           in: path
@@ -1951,7 +1954,7 @@ paths:
         200:
           description: Existing quota updated
         201:
-          description: Quota created
+          description: New quota created
         204:
           description: Existing quota deleted
 

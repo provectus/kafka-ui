@@ -4,10 +4,10 @@ import static java.util.stream.Collectors.toMap;
 
 import com.provectus.kafka.ui.api.ClientQuotasApi;
 import com.provectus.kafka.ui.model.ClientQuotasDTO;
-import com.provectus.kafka.ui.service.audit.AuditService;
+import com.provectus.kafka.ui.model.rbac.AccessContext;
+import com.provectus.kafka.ui.model.rbac.permission.ClientQuotaAction;
 import com.provectus.kafka.ui.service.quota.ClientQuotaRecord;
-import com.provectus.kafka.ui.service.quota.QuotaService;
-import com.provectus.kafka.ui.service.rbac.AccessControlService;
+import com.provectus.kafka.ui.service.quota.ClientQuotaService;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,37 +23,56 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ClientQuotasController extends AbstractController implements ClientQuotasApi {
 
-  private final QuotaService quotaService;
-  private final AccessControlService accessControlService;
-  private final AuditService auditService;
+  private final ClientQuotaService clientQuotaService;
 
   @Override
   public Mono<ResponseEntity<Flux<ClientQuotasDTO>>> listQuotas(String clusterName,
                                                                 ServerWebExchange exchange) {
-    return Mono.just(quotaService.list(getCluster(clusterName)).map(this::map))
-        .map(ResponseEntity::ok);
+    var context = AccessContext.builder()
+        .cluster(clusterName)
+        .operationName("listClientQuotas")
+        .clientQuotaActions(ClientQuotaAction.VIEW)
+        .build();
+
+    Mono<ResponseEntity<Flux<ClientQuotasDTO>>> operation =
+        Mono.just(clientQuotaService.list(getCluster(clusterName)).map(this::mapToDto))
+            .map(ResponseEntity::ok);
+
+    return validateAccess(context)
+        .then(operation)
+        .doOnEach(sig -> audit(context, sig));
   }
 
   @Override
   public Mono<ResponseEntity<Void>> upsertClientQuotas(String clusterName,
-                                                       Mono<ClientQuotasDTO> clientQuotasDto,
+                                                       Mono<ClientQuotasDTO> quotasDto,
                                                        ServerWebExchange exchange) {
-    return clientQuotasDto.flatMap(
-        quotas ->
-            quotaService.upsert(
+    var context = AccessContext.builder()
+        .cluster(clusterName)
+        .operationName("upsertClientQuotas")
+        .clientQuotaActions(ClientQuotaAction.EDIT)
+        .build();
+
+    Mono<ResponseEntity<Void>> operation = quotasDto.flatMap(
+        newQuotas ->
+            clientQuotaService.upsert(
                 getCluster(clusterName),
-                quotas.getUser(),
-                quotas.getClientId(),
-                quotas.getIp(),
-                Optional.ofNullable(quotas.getQuotas()).orElse(Map.of())
+                newQuotas.getUser(),
+                newQuotas.getClientId(),
+                newQuotas.getIp(),
+                Optional.ofNullable(newQuotas.getQuotas()).orElse(Map.of())
                     .entrySet()
                     .stream()
                     .collect(toMap(Map.Entry::getKey, e -> e.getValue().doubleValue()))
             )
     ).map(statusCode -> ResponseEntity.status(statusCode).build());
+
+    return validateAccess(context)
+        .then(operation)
+        .doOnEach(sig -> audit(context, sig));
   }
 
-  private ClientQuotasDTO map(ClientQuotaRecord quotaRecord) {
+  private ClientQuotasDTO mapToDto(ClientQuotaRecord quotaRecord) {
     return new ClientQuotasDTO()
         .user(quotaRecord.user())
         .clientId(quotaRecord.clientId())

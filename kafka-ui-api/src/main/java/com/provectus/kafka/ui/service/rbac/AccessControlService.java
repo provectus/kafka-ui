@@ -123,7 +123,8 @@ public class AccessControlService {
                   && isSchemaAccessible(context, user)
                   && isKsqlAccessible(context, user)
                   && isAclAccessible(context, user)
-                  && isAuditAccessible(context, user);
+                  && isAuditAccessible(context, user)
+                  && isClientQuotaAccessible(context, user);
 
           if (!accessGranted) {
             throw new AccessDeniedException(ACCESS_DENIED);
@@ -415,6 +416,23 @@ public class AccessControlService {
         .collect(Collectors.toSet());
 
     return isAccessible(Resource.AUDIT, null, user, context, requiredActions);
+  }
+
+  private boolean isClientQuotaAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
+    if (context.getClientQuotaActions().isEmpty()) {
+      return true;
+    }
+
+    Set<String> requiredActions = context.getClientQuotaActions()
+        .stream()
+        .map(a -> a.toString().toUpperCase())
+        .collect(Collectors.toSet());
+
+    return isAccessible(Resource.CLIENT_QUOTAS, null, user, context, requiredActions);
   }
 
   public Set<ProviderAuthorityExtractor> getOauthExtractors() {
