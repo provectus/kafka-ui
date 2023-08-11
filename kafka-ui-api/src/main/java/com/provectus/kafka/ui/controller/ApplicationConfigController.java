@@ -15,8 +15,6 @@ import com.provectus.kafka.ui.model.UploadedFileInfoDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.service.ApplicationInfoService;
 import com.provectus.kafka.ui.service.KafkaClusterFactory;
-import com.provectus.kafka.ui.service.audit.AuditService;
-import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import com.provectus.kafka.ui.util.ApplicationRestarter;
 import com.provectus.kafka.ui.util.DynamicConfigOperations;
 import com.provectus.kafka.ui.util.DynamicConfigOperations.PropertiesStructure;
@@ -39,7 +37,7 @@ import reactor.util.function.Tuples;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class ApplicationConfigController implements ApplicationConfigApi {
+public class ApplicationConfigController extends AbstractController implements ApplicationConfigApi {
 
   private static final PropertiesMapper MAPPER = Mappers.getMapper(PropertiesMapper.class);
 
@@ -51,12 +49,10 @@ public class ApplicationConfigController implements ApplicationConfigApi {
     ApplicationConfigPropertiesDTO toDto(PropertiesStructure propertiesStructure);
   }
 
-  private final AccessControlService accessControlService;
   private final DynamicConfigOperations dynamicConfigOperations;
   private final ApplicationRestarter restarter;
   private final KafkaClusterFactory kafkaClusterFactory;
   private final ApplicationInfoService applicationInfoService;
-  private final AuditService auditService;
 
   @Override
   public Mono<ResponseEntity<ApplicationInfoDTO>> getApplicationInfo(ServerWebExchange exchange) {
@@ -69,12 +65,12 @@ public class ApplicationConfigController implements ApplicationConfigApi {
         .applicationConfigActions(VIEW)
         .operationName("getCurrentConfig")
         .build();
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(Mono.fromSupplier(() -> ResponseEntity.ok(
             new ApplicationConfigDTO()
                 .properties(MAPPER.toDto(dynamicConfigOperations.getCurrentProperties()))
         )))
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -84,14 +80,14 @@ public class ApplicationConfigController implements ApplicationConfigApi {
         .applicationConfigActions(EDIT)
         .operationName("restartWithConfig")
         .build();
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(restartRequestDto)
         .<ResponseEntity<Void>>map(dto -> {
           dynamicConfigOperations.persist(MAPPER.fromDto(dto.getConfig().getProperties()));
           restarter.requestRestart();
           return ResponseEntity.ok().build();
         })
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -101,13 +97,13 @@ public class ApplicationConfigController implements ApplicationConfigApi {
         .applicationConfigActions(EDIT)
         .operationName("uploadConfigRelatedFile")
         .build();
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(fileFlux.single())
         .flatMap(file ->
             dynamicConfigOperations.uploadConfigRelatedFile((FilePart) file)
                 .map(path -> new UploadedFileInfoDTO().location(path.toString()))
                 .map(ResponseEntity::ok))
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -117,7 +113,7 @@ public class ApplicationConfigController implements ApplicationConfigApi {
         .applicationConfigActions(EDIT)
         .operationName("validateConfig")
         .build();
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(configDto)
         .flatMap(config -> {
           PropertiesStructure propertiesStructure = MAPPER.fromDto(config.getProperties());
@@ -126,7 +122,7 @@ public class ApplicationConfigController implements ApplicationConfigApi {
               .map(validations -> new ApplicationConfigValidationDTO().clusters(validations));
         })
         .map(ResponseEntity::ok)
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> audit(context, sig));
   }
 
   private Mono<Map<String, ClusterConfigValidationDTO>> validateClustersConfig(

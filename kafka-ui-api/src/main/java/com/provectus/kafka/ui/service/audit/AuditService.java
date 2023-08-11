@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service.audit;
 
+import static com.provectus.kafka.ui.config.ClustersProperties.AuditProperties.LogLevel.ALTER_ONLY;
 import static com.provectus.kafka.ui.service.MessagesService.createProducer;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -80,12 +81,13 @@ public class AuditService implements Closeable {
     }
     boolean topicAudit = Optional.ofNullable(auditProps.getTopicAuditEnabled()).orElse(false);
     boolean consoleAudit = Optional.ofNullable(auditProps.getConsoleAuditEnabled()).orElse(false);
+    boolean alterLogOnly = Optional.ofNullable(auditProps.getLevel()).map(lvl -> lvl == ALTER_ONLY).orElse(true);
     if (!topicAudit && !consoleAudit) {
       return Optional.empty();
     }
     if (!topicAudit) {
       log.info("Audit initialization finished for cluster '{}' (console only)", cluster.getName());
-      return Optional.of(consoleOnlyWriter(cluster));
+      return Optional.of(consoleOnlyWriter(cluster, alterLogOnly));
     }
     String auditTopicName = Optional.ofNullable(auditProps.getTopic()).orElse(DEFAULT_AUDIT_TOPIC_NAME);
     boolean topicAuditCanBeDone = createTopicIfNeeded(cluster, acSupplier, auditTopicName, auditProps);
@@ -95,7 +97,7 @@ public class AuditService implements Closeable {
             "Audit initialization finished for cluster '{}' (console only, topic audit init failed)",
             cluster.getName()
         );
-        return Optional.of(consoleOnlyWriter(cluster));
+        return Optional.of(consoleOnlyWriter(cluster, alterLogOnly));
       }
       return Optional.empty();
     }
@@ -103,6 +105,7 @@ public class AuditService implements Closeable {
     return Optional.of(
         new AuditWriter(
             cluster.getName(),
+            alterLogOnly,
             auditTopicName,
             producerFactory.get(),
             consoleAudit ? AUDIT_LOGGER : null
@@ -110,8 +113,8 @@ public class AuditService implements Closeable {
     );
   }
 
-  private static AuditWriter consoleOnlyWriter(KafkaCluster cluster) {
-    return new AuditWriter(cluster.getName(), null, null, AUDIT_LOGGER);
+  private static AuditWriter consoleOnlyWriter(KafkaCluster cluster, boolean alterLogOnly) {
+    return new AuditWriter(cluster.getName(), alterLogOnly, null, null, AUDIT_LOGGER);
   }
 
   /**

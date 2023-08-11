@@ -45,8 +45,8 @@ class TopicsServicePaginationTest {
   private final ClusterMapper clusterMapper = new ClusterMapperImpl();
   private final AccessControlService accessControlService = new AccessControlServiceMock().getMock();
 
-  private final TopicsController topicsController = new TopicsController(
-      topicsService, mock(TopicAnalysisService.class), clusterMapper, accessControlService, mock(AuditService.class));
+  private final TopicsController topicsController =
+      new TopicsController(topicsService, mock(TopicAnalysisService.class), clusterMapper);
 
   private void init(Map<String, InternalTopic> topicsInCache) {
 
@@ -59,6 +59,8 @@ class TopicsServicePaginationTest {
           List<String> lst = a.getArgument(1);
           return Mono.just(lst.stream().map(topicsInCache::get).collect(Collectors.toList()));
         });
+    topicsController.setAccessControlService(accessControlService);
+    topicsController.setAuditService(mock(AuditService.class));
     topicsController.setClustersStorage(clustersStorage);
   }
 
