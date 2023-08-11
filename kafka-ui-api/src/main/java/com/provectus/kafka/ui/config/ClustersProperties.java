@@ -152,7 +152,13 @@ public class ClustersProperties {
     Integer auditTopicsPartitions;
     Boolean topicAuditEnabled;
     Boolean consoleAuditEnabled;
+    LogLevel level;
     Map<String, String> auditTopicProperties;
+
+    public enum LogLevel {
+      ALL,
+      ALTER_ONLY //default
+    }
   }
 
   @PostConstruct
