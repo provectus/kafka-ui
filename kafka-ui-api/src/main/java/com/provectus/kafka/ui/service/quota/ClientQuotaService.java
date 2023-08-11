@@ -4,6 +4,7 @@ import static org.apache.kafka.common.quota.ClientQuotaEntity.CLIENT_ID;
 import static org.apache.kafka.common.quota.ClientQuotaEntity.IP;
 import static org.apache.kafka.common.quota.ClientQuotaEntity.USER;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -38,8 +39,11 @@ public class ClientQuotaService {
     return adminClientService.get(cluster)
         .flatMap(ac -> ac.getClientQuotas(ClientQuotaFilter.all()))
         .flatMapIterable(map ->
-            map.entrySet().stream().map(e -> ClientQuotaRecord.create(e.getKey(), e.getValue())).toList())
-        .sort(ClientQuotaRecord.COMPARATOR);
+            map.entrySet().stream()
+                .map(e -> ClientQuotaRecord.create(e.getKey(), e.getValue()))
+                .sorted(ClientQuotaRecord.COMPARATOR)
+                .toList()
+        );
   }
 
   //returns 201 if new entity was created, 200 if existing was updated, 204 if existing was deleted
@@ -66,7 +70,8 @@ public class ClientQuotaService {
         );
   }
 
-  private ClientQuotaEntity quotaEntity(@Nullable String user, @Nullable String clientId, @Nullable String ip) {
+  @VisibleForTesting
+  static ClientQuotaEntity quotaEntity(@Nullable String user, @Nullable String clientId, @Nullable String ip) {
     if (Stream.of(user, clientId, ip).allMatch(Objects::isNull)) {
       throw new ValidationException("Quota entity id is not set");
     }

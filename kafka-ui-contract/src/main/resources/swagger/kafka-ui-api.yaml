@@ -3650,6 +3650,7 @@ components:
         - KSQL
         - ACL
         - AUDIT
+        - CLIENT_QUOTAS
 
     KafkaAcl:
       type: object
