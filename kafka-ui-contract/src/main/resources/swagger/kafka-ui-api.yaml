@@ -1910,6 +1910,50 @@ paths:
         200:
           description: OK
 
+  /api/clusters/{clusterName}/clientquotas:
+    get:
+      tags:
+        - ClientQuotas
+      summary: listQuotas
+      operationId: listQuotas
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientQuotas'
+    post:
+      tags:
+        - ClientQuotas
+      summary: upsertClientQuotas
+      operationId: upsertClientQuotas
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientQuotas'
+      responses:
+        201:
+          description: Quota created
+        204:
+          description: Existing quota updated
+
+
   /api/clusters/{clusterName}/acl/streamApp:
     post:
       tags:
@@ -2175,6 +2219,7 @@ components:
               - TOPIC_DELETION
               - KAFKA_ACL_VIEW # get ACLs listing
               - KAFKA_ACL_EDIT # create & delete ACLs
+              - CLIENT_QUOTA_MANAGEMENT
       required:
         - id
         - name
@@ -3700,6 +3745,20 @@ components:
         applicationId:
           nullable: false
           type: string
+
+    ClientQuotas:
+      type: object
+      properties:
+        user:
+          type: string
+        clientId:
+          type: string
+        ip:
+          type: string
+        quotas:
+          type: object
+          additionalProperties:
+            type: number
 
     KafkaAclResourceType:
       type: string

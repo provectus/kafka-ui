@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.service;
 
+import static com.provectus.kafka.ui.service.ReactiveAdminClient.SupportedFeature.CLIENT_QUOTA_MANAGEMENT;
+
 import com.provectus.kafka.ui.model.ClusterFeature;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.ReactiveAdminClient.ClusterDescription;
@@ -41,6 +43,7 @@ public class FeatureService {
     features.add(topicDeletionEnabled(adminClient));
     features.add(aclView(adminClient));
     features.add(aclEdit(adminClient, clusterDescription));
+    features.add(quotaManagement(adminClient));
 
     return Flux.fromIterable(features).flatMap(m -> m).collectList();
   }
@@ -68,6 +71,12 @@ public class FeatureService {
 
   private boolean aclViewEnabled(ReactiveAdminClient adminClient) {
     return adminClient.getClusterFeatures().contains(ReactiveAdminClient.SupportedFeature.AUTHORIZED_SECURITY_ENABLED);
+  }
+
+  private Mono<ClusterFeature> quotaManagement(ReactiveAdminClient adminClient) {
+    return adminClient.getClusterFeatures().contains(CLIENT_QUOTA_MANAGEMENT)
+        ? Mono.just(ClusterFeature.CLIENT_QUOTA_MANAGEMENT)
+        : Mono.empty();
   }
 
 }

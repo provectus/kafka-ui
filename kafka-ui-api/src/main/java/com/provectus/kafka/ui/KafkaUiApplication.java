@@ -1,6 +1,9 @@
 package com.provectus.kafka.ui;
 
 import com.provectus.kafka.ui.util.DynamicConfigOperations;
+import java.util.Map;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.ldap.LdapAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -14,7 +17,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class KafkaUiApplication {
 
   public static void main(String[] args) {
-    startApplication(args);
+    AdminClient ac = AdminClient.create(Map.of(
+        AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092"
+    ));
+    System.out.println(ac);
   }
 
   public static ConfigurableApplicationContext startApplication(String[] args) {
