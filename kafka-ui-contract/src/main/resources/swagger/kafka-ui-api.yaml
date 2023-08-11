@@ -1948,10 +1948,12 @@ paths:
             schema:
               $ref: '#/components/schemas/ClientQuotas'
       responses:
+        200:
+          description: Existing quota updated
         201:
           description: Quota created
         204:
-          description: Existing quota updated
+          description: Existing quota deleted
 
 
   /api/clusters/{clusterName}/acl/streamApp:

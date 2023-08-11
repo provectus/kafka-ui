@@ -9,9 +9,9 @@ import com.provectus.kafka.ui.service.quota.ClientQuotaRecord;
 import com.provectus.kafka.ui.service.quota.QuotaService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,16 +30,15 @@ public class ClientQuotasController extends AbstractController implements Client
   @Override
   public Mono<ResponseEntity<Flux<ClientQuotasDTO>>> listQuotas(String clusterName,
                                                                 ServerWebExchange exchange) {
-    return Mono.just(quotaService.all(getCluster(clusterName)).map(this::map))
+    return Mono.just(quotaService.list(getCluster(clusterName)).map(this::map))
         .map(ResponseEntity::ok);
   }
 
   @Override
   public Mono<ResponseEntity<Void>> upsertClientQuotas(String clusterName,
-                                                       Mono<ClientQuotasDTO> clientQuotasDTO,
+                                                       Mono<ClientQuotasDTO> clientQuotasDto,
                                                        ServerWebExchange exchange) {
-
-    return clientQuotasDTO.flatMap(
+    return clientQuotasDto.flatMap(
         quotas ->
             quotaService.upsert(
                 getCluster(clusterName),
@@ -60,8 +59,15 @@ public class ClientQuotasController extends AbstractController implements Client
         .clientId(quotaRecord.clientId())
         .ip(quotaRecord.ip())
         .quotas(
-            quotaRecord.quotas().entrySet().stream()
-                .collect(toMap(Map.Entry::getKey, e -> BigDecimal.valueOf(e.getValue())))
+            quotaRecord.quotas().entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(toMap(
+                    Map.Entry::getKey,
+                    e -> BigDecimal.valueOf(e.getValue()),
+                    (v1, v2) -> null, //won't be called
+                    LinkedHashMap::new //to keep order
+                ))
         );
   }
 
