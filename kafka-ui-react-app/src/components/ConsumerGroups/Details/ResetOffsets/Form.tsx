@@ -189,7 +189,7 @@ const Form: React.FC<FormProps> = ({ defaultValues, partitions, topics }) => {
             type="submit"
             disabled={partitionsValue.length === 0}
           >
-            Submit
+            Reset Offsets
           </Button>
         </div>
       </StyledForm>

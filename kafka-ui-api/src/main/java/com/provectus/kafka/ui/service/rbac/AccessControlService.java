@@ -51,6 +51,8 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class AccessControlService {
 
+  private static final String ACCESS_DENIED = "Access denied";
+
   @Nullable
   private final InMemoryReactiveClientRegistrationRepository clientRegistrationRepository;
   private final RoleBasedAccessControlProperties properties;
@@ -97,6 +99,17 @@ public class AccessControlService {
       return Mono.empty();
     }
 
+    if (CollectionUtils.isNotEmpty(context.getApplicationConfigActions())) {
+      return getUser()
+          .doOnNext(user -> {
+            boolean accessGranted = isApplicationConfigAccessible(context, user);
+
+            if (!accessGranted) {
+              throw new AccessDeniedException(ACCESS_DENIED);
+            }
+          }).then();
+    }
+
     return getUser()
         .doOnNext(user -> {
           boolean accessGranted =
@@ -113,7 +126,7 @@ public class AccessControlService {
                   && isAuditAccessible(context, user);
 
           if (!accessGranted) {
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException(ACCESS_DENIED);
           }
         })
         .then();

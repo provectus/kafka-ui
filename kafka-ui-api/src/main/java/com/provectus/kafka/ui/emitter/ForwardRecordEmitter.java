@@ -5,8 +5,6 @@ import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
@@ -16,11 +14,11 @@ public class ForwardRecordEmitter
     extends AbstractEmitter
     implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
 
-  private final Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier;
+  private final Supplier<EnhancedConsumer> consumerSupplier;
   private final ConsumerPosition position;
 
   public ForwardRecordEmitter(
-      Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
+      Supplier<EnhancedConsumer> consumerSupplier,
       ConsumerPosition position,
       MessagesProcessing messagesProcessing,
       PollingSettings pollingSettings) {
@@ -32,7 +30,7 @@ public class ForwardRecordEmitter
   @Override
   public void accept(FluxSink<TopicMessageEventDTO> sink) {
     log.debug("Starting forward polling for {}", position);
-    try (KafkaConsumer<Bytes, Bytes> consumer = consumerSupplier.get()) {
+    try (EnhancedConsumer consumer = consumerSupplier.get()) {
       sendPhase(sink, "Assigning partitions");
       var seekOperations = SeekOperations.create(consumer, position);
       seekOperations.assignAndSeekNonEmptyPartitions();
@@ -44,8 +42,8 @@ public class ForwardRecordEmitter
           && !emptyPolls.noDataEmptyPollsReached()) {
 
         sendPhase(sink, "Polling");
-        ConsumerRecords<Bytes, Bytes> records = poll(sink, consumer);
-        emptyPolls.count(records);
+        var records = poll(sink, consumer);
+        emptyPolls.count(records.count());
 
         log.debug("{} records polled", records.count());
 

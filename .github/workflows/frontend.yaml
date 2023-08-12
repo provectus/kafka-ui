@@ -3,11 +3,14 @@ on:
   push:
     branches:
       - master
-  pull_request:
+  pull_request_target:
     types: ["opened", "edited", "reopened", "synchronize"]
     paths:
       - "kafka-ui-contract/**"
       - "kafka-ui-react-app/**"
+permissions:
+  checks: write
+  pull-requests: write
 jobs:
   build-and-test:
     env:
@@ -46,7 +49,7 @@ jobs:
           cd kafka-ui-react-app/
           pnpm test:CI
       - name: SonarCloud Scan
-        uses: workshur/sonarcloud-github-action@improved_basedir
+        uses: sonarsource/sonarcloud-github-action@master
         with:
           projectBaseDir: ./kafka-ui-react-app
           args: -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} -Dsonar.pullrequest.branch=${{ github.head_ref }} -Dsonar.pullrequest.base=${{ github.base_ref }}
