@@ -247,22 +247,7 @@ public class MessagesService {
       );
     };
     return Flux.create(emitter)
-        .map(getDataMasker(cluster, topic))
         .map(throttleUiPublish(seekDirection));
-  }
-
-  private UnaryOperator<TopicMessageEventDTO> getDataMasker(KafkaCluster cluster, String topicName) {
-    var keyMasker = cluster.getMasking().getMaskingFunction(topicName, Serde.Target.KEY);
-    var valMasker = cluster.getMasking().getMaskingFunction(topicName, Serde.Target.VALUE);
-    return evt -> {
-      if (evt.getType() != TopicMessageEventDTO.TypeEnum.MESSAGE) {
-        return evt;
-      }
-      return evt.message(
-          evt.getMessage()
-              .key(keyMasker.apply(evt.getMessage().getKey()))
-              .content(valMasker.apply(evt.getMessage().getContent())));
-    };
   }
 
   private Predicate<TopicMessageDTO> getMsgFilter(String query,
