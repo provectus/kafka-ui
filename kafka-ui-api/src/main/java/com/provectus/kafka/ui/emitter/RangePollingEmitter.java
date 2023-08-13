@@ -14,7 +14,7 @@ import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
 
 @Slf4j
-public abstract class RangePollingEmitter extends AbstractEmitter {
+abstract class RangePollingEmitter extends AbstractEmitter {
 
   private final Supplier<EnhancedConsumer> consumerSupplier;
   protected final ConsumerPosition consumerPosition;

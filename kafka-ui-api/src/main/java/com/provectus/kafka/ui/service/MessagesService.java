@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.service;
 
 import com.google.common.util.concurrent.RateLimiter;
 import com.provectus.kafka.ui.config.ClustersProperties;
-import com.provectus.kafka.ui.emitter.AbstractEmitter;
 import com.provectus.kafka.ui.emitter.BackwardEmitter;
 import com.provectus.kafka.ui.emitter.ForwardEmitter;
 import com.provectus.kafka.ui.emitter.MessageFilters;
@@ -18,7 +17,6 @@ import com.provectus.kafka.ui.model.SmartFilterTestExecutionDTO;
 import com.provectus.kafka.ui.model.SmartFilterTestExecutionResultDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
 import com.provectus.kafka.ui.util.SslPropertiesUtil;
 import java.time.Instant;
@@ -232,7 +230,7 @@ public class MessagesService {
 
     var deserializer = deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde);
     var filter = getMsgFilter(query, filterQueryType);
-    AbstractEmitter emitter = switch (seekDirection) {
+    var emitter = switch (seekDirection) {
       case FORWARD -> new ForwardEmitter(
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition, limit, deserializer, filter, cluster.getPollingSettings()
