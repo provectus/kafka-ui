@@ -37,12 +37,8 @@ public class ClientQuotaService {
   public Flux<ClientQuotaRecord> list(KafkaCluster cluster) {
     return adminClientService.get(cluster)
         .flatMap(ac -> ac.getClientQuotas(ClientQuotaFilter.all()))
-        .flatMapIterable(map ->
-            map.entrySet().stream()
-                .map(e -> ClientQuotaRecord.create(e.getKey(), e.getValue()))
-                .sorted(ClientQuotaRecord.COMPARATOR)
-                .toList()
-        );
+        .flatMapIterable(Map::entrySet)
+        .map(e -> ClientQuotaRecord.create(e.getKey(), e.getValue()));
   }
 
   //returns 201 if new entity was created, 200 if existing was updated, 204 if existing was deleted

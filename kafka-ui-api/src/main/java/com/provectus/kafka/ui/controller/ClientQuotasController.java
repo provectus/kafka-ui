@@ -9,6 +9,7 @@ import com.provectus.kafka.ui.model.rbac.permission.ClientQuotaAction;
 import com.provectus.kafka.ui.service.quota.ClientQuotaRecord;
 import com.provectus.kafka.ui.service.quota.ClientQuotaService;
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +24,11 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ClientQuotasController extends AbstractController implements ClientQuotasApi {
 
+  private static final Comparator<ClientQuotaRecord> QUOTA_RECORDS_COMPARATOR =
+      Comparator.nullsLast(Comparator.comparing(ClientQuotaRecord::user))
+          .thenComparing(Comparator.nullsLast(Comparator.comparing(ClientQuotaRecord::clientId)))
+          .thenComparing(Comparator.nullsLast(Comparator.comparing(ClientQuotaRecord::ip)));
+
   private final ClientQuotaService clientQuotaService;
 
   @Override
@@ -35,8 +41,11 @@ public class ClientQuotasController extends AbstractController implements Client
         .build();
 
     Mono<ResponseEntity<Flux<ClientQuotasDTO>>> operation =
-        Mono.just(clientQuotaService.list(getCluster(clusterName)).map(this::mapToDto))
-            .map(ResponseEntity::ok);
+        Mono.just(
+            clientQuotaService.list(getCluster(clusterName))
+                .sort(QUOTA_RECORDS_COMPARATOR)
+                .map(this::mapToDto)
+        ).map(ResponseEntity::ok);
 
     return validateAccess(context)
         .then(operation)
