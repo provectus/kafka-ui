@@ -42,7 +42,7 @@ public class ClientQuotasController extends AbstractController implements Client
 
     Mono<ResponseEntity<Flux<ClientQuotasDTO>>> operation =
         Mono.just(
-            clientQuotaService.list(getCluster(clusterName))
+            clientQuotaService.getAll(getCluster(clusterName))
                 .sort(QUOTA_RECORDS_COMPARATOR)
                 .map(this::mapToDto)
         ).map(ResponseEntity::ok);

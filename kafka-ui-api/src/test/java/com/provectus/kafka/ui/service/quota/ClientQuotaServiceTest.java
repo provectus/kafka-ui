@@ -34,7 +34,7 @@ class ClientQuotaServiceTest extends AbstractIntegrationTest {
       nullValues = "null"
   )
   void createUpdateDelete(String user, String clientId, String ip) {
-    var quotas = Map.of(
+    var initialQuotas = Map.of(
         "producer_byte_rate", 123.0,
         "consumer_byte_rate", 234.0,
         "request_percentage", 10.0
@@ -42,22 +42,22 @@ class ClientQuotaServiceTest extends AbstractIntegrationTest {
 
     //creating new
     StepVerifier.create(
-            quotaService.upsert(cluster, user, clientId, ip, quotas)
+            quotaService.upsert(cluster, user, clientId, ip, initialQuotas)
         )
         .assertNext(status -> assertThat(status.value()).isEqualTo(201))
         .verifyComplete();
 
-    assertThat(quotaRecordExisits(new ClientQuotaRecord(user, clientId, ip, quotas)))
+    assertThat(quotaRecordExists(new ClientQuotaRecord(user, clientId, ip, initialQuotas)))
         .isTrue();
 
     //updating
     StepVerifier.create(
-            quotaService.upsert(cluster, user, clientId, ip, Map.of("producer_byte_rate", 111111.0))
+            quotaService.upsert(cluster, user, clientId, ip, Map.of("producer_byte_rate", 22222.0))
         )
         .assertNext(status -> assertThat(status.value()).isEqualTo(200))
         .verifyComplete();
 
-    assertThat(quotaRecordExisits(new ClientQuotaRecord(user, clientId, ip, Map.of("producer_byte_rate", 111111.0))))
+    assertThat(quotaRecordExists(new ClientQuotaRecord(user, clientId, ip, Map.of("producer_byte_rate", 22222.0))))
         .isTrue();
 
     //deleting created record
@@ -67,12 +67,12 @@ class ClientQuotaServiceTest extends AbstractIntegrationTest {
         .assertNext(status -> assertThat(status.value()).isEqualTo(204))
         .verifyComplete();
 
-    assertThat(quotaRecordExisits(new ClientQuotaRecord(user, clientId, ip, Map.of("producer_byte_rate", 111111.0))))
+    assertThat(quotaRecordExists(new ClientQuotaRecord(user, clientId, ip, Map.of("producer_byte_rate", 22222.0))))
         .isFalse();
   }
 
-  private boolean quotaRecordExisits(ClientQuotaRecord rec) {
-    return quotaService.list(cluster).collectList().block().contains(rec);
+  private boolean quotaRecordExists(ClientQuotaRecord rec) {
+    return quotaService.getAll(cluster).collectList().block().contains(rec);
   }
 
 }

@@ -34,7 +34,7 @@ public class ClientQuotaService {
 
   private final AdminClientService adminClientService;
 
-  public Flux<ClientQuotaRecord> list(KafkaCluster cluster) {
+  public Flux<ClientQuotaRecord> getAll(KafkaCluster cluster) {
     return adminClientService.get(cluster)
         .flatMap(ac -> ac.getClientQuotas(ClientQuotaFilter.all()))
         .flatMapIterable(Map::entrySet)
