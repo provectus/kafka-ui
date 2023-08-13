@@ -127,7 +127,7 @@ export default createGlobalStyle(
       --rmsc-selected: #1d1915;
       --rmsc-border: #333333;
       --rmsc-gray: #555555;
-      --rmsc-bg: #121212;
+      --rmsc-bg: #171A1C;
       color: #fff;
     }
   `
