@@ -22,7 +22,7 @@ public class TailingEmitter extends AbstractEmitter {
                         ConsumerRecordDeserializer deserializer,
                         Predicate<TopicMessageDTO> filter,
                         PollingSettings pollingSettings) {
-    super(new MessagesProcessing(deserializer, filter, true, null), pollingSettings);
+    super(new MessagesProcessing(deserializer, filter, false, null), pollingSettings);
     this.consumerSupplier = consumerSupplier;
     this.consumerPosition = consumerPosition;
   }
