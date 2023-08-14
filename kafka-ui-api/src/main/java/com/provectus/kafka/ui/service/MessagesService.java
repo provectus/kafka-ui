@@ -2,10 +2,9 @@ package com.provectus.kafka.ui.service;
 
 import com.google.common.util.concurrent.RateLimiter;
 import com.provectus.kafka.ui.config.ClustersProperties;
-import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
-import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
+import com.provectus.kafka.ui.emitter.BackwardEmitter;
+import com.provectus.kafka.ui.emitter.ForwardEmitter;
 import com.provectus.kafka.ui.emitter.MessageFilters;
-import com.provectus.kafka.ui.emitter.MessagesProcessing;
 import com.provectus.kafka.ui.emitter.TailingEmitter;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
@@ -18,7 +17,6 @@ import com.provectus.kafka.ui.model.SmartFilterTestExecutionDTO;
 import com.provectus.kafka.ui.model.SmartFilterTestExecutionResultDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
 import com.provectus.kafka.ui.util.SslPropertiesUtil;
 import java.time.Instant;
@@ -45,7 +43,6 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -231,54 +228,24 @@ public class MessagesService {
                                                       @Nullable String keySerde,
                                                       @Nullable String valueSerde) {
 
-    java.util.function.Consumer<? super FluxSink<TopicMessageEventDTO>> emitter;
-
-    var processing = new MessagesProcessing(
-        deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde),
-        getMsgFilter(query, filterQueryType),
-        seekDirection == SeekDirectionDTO.TAILING ? null : limit
-    );
-
-    if (seekDirection.equals(SeekDirectionDTO.FORWARD)) {
-      emitter = new ForwardRecordEmitter(
+    var deserializer = deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde);
+    var filter = getMsgFilter(query, filterQueryType);
+    var emitter = switch (seekDirection) {
+      case FORWARD -> new ForwardEmitter(
           () -> consumerGroupService.createConsumer(cluster),
-          consumerPosition,
-          processing,
-          cluster.getPollingSettings()
+          consumerPosition, limit, deserializer, filter, cluster.getPollingSettings()
       );
-    } else if (seekDirection.equals(SeekDirectionDTO.BACKWARD)) {
-      emitter = new BackwardRecordEmitter(
+      case BACKWARD -> new BackwardEmitter(
           () -> consumerGroupService.createConsumer(cluster),
-          consumerPosition,
-          limit,
-          processing,
-          cluster.getPollingSettings()
+          consumerPosition, limit, deserializer, filter, cluster.getPollingSettings()
       );
-    } else {
-      emitter = new TailingEmitter(
+      case TAILING -> new TailingEmitter(
           () -> consumerGroupService.createConsumer(cluster),
-          consumerPosition,
-          processing,
-          cluster.getPollingSettings()
+          consumerPosition, deserializer, filter, cluster.getPollingSettings()
       );
-    }
-    return Flux.create(emitter)
-        .map(getDataMasker(cluster, topic))
-        .map(throttleUiPublish(seekDirection));
-  }
-
-  private UnaryOperator<TopicMessageEventDTO> getDataMasker(KafkaCluster cluster, String topicName) {
-    var keyMasker = cluster.getMasking().getMaskingFunction(topicName, Serde.Target.KEY);
-    var valMasker = cluster.getMasking().getMaskingFunction(topicName, Serde.Target.VALUE);
-    return evt -> {
-      if (evt.getType() != TopicMessageEventDTO.TypeEnum.MESSAGE) {
-        return evt;
-      }
-      return evt.message(
-          evt.getMessage()
-              .key(keyMasker.apply(evt.getMessage().getKey()))
-              .content(valMasker.apply(evt.getMessage().getContent())));
     };
+    return Flux.create(emitter)
+        .map(throttleUiPublish(seekDirection));
   }
 
   private Predicate<TopicMessageDTO> getMsgFilter(String query,
