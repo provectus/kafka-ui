@@ -81,7 +81,7 @@ class Serialize {
     DynamicMessage.Builder builder = schema.newMessageBuilder();
     JsonFormat.parser().merge(input, builder);
     Message message = builder.build();
-    MessageIndexes indexes = schema.toMessageIndexes(message.getDescriptorForType().getFullName(), false);
+    MessageIndexes indexes = schema.toMessageIndexes(message.getDescriptorForType().getFullName(), normalizeSchema);
     try (var out = new ByteArrayOutputStream()) {
       out.write(MAGIC);
       out.write(schemaId(schemaId));
