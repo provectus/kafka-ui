@@ -49,7 +49,7 @@ class Serialize {
       throw new ValidationException(
           String.format("'%s' does not fit schema: %s", value, e.getAllMessages()));
     }
-    try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+    try (var out = new ByteArrayOutputStream()) {
       out.write(MAGIC);
       out.write(schemaId(schemaId));
       out.write(JSON_SERIALIZE_MAPPER.writeValueAsBytes(json));
@@ -95,7 +95,7 @@ class Serialize {
   @SneakyThrows
   static byte[] serializeAvro(AvroSchema schema, int schemaId, String input) {
     var avroObject = JsonAvroConversion.convertJsonToAvro(input, schema.rawSchema());
-    try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+    try (var out = new ByteArrayOutputStream()) {
       out.write(MAGIC);
       out.write(schemaId(schemaId));
       Schema rawSchema = schema.rawSchema();
