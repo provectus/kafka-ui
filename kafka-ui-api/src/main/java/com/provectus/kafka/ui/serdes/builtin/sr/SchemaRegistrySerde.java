@@ -1,5 +1,8 @@
 package com.provectus.kafka.ui.serdes.builtin.sr;
 
+import static com.provectus.kafka.ui.serdes.builtin.sr.Serialize.serializeAvro;
+import static com.provectus.kafka.ui.serdes.builtin.sr.Serialize.serializeJson;
+import static com.provectus.kafka.ui.serdes.builtin.sr.Serialize.serializeProto;
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.BASIC_AUTH_CREDENTIALS_SOURCE;
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.USER_INFO_CONFIG;
 
@@ -219,8 +222,8 @@ public class SchemaRegistrySerde implements BuiltInSerde {
           .convert(basePath, ((AvroSchema) parsedSchema).rawSchema())
           .toJson();
       case JSON ->
-        //need to use confluent JsonSchema since it includes resolved references
-        ((JsonSchema) parsedSchema).rawSchema().toString();
+          //need to use confluent JsonSchema since it includes resolved references
+          ((JsonSchema) parsedSchema).rawSchema().toString();
     };
   }
 
@@ -252,15 +255,21 @@ public class SchemaRegistrySerde implements BuiltInSerde {
   @Override
   public Serializer serializer(String topic, Target type) {
     String subject = schemaSubject(topic, type);
-    var schema = getSchemaBySubject(subject)
-        .orElseThrow(() -> new ValidationException(String.format("No schema for subject '%s' found", subject)));
-    boolean isKey = type == Target.KEY;
-    SchemaType schemaType = SchemaType.fromString(schema.getSchemaType())
-        .orElseThrow(() -> new IllegalStateException("Unknown schema type: " + schema.getSchemaType()));
+    SchemaMetadata meta = getSchemaBySubject(subject)
+        .orElseThrow(() -> new ValidationException(
+            String.format("No schema for subject '%s' found", subject)));
+    ParsedSchema schema = getSchemaById(meta.getId())
+        .orElseThrow(() -> new IllegalStateException(
+            String.format("Schema found for id %s, subject '%s'", meta.getId(), subject)));
+    SchemaType schemaType = SchemaType.fromString(meta.getSchemaType())
+        .orElseThrow(() -> new IllegalStateException("Unknown schema type: " + meta.getSchemaType()));
     return switch (schemaType) {
-      case PROTOBUF -> new ProtobufSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
-      case AVRO -> new AvroSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
-      case JSON -> new JsonSchemaSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
+      case PROTOBUF -> input ->
+          serializeProto(schemaRegistryClient, topic, type, (ProtobufSchema) schema, meta.getId(), input);
+      case AVRO -> input ->
+          serializeAvro((AvroSchema) schema, meta.getId(), input);
+      case JSON -> input ->
+          serializeJson((JsonSchema) schema, meta.getId(), input);
     };
   }
 
