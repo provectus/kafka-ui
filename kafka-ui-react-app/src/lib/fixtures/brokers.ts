@@ -1,8 +1,8 @@
 import { BrokerConfig, BrokersLogdirs, ConfigSource } from 'generated-sources';
 
 export const brokersPayload = [
-  { id: 1, host: 'b-1.test.kafka.amazonaws.com', port: 9092 },
-  { id: 2, host: 'b-2.test.kafka.amazonaws.com', port: 9092 },
+  { id: 100, host: 'b-1.test.kafka.amazonaws.com', port: 9092 },
+  { id: 200, host: 'b-2.test.kafka.amazonaws.com', port: 9092 },
 ];
 
 const partition = {
