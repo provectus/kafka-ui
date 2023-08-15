@@ -42,3 +42,10 @@ export const ProgressBarWrapper = styled.div`
   align-items: center;
   width: 280px;
 `;
+
+export const ProgressPct = styled.span`
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1.5;
+  color: ${({ theme }) => theme.statictics.progressPctColor};
+`;
