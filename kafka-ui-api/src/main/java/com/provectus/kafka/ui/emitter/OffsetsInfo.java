@@ -8,12 +8,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.mutable.MutableLong;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
 
 @Slf4j
 @Getter
-public class OffsetsInfo {
+class OffsetsInfo {
 
   private final Consumer<?, ?> consumer;
 
@@ -23,7 +24,7 @@ public class OffsetsInfo {
   private final Set<TopicPartition> nonEmptyPartitions = new HashSet<>();
   private final Set<TopicPartition> emptyPartitions = new HashSet<>();
 
-  public OffsetsInfo(Consumer<?, ?> consumer, String topic) {
+  OffsetsInfo(Consumer<?, ?> consumer, String topic) {
     this(consumer,
         consumer.partitionsFor(topic).stream()
             .map(pi -> new TopicPartition(topic, pi.partition()))
@@ -31,8 +32,7 @@ public class OffsetsInfo {
     );
   }
 
-  public OffsetsInfo(Consumer<?, ?> consumer,
-                     Collection<TopicPartition> targetPartitions) {
+  OffsetsInfo(Consumer<?, ?> consumer, Collection<TopicPartition> targetPartitions) {
     this.consumer = consumer;
     this.beginOffsets = consumer.beginningOffsets(targetPartitions);
     this.endOffsets = consumer.endOffsets(targetPartitions);
@@ -46,14 +46,20 @@ public class OffsetsInfo {
     });
   }
 
-  public boolean assignedPartitionsFullyPolled() {
-    for (var tp: consumer.assignment()) {
+  boolean assignedPartitionsFullyPolled() {
+    for (var tp : consumer.assignment()) {
       Preconditions.checkArgument(endOffsets.containsKey(tp));
       if (endOffsets.get(tp) > consumer.position(tp)) {
         return false;
       }
     }
     return true;
+  }
+
+  long summaryOffsetsRange() {
+    MutableLong cnt = new MutableLong();
+    nonEmptyPartitions.forEach(tp -> cnt.add(endOffsets.get(tp) - beginOffsets.get(tp)));
+    return cnt.getValue();
   }
 
 }
