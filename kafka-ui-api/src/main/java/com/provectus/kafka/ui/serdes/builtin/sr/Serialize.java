@@ -29,10 +29,13 @@ import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.EncoderFactory;
 
-class Serialize {
+final class Serialize {
 
   private static final byte MAGIC = 0x0;
   private static final ObjectMapper JSON_SERIALIZE_MAPPER = Jackson.newObjectMapper(); //from confluent package
+
+  private Serialize() {
+  }
 
   @KafkaClientInternalsDependant("AbstractKafkaJsonSchemaSerializer::serializeImpl")
   @SneakyThrows
