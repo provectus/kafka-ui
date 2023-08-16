@@ -341,7 +341,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     Comparator<TopicProducerStateDTO> ordering =
         Comparator.comparingInt(TopicProducerStateDTO::getPartition)
-            .thenComparing(TopicProducerStateDTO::getProducerId);
+            .thenComparing(Comparator.comparing(TopicProducerStateDTO::getProducerId).reversed());
 
     Flux<TopicProducerStateDTO> states = topicsService.getActiveProducersState(getCluster(clusterName), topicName)
         .flatMapMany(statesMap ->
