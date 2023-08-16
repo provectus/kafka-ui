@@ -57,8 +57,6 @@ public class ClustersProperties {
   @Data
   public static class PollingProperties {
     Integer pollTimeoutMs;
-    Integer partitionPollTimeout;
-    Integer noDataEmptyPolls;
     Integer maxPageSize;
     Integer defaultPageSize;
   }
