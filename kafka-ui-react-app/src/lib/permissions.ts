@@ -47,6 +47,12 @@ interface IsPermittedConfig {
   rbacFlag: boolean;
 }
 
+const valueMatches = (regexp: string | undefined, val: string | undefined) => {
+  if (!val) return false;
+  if (!regexp) return true;
+  return new RegExp(regexp).test(val);
+};
+
 /**
  * @description it the logic behind depending on the roles whether a certain action
  * is permitted or not the philosophy is inspired from Headless UI libraries where
@@ -93,15 +99,6 @@ export function isPermitted({
   // short circuit
   const resourcePermissions = clusterMap.get(resource);
   if (!resourcePermissions) return false;
-
-  const valueMatches = (
-    regexp: string | undefined,
-    val: string | undefined
-  ) => {
-    if (!val) return false;
-    if (!regexp) return true;
-    return new RegExp(regexp).test(val);
-  };
 
   const actions = Array.isArray(action) ? action : [action];
 
