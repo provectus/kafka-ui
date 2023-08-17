@@ -9,12 +9,15 @@ import com.provectus.kafka.ui.model.ClusterDTO;
 import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
+import com.provectus.kafka.ui.model.rbac.AccessContextV2;
 import com.provectus.kafka.ui.model.rbac.Permission;
 import com.provectus.kafka.ui.model.rbac.Resource;
+import com.provectus.kafka.ui.model.rbac.ResourceV2;
 import com.provectus.kafka.ui.model.rbac.Role;
 import com.provectus.kafka.ui.model.rbac.Subject;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
+import com.provectus.kafka.ui.model.rbac.permission.PermissibleAction;
 import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
 import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import com.provectus.kafka.ui.service.rbac.extractor.CognitoAuthorityExtractor;
@@ -94,6 +97,40 @@ public class AccessControlService {
     }
   }
 
+  public Mono<Void> validateAccess(AccessContextV2 context) {
+    if (!rbacEnabled) {
+      return Mono.empty();
+    }
+
+    return getUser()
+        .doOnNext(user -> {
+          if (context.getCluster() != null && !isClusterAccessible(context.getCluster(), user)) {
+            throw new AccessDeniedException(ACCESS_DENIED);
+          }
+          context.getAccesses().forEach(resourceAccess -> {
+            @Nullable String name = resourceAccess.name();
+            ResourceV2 type = resourceAccess.type();
+            List<PermissibleAction> requestedActions = resourceAccess.actions();
+
+            Set<PermissibleAction> allowedActions = properties.getRoles().stream()
+                .filter(filterRole(user))
+                .flatMap(role -> role.getPermissions().stream())
+                .filter(permission -> permission.getResourceV2() == type && Objects.equals(permission.getValue(), name))
+                .flatMap(p -> p.getActionsv2().stream())
+                .collect(Collectors.toSet());
+
+            if (allowedActions.isEmpty()) {
+              //TODO: do smth?
+            }
+
+            if (!allowedActions.containsAll(requestedActions)) {
+              throw new AccessDeniedException(ACCESS_DENIED);
+            }
+          });
+        })
+        .then();
+  }
+
   public Mono<Void> validateAccess(AccessContext context) {
     if (!rbacEnabled) {
       return Mono.empty();
@@ -152,6 +189,19 @@ public class AccessControlService {
         .map(a -> a.toString().toUpperCase())
         .collect(Collectors.toSet());
     return isAccessible(APPLICATIONCONFIG, null, user, context, requiredActions);
+  }
+
+  private boolean isClusterAccessible(String clusterName, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
+    Assert.isTrue(StringUtils.isNotEmpty(clusterName), "cluster value is empty");
+
+    return properties.getRoles()
+        .stream()
+        .filter(filterRole(user))
+        .anyMatch(filterCluster(clusterName));
   }
 
   private boolean isClusterAccessible(AccessContext context, AuthenticatedUser user) {

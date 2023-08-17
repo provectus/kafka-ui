@@ -13,6 +13,7 @@ import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
 import com.provectus.kafka.ui.model.rbac.permission.KsqlAction;
+import com.provectus.kafka.ui.model.rbac.permission.PermissibleAction;
 import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
 import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import java.util.Arrays;
@@ -35,7 +36,10 @@ public class Permission {
       List.of(KSQL, CLUSTERCONFIG, APPLICATIONCONFIG, ACL, AUDIT);
 
   Resource resource;
+  ResourceV2 resourceV2;
   List<String> actions;
+  List<PermissibleAction> actionsv2;
+
 
   @Nullable
   String value;
@@ -55,6 +59,7 @@ public class Permission {
   @SuppressWarnings("unused")
   public void setActions(List<String> actions) {
     this.actions = actions;
+    this.actionsv2 = resourceV2.parseActions(actions); //TODO: setting order ? set on transform?
   }
 
   public void validate() {
