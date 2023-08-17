@@ -1,5 +1,9 @@
-import {isPermitted, isPermittedToCreate, modifyRolesData,} from 'lib/permissions';
-import {Action, ResourceType} from 'generated-sources';
+import {
+  isPermitted,
+  isPermittedToCreate,
+  modifyRolesData,
+} from 'lib/permissions';
+import { Action, ResourceType } from 'generated-sources';
 
 describe('Permission Helpers', () => {
   const clusterName1 = 'local';
