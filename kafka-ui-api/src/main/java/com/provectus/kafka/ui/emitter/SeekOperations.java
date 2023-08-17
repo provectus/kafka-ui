@@ -10,17 +10,18 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.mutable.MutableLong;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-class SeekOperations {
+public class SeekOperations {
 
   private final Consumer<?, ?> consumer;
   private final OffsetsInfo offsetsInfo;
   private final Map<TopicPartition, Long> offsetsForSeek; //only contains non-empty partitions!
 
-  static SeekOperations create(Consumer<?, ?> consumer, ConsumerPosition consumerPosition) {
+  public static SeekOperations create(Consumer<?, ?> consumer, ConsumerPosition consumerPosition) {
     OffsetsInfo offsetsInfo;
     if (consumerPosition.getSeekTo() == null) {
       offsetsInfo = new OffsetsInfo(consumer, consumerPosition.getTopic());
@@ -34,25 +35,37 @@ class SeekOperations {
     );
   }
 
-  void assignAndSeekNonEmptyPartitions() {
+  public void assignAndSeekNonEmptyPartitions() {
     consumer.assign(offsetsForSeek.keySet());
     offsetsForSeek.forEach(consumer::seek);
   }
 
-  Map<TopicPartition, Long> getBeginOffsets() {
+  public Map<TopicPartition, Long> getBeginOffsets() {
     return offsetsInfo.getBeginOffsets();
   }
 
-  Map<TopicPartition, Long> getEndOffsets() {
+  public Map<TopicPartition, Long> getEndOffsets() {
     return offsetsInfo.getEndOffsets();
   }
 
-  boolean assignedPartitionsFullyPolled() {
+  public boolean assignedPartitionsFullyPolled() {
     return offsetsInfo.assignedPartitionsFullyPolled();
   }
 
+  // sum of (end - start) offsets for all partitions
+  public long summaryOffsetsRange() {
+    return offsetsInfo.summaryOffsetsRange();
+  }
+
+  // sum of differences between initial consumer seek and current consumer position (across all partitions)
+  public long offsetsProcessedFromSeek() {
+    MutableLong count = new MutableLong();
+    offsetsForSeek.forEach((tp, initialOffset) -> count.add(consumer.position(tp) - initialOffset));
+    return count.getValue();
+  }
+
   // Get offsets to seek to. NOTE: offsets do not contain empty partitions offsets
-  Map<TopicPartition, Long> getOffsetsForSeek() {
+  public Map<TopicPartition, Long> getOffsetsForSeek() {
     return offsetsForSeek;
   }
 
@@ -61,19 +74,19 @@ class SeekOperations {
    */
   @VisibleForTesting
   static Map<TopicPartition, Long> getOffsetsForSeek(Consumer<?, ?> consumer,
-                                                             OffsetsInfo offsetsInfo,
-                                                             SeekTypeDTO seekType,
-                                                             @Nullable Map<TopicPartition, Long> seekTo) {
+                                                     OffsetsInfo offsetsInfo,
+                                                     SeekTypeDTO seekType,
+                                                     @Nullable Map<TopicPartition, Long> seekTo) {
     switch (seekType) {
       case LATEST:
         return consumer.endOffsets(offsetsInfo.getNonEmptyPartitions());
       case BEGINNING:
         return consumer.beginningOffsets(offsetsInfo.getNonEmptyPartitions());
       case OFFSET:
-        Preconditions.checkNotNull(offsetsInfo);
+        Preconditions.checkNotNull(seekTo);
         return fixOffsets(offsetsInfo, seekTo);
       case TIMESTAMP:
-        Preconditions.checkNotNull(offsetsInfo);
+        Preconditions.checkNotNull(seekTo);
         return offsetsForTimestamp(consumer, offsetsInfo, seekTo);
       default:
         throw new IllegalStateException();
@@ -100,7 +113,7 @@ class SeekOperations {
   }
 
   private static Map<TopicPartition, Long> offsetsForTimestamp(Consumer<?, ?> consumer, OffsetsInfo offsetsInfo,
-                                                        Map<TopicPartition, Long> timestamps) {
+                                                               Map<TopicPartition, Long> timestamps) {
     timestamps = new HashMap<>(timestamps);
     timestamps.keySet().retainAll(offsetsInfo.getNonEmptyPartitions());
 

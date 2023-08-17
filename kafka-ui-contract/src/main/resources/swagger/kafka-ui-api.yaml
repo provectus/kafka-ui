@@ -3868,10 +3868,6 @@ components:
                   properties:
                     pollTimeoutMs:
                       type: integer
-                    partitionPollTimeout:
-                      type: integer
-                    noDataEmptyPolls:
-                      type: integer
                     maxPageSize:
                       type: integer
                     defaultPageSize:
