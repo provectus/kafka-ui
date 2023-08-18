@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.service.rbac;
 
-import static com.provectus.kafka.ui.model.rbac.Resource.APPLICATIONCONFIG;
-
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
 import com.provectus.kafka.ui.config.auth.RbacUser;
 import com.provectus.kafka.ui.config.auth.RoleBasedAccessControlProperties;
@@ -98,15 +96,14 @@ public class AccessControlService {
     }
     return getUser()
         .doOnNext(user -> {
-          if (!validate(user, context)) {
+          if (!isAccessible(user, context)) {
             throw new AccessDeniedException(ACCESS_DENIED);
           }
         })
         .then();
   }
 
-  // returns false if access not allowed
-  private boolean validate(AuthenticatedUser user, AccessContext context) {
+  private boolean isAccessible(AuthenticatedUser user, AccessContext context) {
     if (context.getCluster() != null && !isClusterAccessible(context.getCluster(), user)) {
       return false;
     }
@@ -160,7 +157,7 @@ public class AccessControlService {
                       .cluster(clusterName)
                       .topicActions(topic.getName(), TopicAction.VIEW)
                       .build();
-                  return validate(user, accessContext);
+                  return isAccessible(user, accessContext);
                 }
             ).toList());
   }
@@ -176,7 +173,7 @@ public class AccessControlService {
         .consumerGroupActions(groupId, ConsumerGroupAction.VIEW)
         .build();
 
-    return getUser().map(u -> validate(u, accessContext));
+    return getUser().map(u -> isAccessible(u, accessContext));
   }
 
   public Mono<Boolean> isSchemaAccessible(String schema, String clusterName) {
@@ -190,7 +187,7 @@ public class AccessControlService {
         .schemaActions(schema, SchemaAction.VIEW)
         .build();
 
-    return getUser().map(u -> validate(u, accessContext));
+    return getUser().map(u -> isAccessible(u, accessContext));
   }
 
   public Mono<Boolean> isConnectAccessible(ConnectDTO dto, String clusterName) {
@@ -211,7 +208,7 @@ public class AccessControlService {
         .connectActions(connectName, ConnectAction.VIEW)
         .build();
 
-    return getUser().map(u -> validate(u, accessContext));
+    return getUser().map(u -> isAccessible(u, accessContext));
   }
 
   public Set<ProviderAuthorityExtractor> getOauthExtractors() {
