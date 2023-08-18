@@ -32,11 +32,11 @@ record AuditRecord(String timestamp,
     return MAPPER.writeValueAsString(this);
   }
 
-  record AuditResource(List<String> accessType, boolean alter, Resource type, @Nullable Object id) {
+  record AuditResource(Resource type, @Nullable Object id, boolean alter, List<String> accessType) {
 
     private static AuditResource create(Collection<PermissibleAction> actions, Resource type, @Nullable Object id) {
       boolean isAlter = actions.stream().anyMatch(PermissibleAction::isAlter);
-      return new AuditResource(actions.stream().map(PermissibleAction::name).toList(), isAlter, type, id);
+      return new AuditResource(type, id, isAlter, actions.stream().map(PermissibleAction::name).toList());
     }
 
     static List<AuditResource> getAccessedResources(AccessContext ctx) {
