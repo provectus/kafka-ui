@@ -31,7 +31,7 @@ public class AccessContext {
 
     Collection<PermissibleAction> requestedActions();
 
-    boolean isAccessible(List<Permission> allowedPermissions);
+    boolean isAccessible(List<Permission> userPermissions);
   }
 
   private record SingleResourceAccess(@Nullable String name,
