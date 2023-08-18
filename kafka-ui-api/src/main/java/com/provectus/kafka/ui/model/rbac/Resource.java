@@ -50,11 +50,11 @@ public enum Resource {
 
   public List<PermissibleAction> parseActions(List<String> actionsToParse) {
     return actionsToParse.stream()
-        .map(String::toUpperCase)
-        .map(toParse -> allActions().stream()
-            .filter(a -> toParse.equals(a.name().toUpperCase()))
+        .map(toParse -> actions.stream()
+            .filter(a -> toParse.equalsIgnoreCase(a.name()))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("no actions found for string '%s'".formatted(toParse)))
+            .orElseThrow(() -> new IllegalArgumentException(
+                "'%s' actions not applicable for resource %s".formatted(toParse, name())))
         )
         .toList();
   }

@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.model.rbac;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.model.rbac.permission.PermissibleAction;
 import java.util.List;
@@ -9,7 +11,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.util.Assert;
 
 @Getter
 @ToString
@@ -42,14 +43,14 @@ public class Permission {
   }
 
   public void validate() {
-    Assert.notNull(resource, "resource cannot be null");
+    Preconditions.checkNotNull(resource, "resource cannot be null");
   }
 
   public void transform() {
     if (value != null) {
       this.compiledValuePattern = Pattern.compile(value);
     }
-    Preconditions.checkArgument(CollectionUtils.isNotEmpty(actions), "Actions list can't be null or empty list");
+    Preconditions.checkArgument(isNotEmpty(actions), "Actions list for %s can't be null or empty", resource);
     if (actions.stream().anyMatch("ALL"::equalsIgnoreCase)) {
       this.parsedActions = resource.allActions();
     } else {
