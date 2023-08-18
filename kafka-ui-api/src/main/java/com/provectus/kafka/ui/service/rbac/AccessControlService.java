@@ -95,10 +95,11 @@ public class AccessControlService {
       return Mono.empty();
     }
     return getUser()
-        .doOnNext(user -> {
+        .flatMap(user -> {
           if (!isAccessible(user, context)) {
-            throw new AccessDeniedException(ACCESS_DENIED);
+            return Mono.error(new AccessDeniedException(ACCESS_DENIED));
           }
+          return Mono.empty();
         })
         .then();
   }
