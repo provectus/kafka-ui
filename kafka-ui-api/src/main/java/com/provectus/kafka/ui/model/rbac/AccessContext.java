@@ -31,8 +31,7 @@ public class AccessContext {
 
     Collection<PermissibleAction> requestedActions();
 
-    // returns false if access not allowed
-    boolean validate(List<Permission> allowedPermissions);
+    boolean isAccessible(List<Permission> allowedPermissions);
   }
 
   private record SingleResourceAccess(@Nullable String name,
@@ -49,7 +48,7 @@ public class AccessContext {
     }
 
     @Override
-    public boolean validate(List<Permission> userPermissions) throws AccessDeniedException {
+    public boolean isAccessible(List<Permission> userPermissions) throws AccessDeniedException {
       var allowedActions = userPermissions.stream()
           .filter(permission -> permission.getResource() == resourceType)
           .filter(permission -> {

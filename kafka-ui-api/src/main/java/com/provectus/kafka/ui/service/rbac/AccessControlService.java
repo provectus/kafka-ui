@@ -114,7 +114,7 @@ public class AccessControlService {
         .toList();
 
     return context.getAccesses().stream()
-        .allMatch(resourceAccess -> resourceAccess.validate(allUserPermissions));
+        .allMatch(resourceAccess -> resourceAccess.isAccessible(allUserPermissions));
   }
 
   public Mono<AuthenticatedUser> getUser() {
