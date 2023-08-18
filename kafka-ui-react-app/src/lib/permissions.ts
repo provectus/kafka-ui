@@ -1,8 +1,16 @@
-import { Action, UserPermission, ResourceType } from 'generated-sources';
+import { Action, ResourceType, UserPermission } from 'generated-sources';
 
 export type RolesType = UserPermission[];
 
 export type RolesModifiedTypes = Map<string, Map<ResourceType, RolesType>>;
+
+const ResourceExemptList: ResourceType[] = [
+  ResourceType.KSQL,
+  ResourceType.CLUSTERCONFIG,
+  ResourceType.APPLICATIONCONFIG,
+  ResourceType.ACL,
+  ResourceType.AUDIT,
+];
 
 export function modifyRolesData(
   data?: RolesType
@@ -38,6 +46,12 @@ interface IsPermittedConfig {
   value?: string;
   rbacFlag: boolean;
 }
+
+const valueMatches = (regexp: string | undefined, val: string | undefined) => {
+  if (!val) return false;
+  if (!regexp) return true;
+  return new RegExp(regexp).test(val);
+};
 
 /**
  * @description it the logic behind depending on the roles whether a certain action
@@ -83,32 +97,18 @@ export function isPermitted({
   if (!clusterMap) return false;
 
   // short circuit
-  const resourceData = clusterMap.get(resource);
-  if (!resourceData) return false;
+  const resourcePermissions = clusterMap.get(resource);
+  if (!resourcePermissions) return false;
 
-  return (
-    resourceData.findIndex((item) => {
-      let valueCheck = true;
-      if (item.value) {
-        valueCheck = false;
+  const actions = Array.isArray(action) ? action : [action];
 
-        if (value) valueCheck = new RegExp(item.value).test(value);
-      }
-
-      // short circuit
-      if (!valueCheck) return false;
-
-      if (!Array.isArray(action)) {
-        return item.actions.includes(action);
-      }
-
-      // every given action should be found in that resource
-      return action.every(
-        (currentAction) =>
-          item.actions.findIndex((element) => element === currentAction) !== -1
-      );
-    }) !== -1
-  );
+  return actions.every((a) => {
+    return resourcePermissions.some((item) => {
+      if (!item.actions.includes(a)) return false;
+      if (ResourceExemptList.includes(resource)) return true;
+      return valueMatches(item.value, value);
+    });
+  });
 }
 
 /**
