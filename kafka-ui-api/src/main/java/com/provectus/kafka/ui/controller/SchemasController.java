@@ -52,8 +52,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
       ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .schema(subject)
-        .schemaActions(SchemaAction.VIEW)
+        .schemaActions(subject, SchemaAction.VIEW)
         .operationName("checkSchemaCompatibility")
         .build();
 
@@ -73,22 +72,23 @@ public class SchemasController extends AbstractController implements SchemasApi 
   public Mono<ResponseEntity<SchemaSubjectDTO>> createNewSchema(
       String clusterName, @Valid Mono<NewSchemaSubjectDTO> newSchemaSubjectMono,
       ServerWebExchange exchange) {
-    var context = AccessContext.builder()
-        .cluster(clusterName)
-        .schemaActions(SchemaAction.CREATE)
-        .operationName("createNewSchema")
-        .build();
-
-    return validateAccess(context).then(
-        newSchemaSubjectMono.flatMap(newSubject ->
-                schemaRegistryService.registerNewSchema(
-                    getCluster(clusterName),
-                    newSubject.getSubject(),
-                    kafkaSrMapper.fromDto(newSubject)
-                )
-            ).map(kafkaSrMapper::toDto)
-            .map(ResponseEntity::ok)
-    ).doOnEach(sig -> audit(context, sig));
+    return newSchemaSubjectMono.flatMap(newSubject -> {
+          var context = AccessContext.builder()
+              .cluster(clusterName)
+              .schemaActions(newSubject.getSubject(), SchemaAction.CREATE)
+              .operationName("createNewSchema")
+              .build();
+          return validateAccess(context).then(
+                  schemaRegistryService.registerNewSchema(
+                      getCluster(clusterName),
+                      newSubject.getSubject(),
+                      kafkaSrMapper.fromDto(newSubject)
+                  ))
+              .map(kafkaSrMapper::toDto)
+              .map(ResponseEntity::ok)
+              .doOnEach(sig -> audit(context, sig));
+        }
+    );
   }
 
   @Override
@@ -96,8 +96,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
       String clusterName, String subject, ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .schema(subject)
-        .schemaActions(SchemaAction.DELETE)
+        .schemaActions(subject, SchemaAction.DELETE)
         .operationName("deleteLatestSchema")
         .build();
 
@@ -113,8 +112,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
       String clusterName, String subject, ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .schema(subject)
-        .schemaActions(SchemaAction.DELETE)
+        .schemaActions(subject, SchemaAction.DELETE)
         .operationName("deleteSchema")
         .build();
 
@@ -130,8 +128,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
       String clusterName, String subjectName, Integer version, ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .schema(subjectName)
-        .schemaActions(SchemaAction.DELETE)
+        .schemaActions(subjectName, SchemaAction.DELETE)
         .operationName("deleteSchemaByVersion")
         .build();
 
@@ -147,8 +144,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
       String clusterName, String subjectName, ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .schema(subjectName)
-        .schemaActions(SchemaAction.VIEW)
+        .schemaActions(subjectName, SchemaAction.VIEW)
         .operationName("getAllVersionsBySubject")
         .build();
 
@@ -176,8 +172,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
                                                                 ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .schema(subject)
-        .schemaActions(SchemaAction.VIEW)
+        .schemaActions(subject, SchemaAction.VIEW)
         .operationName("getLatestSchema")
         .build();
 
@@ -193,8 +188,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
       String clusterName, String subject, Integer version, ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .schema(subject)
-        .schemaActions(SchemaAction.VIEW)
+        .schemaActions(subject, SchemaAction.VIEW)
         .operationName("getSchemaByVersion")
         .operationParams(Map.of("subject", subject, "version", version))
         .build();
@@ -249,7 +243,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
       ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .schemaActions(SchemaAction.MODIFY_GLOBAL_COMPATIBILITY)
+        .schemaGlobalCompatChange()
         .operationName("updateGlobalSchemaCompatibilityLevel")
         .build();
 
@@ -269,16 +263,16 @@ public class SchemasController extends AbstractController implements SchemasApi 
   public Mono<ResponseEntity<Void>> updateSchemaCompatibilityLevel(
       String clusterName, String subject, @Valid Mono<CompatibilityLevelDTO> compatibilityLevelMono,
       ServerWebExchange exchange) {
+
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .schemaActions(SchemaAction.EDIT)
+        .schemaActions(subject, SchemaAction.EDIT)
         .operationName("updateSchemaCompatibilityLevel")
         .operationParams(Map.of("subject", subject))
         .build();
 
-    return validateAccess(context).then(
-        compatibilityLevelMono
-            .flatMap(compatibilityLevelDTO ->
+    return compatibilityLevelMono.flatMap(compatibilityLevelDTO ->
+        validateAccess(context).then(
                 schemaRegistryService.updateSchemaCompatibility(
                     getCluster(clusterName),
                     subject,

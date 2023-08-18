@@ -65,9 +65,9 @@ public class AccessController implements AuthorizationApi {
           dto.setClusters(clusters);
           dto.setResource(ResourceTypeDTO.fromValue(permission.getResource().toString().toUpperCase()));
           dto.setValue(permission.getValue());
-          dto.setActions(permission.getActions()
+          dto.setActions(permission.getParsedActions()
               .stream()
-              .map(String::toUpperCase)
+              .map(p -> p.name().toUpperCase())
               .map(this::mapAction)
               .filter(Objects::nonNull)
               .collect(Collectors.toList()));

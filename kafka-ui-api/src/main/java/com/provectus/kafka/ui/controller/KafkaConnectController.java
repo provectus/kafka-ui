@@ -55,8 +55,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .connect(connectName)
-        .connectActions(ConnectAction.VIEW)
+        .connectActions(connectName, ConnectAction.VIEW)
         .operationName("getConnectors")
         .build();
 
@@ -72,8 +71,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .connect(connectName)
-        .connectActions(ConnectAction.VIEW, ConnectAction.CREATE)
+        .connectActions(connectName, ConnectAction.VIEW, ConnectAction.CREATE)
         .operationName("createConnector")
         .build();
 
@@ -90,9 +88,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .connect(connectName)
-        .connectActions(ConnectAction.VIEW)
-        .connector(connectorName)
+        .connectActions(connectName, ConnectAction.VIEW)
         .operationName("getConnector")
         .build();
 
@@ -109,8 +105,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .connect(connectName)
-        .connectActions(ConnectAction.VIEW, ConnectAction.EDIT)
+        .connectActions(connectName, ConnectAction.VIEW, ConnectAction.EDIT)
         .operationName("deleteConnector")
         .operationParams(Map.of("connectorName", connectName))
         .build();
@@ -132,7 +127,6 @@ public class KafkaConnectController extends AbstractController implements KafkaC
   ) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .connectActions(ConnectAction.VIEW, ConnectAction.EDIT)
         .operationName("getAllConnectors")
         .build();
 
@@ -142,7 +136,6 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     Flux<FullConnectorInfoDTO> job = kafkaConnectService.getAllConnectors(getCluster(clusterName), search)
         .filterWhen(dto -> accessControlService.isConnectAccessible(dto.getConnect(), clusterName))
-        .filterWhen(dto -> accessControlService.isConnectorAccessible(dto.getConnect(), dto.getName(), clusterName))
         .sort(comparator);
 
     return Mono.just(ResponseEntity.ok(job))
@@ -157,8 +150,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .connect(connectName)
-        .connectActions(ConnectAction.VIEW)
+        .connectActions(connectName, ConnectAction.VIEW)
         .operationName("getConnectorConfig")
         .build();
 
@@ -177,8 +169,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .connect(connectName)
-        .connectActions(ConnectAction.VIEW, ConnectAction.EDIT)
+        .connectActions(connectName, ConnectAction.VIEW, ConnectAction.EDIT)
         .operationName("setConnectorConfig")
         .operationParams(Map.of("connectorName", connectorName))
         .build();
@@ -204,8 +195,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .connect(connectName)
-        .connectActions(connectActions)
+        .connectActions(connectName, connectActions)
         .operationName("updateConnectorState")
         .operationParams(Map.of("connectorName", connectorName))
         .build();
@@ -224,8 +214,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
                                                                ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .connect(connectName)
-        .connectActions(ConnectAction.VIEW)
+        .connectActions(connectName, ConnectAction.VIEW)
         .operationName("getConnectorTasks")
         .operationParams(Map.of("connectorName", connectorName))
         .build();
@@ -244,8 +233,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .connect(connectName)
-        .connectActions(ConnectAction.VIEW, ConnectAction.RESTART)
+        .connectActions(connectName, ConnectAction.VIEW, ConnectAction.RESTART)
         .operationName("restartConnectorTask")
         .operationParams(Map.of("connectorName", connectorName))
         .build();
@@ -263,8 +251,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .connect(connectName)
-        .connectActions(ConnectAction.VIEW)
+        .connectActions(connectName, ConnectAction.VIEW)
         .operationName("getConnectorPlugins")
         .build();
 

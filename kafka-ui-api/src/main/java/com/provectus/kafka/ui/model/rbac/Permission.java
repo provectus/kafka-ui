@@ -1,23 +1,7 @@
 package com.provectus.kafka.ui.model.rbac;
 
-import static com.provectus.kafka.ui.model.rbac.Resource.ACL;
-import static com.provectus.kafka.ui.model.rbac.Resource.APPLICATIONCONFIG;
-import static com.provectus.kafka.ui.model.rbac.Resource.AUDIT;
-import static com.provectus.kafka.ui.model.rbac.Resource.CLUSTERCONFIG;
-import static com.provectus.kafka.ui.model.rbac.Resource.KSQL;
-
-import com.provectus.kafka.ui.model.rbac.permission.AclAction;
-import com.provectus.kafka.ui.model.rbac.permission.ApplicationConfigAction;
-import com.provectus.kafka.ui.model.rbac.permission.AuditAction;
-import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
-import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
-import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
-import com.provectus.kafka.ui.model.rbac.permission.KsqlAction;
+import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.model.rbac.permission.PermissibleAction;
-import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
-import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
@@ -32,14 +16,10 @@ import org.springframework.util.Assert;
 @EqualsAndHashCode
 public class Permission {
 
-  private static final List<Resource> RBAC_ACTION_EXEMPT_LIST =
-      List.of(KSQL, CLUSTERCONFIG, APPLICATIONCONFIG, ACL, AUDIT);
-
   Resource resource;
-  ResourceV2 resourceV2;
-  List<String> actions;
-  List<PermissibleAction> actionsv2;
 
+  List<String> actions;
+  transient List<PermissibleAction> parsedActions;
 
   @Nullable
   String value;
@@ -59,41 +39,22 @@ public class Permission {
   @SuppressWarnings("unused")
   public void setActions(List<String> actions) {
     this.actions = actions;
-    this.actionsv2 = resourceV2.parseActions(actions); //TODO: setting order ? set on transform?
   }
 
   public void validate() {
     Assert.notNull(resource, "resource cannot be null");
-    if (!RBAC_ACTION_EXEMPT_LIST.contains(this.resource)) {
-      Assert.notNull(value, "permission value can't be empty for resource " + resource);
-    }
   }
 
   public void transform() {
     if (value != null) {
       this.compiledValuePattern = Pattern.compile(value);
     }
-    if (CollectionUtils.isNotEmpty(actions) && actions.stream().anyMatch("ALL"::equalsIgnoreCase)) {
-      this.actions = getAllActionValues();
+    Preconditions.checkArgument(CollectionUtils.isNotEmpty(actions), "Actions list can't be null or empty list");
+    if (actions.stream().anyMatch("ALL"::equalsIgnoreCase)) {
+      this.parsedActions = resource.allActions();
+    } else {
+      this.parsedActions = resource.parseActions(actions);
     }
-  }
-
-  private List<String> getAllActionValues() {
-    if (resource == null) {
-      return Collections.emptyList();
-    }
-
-    return switch (this.resource) {
-      case APPLICATIONCONFIG -> Arrays.stream(ApplicationConfigAction.values()).map(Enum::toString).toList();
-      case CLUSTERCONFIG -> Arrays.stream(ClusterConfigAction.values()).map(Enum::toString).toList();
-      case TOPIC -> Arrays.stream(TopicAction.values()).map(Enum::toString).toList();
-      case CONSUMER -> Arrays.stream(ConsumerGroupAction.values()).map(Enum::toString).toList();
-      case SCHEMA -> Arrays.stream(SchemaAction.values()).map(Enum::toString).toList();
-      case CONNECT -> Arrays.stream(ConnectAction.values()).map(Enum::toString).toList();
-      case KSQL -> Arrays.stream(KsqlAction.values()).map(Enum::toString).toList();
-      case ACL -> Arrays.stream(AclAction.values()).map(Enum::toString).toList();
-      case AUDIT -> Arrays.stream(AuditAction.values()).map(Enum::toString).toList();
-    };
   }
 
 }
