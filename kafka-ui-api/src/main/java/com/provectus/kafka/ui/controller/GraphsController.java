@@ -7,10 +7,8 @@ import com.provectus.kafka.ui.model.GraphDescriptionsDTO;
 import com.provectus.kafka.ui.model.GraphParameterDTO;
 import com.provectus.kafka.ui.model.PrometheusApiQueryResponseDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
-import com.provectus.kafka.ui.service.audit.AuditService;
 import com.provectus.kafka.ui.service.graphs.GraphDescription;
 import com.provectus.kafka.ui.service.graphs.GraphsService;
-import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -34,8 +32,6 @@ public class GraphsController extends AbstractController implements GraphsApi {
     PrometheusApiQueryResponseDTO fromClientResponse(QueryResponse resp);
   }
 
-  private final AccessControlService accessControlService;
-  private final AuditService auditService;
   private final GraphsService graphsService;
 
   @Override
