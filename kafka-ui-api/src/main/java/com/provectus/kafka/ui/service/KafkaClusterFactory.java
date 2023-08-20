@@ -194,7 +194,7 @@ public class KafkaClusterFactory {
   private boolean prometheusStorageConfigured(ClustersProperties.Cluster cluster) {
     return Optional.ofNullable(cluster.getMetrics())
         .flatMap(m -> Optional.ofNullable(m.getStore()))
-        .flatMap(s -> Optional.of(s.getPrometheus()))
+        .flatMap(s -> Optional.ofNullable(s.getPrometheus()))
         .map(p -> StringUtils.hasText(p.getUrl()))
         .orElse(false);
   }
