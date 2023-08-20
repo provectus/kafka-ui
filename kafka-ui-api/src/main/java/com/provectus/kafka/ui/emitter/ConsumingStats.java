@@ -2,9 +2,6 @@ package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.TopicMessageConsumingDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.util.ConsumerRecordsUtil;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
 
 class ConsumingStats {
@@ -12,41 +9,37 @@ class ConsumingStats {
   private long bytes = 0;
   private int records = 0;
   private long elapsed = 0;
+  private int filterApplyErrors = 0;
 
-  /**
-   * returns bytes polled.
-   */
-  int sendConsumingEvt(FluxSink<TopicMessageEventDTO> sink,
-                        ConsumerRecords<Bytes, Bytes> polledRecords,
-                        long elapsed,
-                        int filterApplyErrors) {
-    int polledBytes = ConsumerRecordsUtil.calculatePolledSize(polledRecords);
-    bytes += polledBytes;
-    this.records += polledRecords.count();
-    this.elapsed += elapsed;
+  void sendConsumingEvt(FluxSink<TopicMessageEventDTO> sink, PolledRecords polledRecords) {
+    bytes += polledRecords.bytes();
+    records += polledRecords.count();
+    elapsed += polledRecords.elapsed().toMillis();
     sink.next(
         new TopicMessageEventDTO()
             .type(TopicMessageEventDTO.TypeEnum.CONSUMING)
-            .consuming(createConsumingStats(sink, filterApplyErrors))
+            .consuming(createConsumingStats())
     );
-    return polledBytes;
   }
 
-  void sendFinishEvent(FluxSink<TopicMessageEventDTO> sink, int filterApplyErrors) {
+  void incFilterApplyError() {
+    filterApplyErrors++;
+  }
+
+  void sendFinishEvent(FluxSink<TopicMessageEventDTO> sink) {
     sink.next(
         new TopicMessageEventDTO()
             .type(TopicMessageEventDTO.TypeEnum.DONE)
-            .consuming(createConsumingStats(sink, filterApplyErrors))
+            .consuming(createConsumingStats())
     );
   }
 
-  private TopicMessageConsumingDTO createConsumingStats(FluxSink<TopicMessageEventDTO> sink,
-                                                        int filterApplyErrors) {
+  private TopicMessageConsumingDTO createConsumingStats() {
     return new TopicMessageConsumingDTO()
-        .bytesConsumed(this.bytes)
-        .elapsedMs(this.elapsed)
-        .isCancelled(sink.isCancelled())
+        .bytesConsumed(bytes)
+        .elapsedMs(elapsed)
+        .isCancelled(false)
         .filterApplyErrors(filterApplyErrors)
-        .messagesConsumed(this.records);
+        .messagesConsumed(records);
   }
 }

@@ -13,6 +13,7 @@ abstract class AbstractAuthSecurityConfig {
       "/resources/**",
       "/actuator/health/**",
       "/actuator/info",
+      "/actuator/prometheus",
       "/auth",
       "/login",
       "/logout",

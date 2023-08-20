@@ -6,13 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler;
 import org.springframework.security.web.server.authentication.logout.RedirectServerLogoutSuccessHandler;
-import org.springframework.security.web.server.ui.LogoutPageGeneratingWebFilter;
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -33,15 +33,19 @@ public class BasicAuthSecurityConfig extends AbstractAuthSecurityConfig {
     final var logoutSuccessHandler = new RedirectServerLogoutSuccessHandler();
     logoutSuccessHandler.setLogoutSuccessUrl(URI.create(LOGOUT_URL));
 
-    return http
-        .addFilterAfter(new LogoutPageGeneratingWebFilter(), SecurityWebFiltersOrder.REACTOR_CONTEXT)
-        .csrf().disable()
-        .authorizeExchange()
-        .pathMatchers(AUTH_WHITELIST).permitAll()
-        .anyExchange().authenticated()
-        .and().formLogin().loginPage(LOGIN_URL).authenticationSuccessHandler(authHandler)
-        .and().logout().logoutSuccessHandler(logoutSuccessHandler)
-        .and().build();
+
+    return http.authorizeExchange(spec -> spec
+            .pathMatchers(AUTH_WHITELIST)
+            .permitAll()
+            .anyExchange()
+            .authenticated()
+        )
+        .formLogin(spec -> spec.loginPage(LOGIN_URL).authenticationSuccessHandler(authHandler))
+        .logout(spec -> spec
+            .logoutSuccessHandler(logoutSuccessHandler)
+            .requiresLogout(ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/logout")))
+        .csrf(ServerHttpSecurity.CsrfSpec::disable)
+        .build();
   }
 
 }
