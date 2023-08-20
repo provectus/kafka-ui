@@ -4128,6 +4128,31 @@ components:
                             type: string
                           keystorePassword:
                             type: string
+                          prometheusExpose:
+                            type: boolean
+                          store:
+                            type: object
+                            properties:
+                              prometheus:
+                                type: object
+                                properties:
+                                  url:
+                                    type: string
+                                  remoteWrite:
+                                    type: boolean
+                                  pushGatewayUrl:
+                                    type: string
+                                  pushGatewayUsername:
+                                    type: string
+                                  pushGatewayPassword:
+                                    type: string
+                                  pushGatewayJobName:
+                                    type: string
+                              kafka:
+                                type: object
+                                properties:
+                                  topic:
+                                    type: string
                       properties:
                         type: object
                         additionalProperties: true
