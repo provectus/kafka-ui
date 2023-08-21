@@ -17,6 +17,7 @@ import reactor.core.publisher.FluxSink;
 abstract class RangePollingEmitter extends AbstractEmitter {
 
   private final Supplier<EnhancedConsumer> consumerSupplier;
+  private final Cursor.Tracking cursor;
   protected final ConsumerPosition consumerPosition;
   protected final int messagesPerPage;
 
@@ -24,11 +25,13 @@ abstract class RangePollingEmitter extends AbstractEmitter {
                                 ConsumerPosition consumerPosition,
                                 int messagesPerPage,
                                 MessagesProcessing messagesProcessing,
-                                PollingSettings pollingSettings) {
+                                PollingSettings pollingSettings,
+                                Cursor.Tracking cursor) {
     super(messagesProcessing, pollingSettings);
     this.consumerPosition = consumerPosition;
     this.messagesPerPage = messagesPerPage;
     this.consumerSupplier = consumerSupplier;
+    this.cursor = cursor;
   }
 
   protected record FromToOffset(/*inclusive*/ long from, /*exclusive*/ long to) {
@@ -46,18 +49,20 @@ abstract class RangePollingEmitter extends AbstractEmitter {
     try (EnhancedConsumer consumer = consumerSupplier.get()) {
       sendPhase(sink, "Consumer created");
       var seekOperations = SeekOperations.create(consumer, consumerPosition);
+      cursor.initOffsets(seekOperations.getOffsetsForSeek());
+
       TreeMap<TopicPartition, FromToOffset> pollRange = nextPollingRange(new TreeMap<>(), seekOperations);
       log.debug("Starting from offsets {}", pollRange);
 
-      while (!sink.isCancelled() && !pollRange.isEmpty() && !sendLimitReached()) {
+      while (!sink.isCancelled() && !pollRange.isEmpty() && !isSendLimitReached()) {
         var polled = poll(consumer, sink, pollRange);
-        send(sink, polled);
+        send(sink, polled, cursor);
         pollRange = nextPollingRange(pollRange, seekOperations);
       }
       if (sink.isCancelled()) {
         log.debug("Polling finished due to sink cancellation");
       }
-      sendFinishStatsAndCompleteSink(sink);
+      sendFinishStatsAndCompleteSink(sink, pollRange.isEmpty() ? null : cursor);
       log.debug("Polling finished");
     } catch (InterruptException kafkaInterruptException) {
       log.debug("Polling finished due to thread interruption");

@@ -117,56 +117,56 @@ class CursorTest extends AbstractIntegrationTest {
         .verifyComplete();
   }
 
-  private BackwardRecordEmitter createBackwardEmitter(ConsumerPosition position) {
-    return new BackwardRecordEmitter(
+  private BackwardEmitter createBackwardEmitter(ConsumerPosition position) {
+    return new BackwardEmitter(
         this::createConsumer,
         position,
         PAGE_SIZE,
-        new MessagesProcessing(createRecordsDeserializer(), m -> true, PAGE_SIZE),
+        createRecordsDeserializer(),
+        m -> true,
         PollingSettings.createDefault(),
         createCursor(position)
     );
   }
 
-  private BackwardRecordEmitter createBackwardEmitterWithCursor(Cursor cursor) {
-    return new BackwardRecordEmitter(
+  private BackwardEmitter createBackwardEmitterWithCursor(Cursor cursor) {
+    return new BackwardEmitter(
         this::createConsumer,
         cursor.consumerPosition(),
         cursor.limit(),
-        new MessagesProcessing(cursor.deserializer(), cursor.filter(), PAGE_SIZE),
+        cursor.deserializer(),
+        cursor.filter(),
         PollingSettings.createDefault(),
         createCursor(cursor.consumerPosition())
     );
   }
 
-  private ForwardRecordEmitter createForwardEmitterWithCursor(Cursor cursor) {
-    return new ForwardRecordEmitter(
+  private ForwardEmitter createForwardEmitterWithCursor(Cursor cursor) {
+    return new ForwardEmitter(
         this::createConsumer,
         cursor.consumerPosition(),
-        new MessagesProcessing(cursor.deserializer(), cursor.filter(), PAGE_SIZE),
+        cursor.limit(),
+        cursor.deserializer(),
+        cursor.filter(),
         PollingSettings.createDefault(),
         createCursor(cursor.consumerPosition())
     );
   }
 
-  private ForwardRecordEmitter createForwardEmitter(ConsumerPosition position) {
-    return new ForwardRecordEmitter(
+  private ForwardEmitter createForwardEmitter(ConsumerPosition position) {
+    return new ForwardEmitter(
         this::createConsumer,
         position,
-        new MessagesProcessing(createRecordsDeserializer(), m -> true, PAGE_SIZE),
+        PAGE_SIZE,
+        createRecordsDeserializer(),
+        m -> true,
         PollingSettings.createDefault(),
         createCursor(position)
     );
   }
 
   private Cursor.Tracking createCursor(ConsumerPosition position) {
-    return new Cursor.Tracking(
-        createRecordsDeserializer(),
-        position,
-        m -> true,
-        PAGE_SIZE,
-        cursorsStorage::register
-    );
+    return cursorsStorage.createNewCursor(createRecordsDeserializer(), position, m -> true, PAGE_SIZE);
   }
 
   private EnhancedConsumer createConsumer() {
@@ -187,7 +187,8 @@ class CursorTest extends AbstractIntegrationTest {
         s.deserializer(null, Serde.Target.VALUE),
         StringSerde.name(),
         s.deserializer(null, Serde.Target.KEY),
-        s.deserializer(null, Serde.Target.VALUE)
+        s.deserializer(null, Serde.Target.VALUE),
+        msg -> msg
     );
   }
 

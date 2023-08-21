@@ -18,18 +18,15 @@ public class BackwardEmitter extends RangePollingEmitter {
                          int messagesPerPage,
                          ConsumerRecordDeserializer deserializer,
                          Predicate<TopicMessageDTO> filter,
-                         PollingSettings pollingSettings) {
+                         PollingSettings pollingSettings,
+                         Cursor.Tracking cursor) {
     super(
         consumerSupplier,
         consumerPosition,
         messagesPerPage,
-        new MessagesProcessing(
-            deserializer,
-            filter,
-            false,
-            messagesPerPage
-        ),
-        pollingSettings
+        new MessagesProcessing(deserializer, filter, false, messagesPerPage),
+        pollingSettings,
+        cursor
     );
   }
 

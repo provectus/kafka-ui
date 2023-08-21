@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.service.analyze;
 
-import static com.provectus.kafka.ui.model.SeekTypeDTO.BEGINNING;
+import static com.provectus.kafka.ui.model.PollingModeDTO.EARLIEST;
 
 import com.provectus.kafka.ui.emitter.EnhancedConsumer;
 import com.provectus.kafka.ui.emitter.SeekOperations;
@@ -14,6 +14,7 @@ import java.io.Closeable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -104,7 +105,8 @@ public class TopicAnalysisService {
         consumer.partitionsFor(topicId.topicName)
             .forEach(tp -> partitionStats.put(tp.partition(), new TopicAnalysisStats()));
 
-        var seekOperations = SeekOperations.create(consumer, new ConsumerPosition(BEGINNING, topicId.topicName, null));
+        var seekOperations =
+            SeekOperations.create(consumer, new ConsumerPosition(EARLIEST, topicId.topicName, List.of(), null, null));
         long summaryOffsetsRange = seekOperations.summaryOffsetsRange();
         seekOperations.assignAndSeekNonEmptyPartitions();
 

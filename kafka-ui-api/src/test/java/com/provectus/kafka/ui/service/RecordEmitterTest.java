@@ -9,19 +9,21 @@ import static com.provectus.kafka.ui.model.PollingModeDTO.TO_TIMESTAMP;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractIntegrationTest;
-import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
+import com.provectus.kafka.ui.emitter.BackwardEmitter;
 import com.provectus.kafka.ui.emitter.Cursor;
-import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
-import com.provectus.kafka.ui.emitter.MessagesProcessing;
+import com.provectus.kafka.ui.emitter.EnhancedConsumer;
+import com.provectus.kafka.ui.emitter.ForwardEmitter;
 import com.provectus.kafka.ui.emitter.PollingSettings;
+import com.provectus.kafka.ui.emitter.PollingThrottler;
 import com.provectus.kafka.ui.model.ConsumerPosition;
-import com.provectus.kafka.ui.model.ConsumerPosition.Offsets;
+import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
 import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.serdes.PropertyResolverImpl;
 import com.provectus.kafka.ui.serdes.builtin.StringSerde;
+import com.provectus.kafka.ui.util.ApplicationMetrics;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,17 +34,15 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.internals.RecordHeader;
-import org.apache.kafka.common.serialization.BytesDeserializer;
-import org.apache.kafka.common.utils.Bytes;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -62,6 +62,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
   static final List<Record> SENT_RECORDS = new ArrayList<>();
   static final ConsumerRecordDeserializer RECORD_DESERIALIZER = createRecordsDeserializer();
   static final Cursor.Tracking CURSOR_MOCK = Mockito.mock(Cursor.Tracking.class);
+  static final Predicate<TopicMessageDTO> NOOP_FILTER = m -> true;
 
   @BeforeAll
   static void generateMsgs() throws Exception {
@@ -98,6 +99,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
   static void cleanup() {
     deleteTopic(TOPIC);
     deleteTopic(EMPTY_TOPIC);
+    SENT_RECORDS.clear();
   }
 
   private static ConsumerRecordDeserializer createRecordsDeserializer() {
@@ -110,29 +112,29 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         s.deserializer(null, Serde.Target.VALUE),
         StringSerde.name(),
         s.deserializer(null, Serde.Target.KEY),
-        s.deserializer(null, Serde.Target.VALUE)
+        s.deserializer(null, Serde.Target.VALUE),
+        msg -> msg
     );
-  }
-
-  private MessagesProcessing createMessagesProcessing() {
-    return new MessagesProcessing(RECORD_DESERIALIZER, msg -> true, null);
   }
 
   @Test
   void pollNothingOnEmptyTopic() {
-    var forwardEmitter = new ForwardRecordEmitter(
+    var forwardEmitter = new ForwardEmitter(
         this::createConsumer,
         new ConsumerPosition(EARLIEST, EMPTY_TOPIC, List.of(), null, null),
-        createMessagesProcessing(),
+        100,
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault(),
         CURSOR_MOCK
     );
 
-    var backwardEmitter = new BackwardRecordEmitter(
+    var backwardEmitter = new BackwardEmitter(
         this::createConsumer,
         new ConsumerPosition(EARLIEST, EMPTY_TOPIC, List.of(), null, null),
         100,
-        createMessagesProcessing(),
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault(),
         CURSOR_MOCK
     );
@@ -152,19 +154,22 @@ class RecordEmitterTest extends AbstractIntegrationTest {
 
   @Test
   void pollFullTopicFromBeginning() {
-    var forwardEmitter = new ForwardRecordEmitter(
+    var forwardEmitter = new ForwardEmitter(
         this::createConsumer,
         new ConsumerPosition(EARLIEST, TOPIC, List.of(), null, null),
-        createMessagesProcessing(),
+        PARTITIONS * MSGS_PER_PARTITION,
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault(),
         CURSOR_MOCK
     );
 
-    var backwardEmitter = new BackwardRecordEmitter(
+    var backwardEmitter = new BackwardEmitter(
         this::createConsumer,
         new ConsumerPosition(LATEST, TOPIC, List.of(), null, null),
         PARTITIONS * MSGS_PER_PARTITION,
-        createMessagesProcessing(),
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault(),
         CURSOR_MOCK
     );
@@ -183,21 +188,24 @@ class RecordEmitterTest extends AbstractIntegrationTest {
       targetOffsets.put(new TopicPartition(TOPIC, i), offset);
     }
 
-    var forwardEmitter = new ForwardRecordEmitter(
+    var forwardEmitter = new ForwardEmitter(
         this::createConsumer,
         new ConsumerPosition(FROM_OFFSET, TOPIC, List.copyOf(targetOffsets.keySet()), null,
-            new Offsets(null, targetOffsets)),
-        createMessagesProcessing(),
+            new ConsumerPosition.Offsets(null, targetOffsets)),
+        PARTITIONS * MSGS_PER_PARTITION,
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault(),
         CURSOR_MOCK
     );
 
-    var backwardEmitter = new BackwardRecordEmitter(
+    var backwardEmitter = new BackwardEmitter(
         this::createConsumer,
         new ConsumerPosition(TO_OFFSET, TOPIC, List.copyOf(targetOffsets.keySet()), null,
-            new Offsets(null, targetOffsets)),
+            new ConsumerPosition.Offsets(null, targetOffsets)),
         PARTITIONS * MSGS_PER_PARTITION,
-        createMessagesProcessing(),
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault(),
         CURSOR_MOCK
     );
@@ -223,10 +231,12 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     //choosing ts in the middle
     long targetTimestamp = tsStats.getMin() + ((tsStats.getMax() - tsStats.getMin()) / 2);
 
-    var forwardEmitter = new ForwardRecordEmitter(
+    var forwardEmitter = new ForwardEmitter(
         this::createConsumer,
         new ConsumerPosition(FROM_TIMESTAMP, TOPIC, List.of(), targetTimestamp, null),
-        createMessagesProcessing(),
+        PARTITIONS * MSGS_PER_PARTITION,
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault(),
         CURSOR_MOCK
     );
@@ -239,11 +249,12 @@ class RecordEmitterTest extends AbstractIntegrationTest {
             .collect(Collectors.toList())
     );
 
-    var backwardEmitter = new BackwardRecordEmitter(
+    var backwardEmitter = new BackwardEmitter(
         this::createConsumer,
         new ConsumerPosition(TO_TIMESTAMP, TOPIC, List.of(), targetTimestamp, null),
         PARTITIONS * MSGS_PER_PARTITION,
-        createMessagesProcessing(),
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault(),
         CURSOR_MOCK
     );
@@ -265,12 +276,13 @@ class RecordEmitterTest extends AbstractIntegrationTest {
       targetOffsets.put(new TopicPartition(TOPIC, i), (long) MSGS_PER_PARTITION);
     }
 
-    var backwardEmitter = new BackwardRecordEmitter(
+    var backwardEmitter = new BackwardEmitter(
         this::createConsumer,
         new ConsumerPosition(TO_OFFSET, TOPIC, List.copyOf(targetOffsets.keySet()), null,
-            new Offsets(null, targetOffsets)),
+            new ConsumerPosition.Offsets(null, targetOffsets)),
         numMessages,
-        createMessagesProcessing(),
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault(),
         CURSOR_MOCK
     );
@@ -293,11 +305,13 @@ class RecordEmitterTest extends AbstractIntegrationTest {
       offsets.put(new TopicPartition(TOPIC, i), 0L);
     }
 
-    var backwardEmitter = new BackwardRecordEmitter(
+    var backwardEmitter = new BackwardEmitter(
         this::createConsumer,
-        new ConsumerPosition(TO_OFFSET, TOPIC, List.copyOf(offsets.keySet()), null, new Offsets(null, offsets)),
+        new ConsumerPosition(TO_OFFSET, TOPIC, List.copyOf(offsets.keySet()), null,
+            new ConsumerPosition.Offsets(null, offsets)),
         100,
-        createMessagesProcessing(),
+        RECORD_DESERIALIZER,
+        NOOP_FILTER,
         PollingSettings.createDefault(),
         CURSOR_MOCK
     );
@@ -338,22 +352,20 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     assertionsConsumer.accept(step.expectComplete().verifyThenAssertThat());
   }
 
-  private KafkaConsumer<Bytes, Bytes> createConsumer() {
+  private EnhancedConsumer createConsumer() {
     return createConsumer(Map.of());
   }
 
-  private KafkaConsumer<Bytes, Bytes> createConsumer(Map<String, Object> properties) {
+  private EnhancedConsumer createConsumer(Map<String, Object> properties) {
     final Map<String, ? extends Serializable> map = Map.of(
         ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers(),
         ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString(),
-        ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 19, // to check multiple polls
-        ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class,
-        ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class
+        ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 19 // to check multiple polls
     );
     Properties props = new Properties();
     props.putAll(map);
     props.putAll(properties);
-    return new KafkaConsumer<>(props);
+    return new EnhancedConsumer(props, PollingThrottler.noop(), ApplicationMetrics.noop());
   }
 
   @Value

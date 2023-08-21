@@ -16,13 +16,15 @@ import com.provectus.kafka.ui.model.PollingModeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.SeekTypeDTO;
 import com.provectus.kafka.ui.model.SerdeUsageDTO;
+import com.provectus.kafka.ui.model.SmartFilterTestExecutionDTO;
+import com.provectus.kafka.ui.model.SmartFilterTestExecutionResultDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicSerdeSuggestionDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
+import com.provectus.kafka.ui.model.rbac.permission.AuditAction;
 import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import com.provectus.kafka.ui.service.DeserializationService;
 import com.provectus.kafka.ui.service.MessagesService;
-import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
@@ -43,26 +45,33 @@ public class MessagesController extends AbstractController implements MessagesAp
 
   private final MessagesService messagesService;
   private final DeserializationService deserializationService;
-  private final AccessControlService accessControlService;
 
   @Override
   public Mono<ResponseEntity<Void>> deleteTopicMessages(
       String clusterName, String topicName, @Valid List<Integer> partitions,
       ServerWebExchange exchange) {
 
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(MESSAGES_DELETE)
-        .build());
+        .build();
 
-    return validateAccess.then(
+    return validateAccess(context).<ResponseEntity<Void>>then(
         messagesService.deleteTopicMessages(
             getCluster(clusterName),
             topicName,
             Optional.ofNullable(partitions).orElse(List.of())
         ).thenReturn(ResponseEntity.ok().build())
-    );
+    ).doOnEach(sig -> audit(context, sig));
+  }
+
+  @Override
+  public Mono<ResponseEntity<SmartFilterTestExecutionResultDTO>> executeSmartFilterTest(
+      Mono<SmartFilterTestExecutionDTO> smartFilterTestExecutionDto, ServerWebExchange exchange) {
+    return smartFilterTestExecutionDto
+        .map(MessagesService::execSmartFilterTest)
+        .map(ResponseEntity::ok);
   }
 
   @Deprecated
@@ -95,12 +104,17 @@ public class MessagesController extends AbstractController implements MessagesAp
                                                                              String valueSerde,
                                                                              String cursor,
                                                                              ServerWebExchange exchange) {
-    var context = AccessContext.builder()
+    var contextBuilder = AccessContext.builder()
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(MESSAGES_READ)
-        .operationName("getTopicMessages")
-        .build();
+        .operationName("getTopicMessages");
+
+    if (auditService.isAuditTopic(getCluster(clusterName), topicName)) {
+      contextBuilder.auditActions(AuditAction.VIEW);
+    }
+
+    var accessContext = contextBuilder.build();
 
     Flux<TopicMessageEventDTO> messagesFlux;
     if (cursor != null) {
@@ -117,9 +131,9 @@ public class MessagesController extends AbstractController implements MessagesAp
           valueSerde
       );
     }
-    return accessControlService.validateAccess(context)
+    return accessControlService.validateAccess(accessContext)
         .then(Mono.just(ResponseEntity.ok(messagesFlux)))
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> auditService.audit(accessContext, sig));
   }
 
   @Override
@@ -127,17 +141,18 @@ public class MessagesController extends AbstractController implements MessagesAp
       String clusterName, String topicName, @Valid Mono<CreateTopicMessageDTO> createTopicMessage,
       ServerWebExchange exchange) {
 
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(MESSAGES_PRODUCE)
-        .build());
+        .operationName("sendTopicMessages")
+        .build();
 
-    return validateAccess.then(
+    return validateAccess(context).then(
         createTopicMessage.flatMap(msg ->
             messagesService.sendMessage(getCluster(clusterName), topicName, msg).then()
         ).map(ResponseEntity::ok)
-    );
+    ).doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -145,12 +160,12 @@ public class MessagesController extends AbstractController implements MessagesAp
                                                                  String topicName,
                                                                  SerdeUsageDTO use,
                                                                  ServerWebExchange exchange) {
-
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(TopicAction.VIEW)
-        .build());
+        .operationName("getSerdes")
+        .build();
 
     TopicSerdeSuggestionDTO dto = new TopicSerdeSuggestionDTO()
         .key(use == SerdeUsageDTO.SERIALIZE
@@ -160,7 +175,7 @@ public class MessagesController extends AbstractController implements MessagesAp
             ? deserializationService.getSerdesForSerialize(getCluster(clusterName), topicName, VALUE)
             : deserializationService.getSerdesForDeserialize(getCluster(clusterName), topicName, VALUE));
 
-    return validateAccess.then(
+    return validateAccess(context).then(
         Mono.just(dto)
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok)

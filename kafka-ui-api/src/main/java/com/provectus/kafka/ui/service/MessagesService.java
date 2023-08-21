@@ -6,25 +6,21 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.hash.Hashing;
 import com.google.common.util.concurrent.RateLimiter;
 import com.provectus.kafka.ui.config.ClustersProperties;
-import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
+import com.provectus.kafka.ui.emitter.BackwardEmitter;
 import com.provectus.kafka.ui.emitter.Cursor;
-import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
+import com.provectus.kafka.ui.emitter.ForwardEmitter;
 import com.provectus.kafka.ui.emitter.MessageFilters;
-import com.provectus.kafka.ui.emitter.MessagesProcessing;
 import com.provectus.kafka.ui.emitter.TailingEmitter;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.PollingModeDTO;
-import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.SmartFilterTestExecutionDTO;
 import com.provectus.kafka.ui.model.SmartFilterTestExecutionResultDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
 import com.provectus.kafka.ui.util.SslPropertiesUtil;
@@ -252,79 +248,43 @@ public class MessagesService {
     return withExistingTopic(cluster, topic)
         .flux()
         .publishOn(Schedulers.boundedElastic())
-        .flatMap(td -> loadMessagesImpl(cluster, topic, deserializer, consumerPosition, filter, limit));
+        .flatMap(td -> loadMessagesImpl(cluster, deserializer, consumerPosition, filter, limit));
   }
 
   private Flux<TopicMessageEventDTO> loadMessagesImpl(KafkaCluster cluster,
-                                                      String topic,
                                                       ConsumerRecordDeserializer deserializer,
                                                       ConsumerPosition consumerPosition,
                                                       Predicate<TopicMessageDTO> filter,
                                                       int limit) {
-    var processing = new MessagesProcessing(
-        deserializer,
-        filter,
-        consumerPosition.pollingMode() == PollingModeDTO.TAILING ? null : limit
-    );
-
     var emitter = switch (consumerPosition.pollingMode()) {
-      case TO_OFFSET, TO_TIMESTAMP, LATEST -> new BackwardRecordEmitter(
+      case TO_OFFSET, TO_TIMESTAMP, LATEST -> new BackwardEmitter(
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition,
           limit,
-          processing,
+          deserializer,
+          filter,
           cluster.getPollingSettings(),
-          new Cursor.Tracking(deserializer, consumerPosition, filter, limit, cursorsStorage::register)
+          cursorsStorage.createNewCursor(deserializer, consumerPosition, filter, limit)
       );
-      case FROM_OFFSET, FROM_TIMESTAMP, EARLIEST -> new ForwardRecordEmitter(
+      case FROM_OFFSET, FROM_TIMESTAMP, EARLIEST -> new ForwardEmitter(
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition,
-          processing,
+          limit,
+          deserializer,
+          filter,
           cluster.getPollingSettings(),
-          new Cursor.Tracking(deserializer, consumerPosition, filter, limit, cursorsStorage::register)
+          cursorsStorage.createNewCursor(deserializer, consumerPosition, filter, limit)
       );
       case TAILING -> new TailingEmitter(
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition,
-          processing,
+          deserializer,
+          filter,
           cluster.getPollingSettings()
       );
     };
     return Flux.create(emitter)
-        .map(getDataMasker(cluster, topic))
         .map(throttleUiPublish(consumerPosition.pollingMode()));
-  }
-
-  private int fixPageSize(@Nullable Integer pageSize) {
-    return Optional.ofNullable(pageSize)
-        .filter(ps -> ps > 0 && ps <= maxPageSize)
-        .orElse(defaultPageSize);
-  }
-
-  public String registerMessageFilter(String groovyCode) {
-    String saltedCode = groovyCode + SALT_FOR_HASHING;
-    String filterId = Hashing.sha256()
-        .hashString(saltedCode, Charsets.UTF_8)
-        .toString()
-        .substring(0, 8);
-    if (registeredFilters.getIfPresent(filterId) == null) {
-      registeredFilters.put(filterId, MessageFilters.groovyScriptFilter(groovyCode));
-    }
-    return filterId;
-  }
-
-  private UnaryOperator<TopicMessageEventDTO> getDataMasker(KafkaCluster cluster, String topicName) {
-    var keyMasker = cluster.getMasking().getMaskingFunction(topicName, Serde.Target.KEY);
-    var valMasker = cluster.getMasking().getMaskingFunction(topicName, Serde.Target.VALUE);
-    return evt -> {
-      if (evt.getType() != TopicMessageEventDTO.TypeEnum.MESSAGE) {
-        return evt;
-      }
-      return evt.message(
-          evt.getMessage()
-              .key(keyMasker.apply(evt.getMessage().getKey()))
-              .content(valMasker.apply(evt.getMessage().getContent())));
-    };
   }
 
   private Predicate<TopicMessageDTO> getMsgFilter(@Nullable String containsStrFilter,
@@ -354,6 +314,24 @@ public class MessagesService {
     // there is no need to throttle UI production rate for non-tailing modes, since max number of produced
     // messages is limited for them (with page size)
     return UnaryOperator.identity();
+  }
+
+  private int fixPageSize(@Nullable Integer pageSize) {
+    return Optional.ofNullable(pageSize)
+        .filter(ps -> ps > 0 && ps <= maxPageSize)
+        .orElse(defaultPageSize);
+  }
+
+  public String registerMessageFilter(String groovyCode) {
+    String saltedCode = groovyCode + SALT_FOR_HASHING;
+    String filterId = Hashing.sha256()
+        .hashString(saltedCode, Charsets.UTF_8)
+        .toString()
+        .substring(0, 8);
+    if (registeredFilters.getIfPresent(filterId) == null) {
+      registeredFilters.put(filterId, MessageFilters.groovyScriptFilter(groovyCode));
+    }
+    return filterId;
   }
 
 }

@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.emitter;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.PollingModeDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
@@ -20,32 +22,41 @@ public record Cursor(ConsumerRecordDeserializer deserializer,
     private final ConsumerPosition originalPosition;
     private final Predicate<TopicMessageDTO> filter;
     private final int limit;
-    private final Function<Cursor, String> cursorRegistry;
+    private final Function<Cursor, String> registerAction;
 
-    private final Map<TopicPartition, Long> trackingOffsets = new HashMap<>();
+    //topic -> partition -> offset
+    private final Table<String, Integer, Long> trackingOffsets = HashBasedTable.create();
 
     public Tracking(ConsumerRecordDeserializer deserializer,
                     ConsumerPosition originalPosition,
                     Predicate<TopicMessageDTO> filter,
                     int limit,
-                    Function<Cursor, String> cursorRegistry) {
+                    Function<Cursor, String> registerAction) {
       this.deserializer = deserializer;
       this.originalPosition = originalPosition;
       this.filter = filter;
       this.limit = limit;
-      this.cursorRegistry = cursorRegistry;
+      this.registerAction = registerAction;
     }
 
-    void trackOffset(TopicPartition tp, long offset) {
-      trackingOffsets.put(tp, offset);
+    void trackOffset(String topic, int partition, long offset) {
+      trackingOffsets.put(topic, partition, offset);
     }
 
-    void trackOffsets(Map<TopicPartition, Long> offsets) {
-      this.trackingOffsets.putAll(offsets);
+    void initOffsets(Map<TopicPartition, Long> initialSeekOffsets) {
+      initialSeekOffsets.forEach((tp, off) -> trackOffset(tp.topic(), tp.partition(), off));
+    }
+
+    private Map<TopicPartition, Long> getOffsetsMap(int offsetToAdd) {
+      Map<TopicPartition, Long> result = new HashMap<>();
+      trackingOffsets.rowMap()
+          .forEach((topic, partsMap) ->
+              partsMap.forEach((p, off) -> result.put(new TopicPartition(topic, p), off + offsetToAdd)));
+      return result;
     }
 
     String registerCursor() {
-      return cursorRegistry.apply(
+      return registerAction.apply(
           new Cursor(
               deserializer,
               new ConsumerPosition(
@@ -57,7 +68,17 @@ public record Cursor(ConsumerRecordDeserializer deserializer,
                   originalPosition.topic(),
                   originalPosition.partitions(),
                   null,
-                  new ConsumerPosition.Offsets(null, trackingOffsets)
+                  new ConsumerPosition.Offsets(
+                      null,
+                      getOffsetsMap(
+                          switch (originalPosition.pollingMode()) {
+                            case TO_OFFSET, TO_TIMESTAMP, LATEST -> 0;
+                            // when doing forward polling we need to start from latest msg's offset + 1
+                            case FROM_OFFSET, FROM_TIMESTAMP, EARLIEST -> 1;
+                            case TAILING -> throw new IllegalStateException();
+                          }
+                      )
+                  )
               ),
               filter,
               limit
