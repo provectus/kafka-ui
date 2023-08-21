@@ -11,8 +11,6 @@ import com.provectus.kafka.ui.model.KafkaAclResourceTypeDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.permission.AclAction;
 import com.provectus.kafka.ui.service.acl.AclsService;
-import com.provectus.kafka.ui.service.audit.AuditService;
-import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.resource.PatternType;
@@ -29,8 +27,6 @@ import reactor.core.publisher.Mono;
 public class AclsController extends AbstractController implements AclsApi {
 
   private final AclsService aclsService;
-  private final AccessControlService accessControlService;
-  private final AuditService auditService;
 
   @Override
   public Mono<ResponseEntity<Void>> createAcl(String clusterName, Mono<KafkaAclDTO> kafkaAclDto,
@@ -41,11 +37,11 @@ public class AclsController extends AbstractController implements AclsApi {
         .operationName("createAcl")
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(kafkaAclDto)
         .map(ClusterMapper::toAclBinding)
         .flatMap(binding -> aclsService.createAcl(getCluster(clusterName), binding))
-        .doOnEach(sig -> auditService.audit(context, sig))
+        .doOnEach(sig -> audit(context, sig))
         .thenReturn(ResponseEntity.ok().build());
   }
 
@@ -58,11 +54,11 @@ public class AclsController extends AbstractController implements AclsApi {
         .operationName("deleteAcl")
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(kafkaAclDto)
         .map(ClusterMapper::toAclBinding)
         .flatMap(binding -> aclsService.deleteAcl(getCluster(clusterName), binding))
-        .doOnEach(sig -> auditService.audit(context, sig))
+        .doOnEach(sig -> audit(context, sig))
         .thenReturn(ResponseEntity.ok().build());
   }
 
@@ -88,12 +84,12 @@ public class AclsController extends AbstractController implements AclsApi {
 
     var filter = new ResourcePatternFilter(resourceType, resourceName, namePatternType);
 
-    return accessControlService.validateAccess(context).then(
+    return validateAccess(context).then(
         Mono.just(
             ResponseEntity.ok(
                 aclsService.listAcls(getCluster(clusterName), filter)
                     .map(ClusterMapper::toKafkaAclDto)))
-    ).doOnEach(sig -> auditService.audit(context, sig));
+    ).doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -104,11 +100,11 @@ public class AclsController extends AbstractController implements AclsApi {
         .operationName("getAclAsCsv")
         .build();
 
-    return accessControlService.validateAccess(context).then(
+    return validateAccess(context).then(
         aclsService.getAclAsCsvString(getCluster(clusterName))
             .map(ResponseEntity::ok)
             .flatMap(Mono::just)
-            .doOnEach(sig -> auditService.audit(context, sig))
+            .doOnEach(sig -> audit(context, sig))
     );
   }
 
@@ -120,10 +116,10 @@ public class AclsController extends AbstractController implements AclsApi {
         .operationName("syncAclsCsv")
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(csvMono)
         .flatMap(csv -> aclsService.syncAclWithAclCsv(getCluster(clusterName), csv))
-        .doOnEach(sig -> auditService.audit(context, sig))
+        .doOnEach(sig -> audit(context, sig))
         .thenReturn(ResponseEntity.ok().build());
   }
 
@@ -137,10 +133,10 @@ public class AclsController extends AbstractController implements AclsApi {
         .operationName("createConsumerAcl")
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(createConsumerAclDto)
         .flatMap(req -> aclsService.createConsumerAcl(getCluster(clusterName), req))
-        .doOnEach(sig -> auditService.audit(context, sig))
+        .doOnEach(sig -> audit(context, sig))
         .thenReturn(ResponseEntity.ok().build());
   }
 
@@ -154,10 +150,10 @@ public class AclsController extends AbstractController implements AclsApi {
         .operationName("createProducerAcl")
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(createProducerAclDto)
         .flatMap(req -> aclsService.createProducerAcl(getCluster(clusterName), req))
-        .doOnEach(sig -> auditService.audit(context, sig))
+        .doOnEach(sig -> audit(context, sig))
         .thenReturn(ResponseEntity.ok().build());
   }
 
@@ -171,10 +167,10 @@ public class AclsController extends AbstractController implements AclsApi {
         .operationName("createStreamAppAcl")
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(createStreamAppAclDto)
         .flatMap(req -> aclsService.createStreamAppAcl(getCluster(clusterName), req))
-        .doOnEach(sig -> auditService.audit(context, sig))
+        .doOnEach(sig -> audit(context, sig))
         .thenReturn(ResponseEntity.ok().build());
   }
 }

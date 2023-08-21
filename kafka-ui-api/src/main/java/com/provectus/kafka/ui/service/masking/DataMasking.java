@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.service.masking;
 
-import static java.util.stream.Collectors.toList;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -9,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.config.ClustersProperties;
+import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.service.masking.policies.MaskingPolicy;
 import java.util.List;
@@ -54,7 +53,8 @@ public class DataMasking {
               Optional.ofNullable(property.getTopicValuesPattern()).map(Pattern::compile).orElse(null),
               MaskingPolicy.create(property)
           );
-        }).collect(toList()));
+        }).toList()
+    );
   }
 
   @VisibleForTesting
@@ -62,8 +62,17 @@ public class DataMasking {
     this.masks = masks;
   }
 
-  public UnaryOperator<String> getMaskingFunction(String topic, Serde.Target target) {
-    var targetMasks = masks.stream().filter(m -> m.shouldBeApplied(topic, target)).collect(toList());
+  public UnaryOperator<TopicMessageDTO> getMaskerForTopic(String topic) {
+    var keyMasker = getMaskingFunction(topic, Serde.Target.KEY);
+    var valMasker = getMaskingFunction(topic, Serde.Target.VALUE);
+    return msg -> msg
+        .key(keyMasker.apply(msg.getKey()))
+        .content(valMasker.apply(msg.getContent()));
+  }
+
+  @VisibleForTesting
+  UnaryOperator<String> getMaskingFunction(String topic, Serde.Target target) {
+    var targetMasks = masks.stream().filter(m -> m.shouldBeApplied(topic, target)).toList();
     if (targetMasks.isEmpty()) {
       return UnaryOperator.identity();
     }

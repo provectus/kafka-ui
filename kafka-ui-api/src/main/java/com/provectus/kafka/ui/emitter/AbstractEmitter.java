@@ -1,29 +1,22 @@
 package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import jakarta.annotation.Nullable;
-import java.time.Duration;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
 
-public abstract class AbstractEmitter implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
+abstract class AbstractEmitter implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
 
   private final MessagesProcessing messagesProcessing;
-  protected final PollingSettings pollingSettings;
+  private final PollingSettings pollingSettings;
 
   protected AbstractEmitter(MessagesProcessing messagesProcessing, PollingSettings pollingSettings) {
     this.messagesProcessing = messagesProcessing;
     this.pollingSettings = pollingSettings;
   }
 
-  protected PolledRecords poll(
-      FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer) {
-    return poll(sink, consumer, pollingSettings.getPollTimeout());
-  }
-
-  protected PolledRecords poll(FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer, Duration timeout) {
-    var records = consumer.pollEnhanced(timeout);
+  protected PolledRecords poll(FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer) {
+    var records = consumer.pollEnhanced(pollingSettings.getPollTimeout());
     sendConsuming(sink, records);
     return records;
   }
@@ -32,9 +25,8 @@ public abstract class AbstractEmitter implements java.util.function.Consumer<Flu
     return messagesProcessing.limitReached();
   }
 
-  protected void sendMessage(FluxSink<TopicMessageEventDTO> sink,
-                             ConsumerRecord<Bytes, Bytes> msg) {
-    messagesProcessing.sendMsg(sink, msg);
+  protected void send(FluxSink<TopicMessageEventDTO> sink, Iterable<ConsumerRecord<Bytes, Bytes>> records) {
+    messagesProcessing.send(sink, records);
   }
 
   protected void sendPhase(FluxSink<TopicMessageEventDTO> sink, String name) {

@@ -25,8 +25,6 @@ import com.provectus.kafka.ui.model.rbac.permission.AuditAction;
 import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import com.provectus.kafka.ui.service.DeserializationService;
 import com.provectus.kafka.ui.service.MessagesService;
-import com.provectus.kafka.ui.service.audit.AuditService;
-import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
@@ -47,8 +45,6 @@ public class MessagesController extends AbstractController implements MessagesAp
 
   private final MessagesService messagesService;
   private final DeserializationService deserializationService;
-  private final AccessControlService accessControlService;
-  private final AuditService auditService;
 
   @Override
   public Mono<ResponseEntity<Void>> deleteTopicMessages(
@@ -61,13 +57,13 @@ public class MessagesController extends AbstractController implements MessagesAp
         .topicActions(MESSAGES_DELETE)
         .build();
 
-    return accessControlService.validateAccess(context).<ResponseEntity<Void>>then(
+    return validateAccess(context).<ResponseEntity<Void>>then(
         messagesService.deleteTopicMessages(
             getCluster(clusterName),
             topicName,
             Optional.ofNullable(partitions).orElse(List.of())
         ).thenReturn(ResponseEntity.ok().build())
-    ).doOnEach(sig -> auditService.audit(context, sig));
+    ).doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -115,6 +111,31 @@ public class MessagesController extends AbstractController implements MessagesAp
         .operationName("getTopicMessages")
         .build();
 
+    if (auditService.isAuditTopic(getCluster(clusterName), topicName)) {
+      contextBuilder.auditActions(AuditAction.VIEW);
+    }
+
+    seekType = seekType != null ? seekType : SeekTypeDTO.BEGINNING;
+    seekDirection = seekDirection != null ? seekDirection : SeekDirectionDTO.FORWARD;
+    filterQueryType = filterQueryType != null ? filterQueryType : MessageFilterTypeDTO.STRING_CONTAINS;
+
+    var positions = new ConsumerPosition(
+        seekType,
+        topicName,
+        parseSeekTo(topicName, seekType, seekTo)
+    );
+    Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> job = Mono.just(
+        ResponseEntity.ok(
+            messagesService.loadMessages(
+                getCluster(clusterName), topicName, positions, q, filterQueryType,
+                limit, seekDirection, keySerde, valueSerde)
+        )
+    );
+
+    var context = contextBuilder.build();
+    return validateAccess(context)
+        .then(job)
+        .doOnEach(sig -> audit(context, sig));
     Flux<TopicMessageEventDTO> messagesFlux;
     if (cursor != null) {
       messagesFlux = messagesService.loadMessages(getCluster(clusterName), topicName, cursor);
@@ -147,11 +168,11 @@ public class MessagesController extends AbstractController implements MessagesAp
         .operationName("sendTopicMessages")
         .build();
 
-    return accessControlService.validateAccess(context).then(
+    return validateAccess(context).then(
         createTopicMessage.flatMap(msg ->
             messagesService.sendMessage(getCluster(clusterName), topicName, msg).then()
         ).map(ResponseEntity::ok)
-    ).doOnEach(sig -> auditService.audit(context, sig));
+    ).doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -174,7 +195,7 @@ public class MessagesController extends AbstractController implements MessagesAp
             ? deserializationService.getSerdesForSerialize(getCluster(clusterName), topicName, VALUE)
             : deserializationService.getSerdesForDeserialize(getCluster(clusterName), topicName, VALUE));
 
-    return accessControlService.validateAccess(context).then(
+    return validateAccess(context).then(
         Mono.just(dto)
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok)

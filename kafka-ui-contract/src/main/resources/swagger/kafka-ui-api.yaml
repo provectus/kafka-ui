@@ -4010,10 +4010,6 @@ components:
                   properties:
                     pollTimeoutMs:
                       type: integer
-                    partitionPollTimeout:
-                      type: integer
-                    noDataEmptyPolls:
-                      type: integer
                     maxPageSize:
                       type: integer
                     defaultPageSize:
@@ -4168,6 +4164,9 @@ components:
                       audit:
                         type: object
                         properties:
+                          level:
+                            type: string
+                            enum: [ "ALL", "ALTER_ONLY" ]
                           topic:
                             type: string
                           auditTopicsPartitions:
