@@ -82,12 +82,13 @@ public class ApplicationConfigController extends AbstractController implements A
         .build();
     return validateAccess(context)
         .then(restartRequestDto)
-        .<ResponseEntity<Void>>map(dto -> {
-          dynamicConfigOperations.persist(MAPPER.fromDto(dto.getConfig().getProperties()));
-          restarter.requestRestart();
-          return ResponseEntity.ok().build();
+        .doOnNext(restartDto -> {
+          var newConfig = MAPPER.fromDto(restartDto.getConfig().getProperties());
+          dynamicConfigOperations.persist(newConfig);
         })
-        .doOnEach(sig -> audit(context, sig));
+        .doOnEach(sig -> audit(context, sig))
+        .doOnSuccess(dto -> restarter.requestRestart())
+        .map(dto -> ResponseEntity.ok().build());
   }
 
   @Override
@@ -116,8 +117,8 @@ public class ApplicationConfigController extends AbstractController implements A
     return validateAccess(context)
         .then(configDto)
         .flatMap(config -> {
-          PropertiesStructure propertiesStructure = MAPPER.fromDto(config.getProperties());
-          ClustersProperties clustersProperties = propertiesStructure.getKafka();
+          PropertiesStructure newConfig = MAPPER.fromDto(config.getProperties());
+          ClustersProperties clustersProperties = newConfig.getKafka();
           return validateClustersConfig(clustersProperties)
               .map(validations -> new ApplicationConfigValidationDTO().clusters(validations));
         })
