@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
+import jakarta.annotation.Nullable;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
@@ -25,8 +26,10 @@ abstract class AbstractEmitter implements java.util.function.Consumer<FluxSink<T
     return messagesProcessing.limitReached();
   }
 
-  protected void send(FluxSink<TopicMessageEventDTO> sink, Iterable<ConsumerRecord<Bytes, Bytes>> records) {
-    messagesProcessing.send(sink, records);
+  protected void send(FluxSink<TopicMessageEventDTO> sink,
+                      Iterable<ConsumerRecord<Bytes, Bytes>> records,
+                      @Nullable Cursor.Tracking cursor) {
+    messagesProcessing.send(sink, records, cursor);
   }
 
   protected void sendPhase(FluxSink<TopicMessageEventDTO> sink, String name) {

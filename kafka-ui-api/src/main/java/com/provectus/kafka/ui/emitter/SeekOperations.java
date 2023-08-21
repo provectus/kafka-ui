@@ -21,7 +21,7 @@ public class SeekOperations {
   private final OffsetsInfo offsetsInfo;
   private final Map<TopicPartition, Long> offsetsForSeek; //only contains non-empty partitions!
 
-  static SeekOperations create(Consumer<?, ?> consumer, ConsumerPosition consumerPosition) {
+  public static SeekOperations create(Consumer<?, ?> consumer, ConsumerPosition consumerPosition) {
     OffsetsInfo offsetsInfo = consumerPosition.partitions().isEmpty()
         ? new OffsetsInfo(consumer, consumerPosition.topic())
         : new OffsetsInfo(consumer, consumerPosition.partitions());
@@ -29,7 +29,7 @@ public class SeekOperations {
     return new SeekOperations(consumer, offsetsInfo, offsetsToSeek);
   }
 
-  void assignAndSeek() {
+  public void assignAndSeekNonEmptyPartitions() {
     consumer.assign(offsetsForSeek.keySet());
     offsetsForSeek.forEach(consumer::seek);
   }
@@ -86,8 +86,7 @@ public class SeekOperations {
     if (positionOffset.offset() != null) {
       offsetsInfo.getNonEmptyPartitions().forEach(tp -> offsets.put(tp, positionOffset.offset()));
     } else {
-      requireNonNull(positionOffset.tpOffsets());
-      offsets.putAll(positionOffset.tpOffsets());
+      offsets.putAll(requireNonNull(positionOffset.tpOffsets()));
       offsets.keySet().retainAll(offsetsInfo.getNonEmptyPartitions());
     }
 

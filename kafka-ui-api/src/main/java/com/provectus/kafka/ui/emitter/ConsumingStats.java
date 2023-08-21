@@ -28,8 +28,7 @@ class ConsumingStats {
     filterApplyErrors++;
   }
 
-
-  void sendFinishEvent(FluxSink<TopicMessageEventDTO> sink, int filterApplyErrors, @Nullable Cursor.Tracking cursor) {
+  void sendFinishEvent(FluxSink<TopicMessageEventDTO> sink, @Nullable Cursor.Tracking cursor) {
     sink.next(
         new TopicMessageEventDTO()
             .type(TopicMessageEventDTO.TypeEnum.DONE)
@@ -38,7 +37,7 @@ class ConsumingStats {
                     ? new TopicMessageNextPageCursorDTO().id(cursor.registerCursor())
                     : null
             )
-            .consuming(createConsumingStats(sink, filterApplyErrors))
+            .consuming(createConsumingStats())
     );
   }
 

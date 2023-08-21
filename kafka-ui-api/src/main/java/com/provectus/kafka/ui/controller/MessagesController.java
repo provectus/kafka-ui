@@ -104,38 +104,18 @@ public class MessagesController extends AbstractController implements MessagesAp
                                                                              String valueSerde,
                                                                              String cursor,
                                                                              ServerWebExchange exchange) {
-    var context = AccessContext.builder()
+    var contextBuilder = AccessContext.builder()
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(MESSAGES_READ)
-        .operationName("getTopicMessages")
-        .build();
+        .operationName("getTopicMessages");
 
     if (auditService.isAuditTopic(getCluster(clusterName), topicName)) {
       contextBuilder.auditActions(AuditAction.VIEW);
     }
 
-    seekType = seekType != null ? seekType : SeekTypeDTO.BEGINNING;
-    seekDirection = seekDirection != null ? seekDirection : SeekDirectionDTO.FORWARD;
-    filterQueryType = filterQueryType != null ? filterQueryType : MessageFilterTypeDTO.STRING_CONTAINS;
+    var accessContext = contextBuilder.build();
 
-    var positions = new ConsumerPosition(
-        seekType,
-        topicName,
-        parseSeekTo(topicName, seekType, seekTo)
-    );
-    Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> job = Mono.just(
-        ResponseEntity.ok(
-            messagesService.loadMessages(
-                getCluster(clusterName), topicName, positions, q, filterQueryType,
-                limit, seekDirection, keySerde, valueSerde)
-        )
-    );
-
-    var context = contextBuilder.build();
-    return validateAccess(context)
-        .then(job)
-        .doOnEach(sig -> audit(context, sig));
     Flux<TopicMessageEventDTO> messagesFlux;
     if (cursor != null) {
       messagesFlux = messagesService.loadMessages(getCluster(clusterName), topicName, cursor);
@@ -151,9 +131,9 @@ public class MessagesController extends AbstractController implements MessagesAp
           valueSerde
       );
     }
-    return accessControlService.validateAccess(context)
+    return accessControlService.validateAccess(accessContext)
         .then(Mono.just(ResponseEntity.ok(messagesFlux)))
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> auditService.audit(accessContext, sig));
   }
 
   @Override
