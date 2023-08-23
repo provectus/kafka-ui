@@ -11,8 +11,6 @@ import com.provectus.kafka.ui.model.BrokersLogdirsDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
 import com.provectus.kafka.ui.service.BrokerService;
-import com.provectus.kafka.ui.service.audit.AuditService;
-import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -31,9 +29,6 @@ public class BrokersController extends AbstractController implements BrokersApi 
   private final BrokerService brokerService;
   private final ClusterMapper clusterMapper;
 
-  private final AuditService auditService;
-  private final AccessControlService accessControlService;
-
   @Override
   public Mono<ResponseEntity<Flux<BrokerDTO>>> getBrokers(String clusterName,
                                                           ServerWebExchange exchange) {
@@ -43,9 +38,9 @@ public class BrokersController extends AbstractController implements BrokersApi 
         .build();
 
     var job = brokerService.getBrokers(getCluster(clusterName)).map(clusterMapper::toBrokerDto);
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .thenReturn(ResponseEntity.ok(job))
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -57,14 +52,14 @@ public class BrokersController extends AbstractController implements BrokersApi 
         .operationParams(Map.of("id", id))
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(
             brokerService.getBrokerMetrics(getCluster(clusterName), id)
                 .map(clusterMapper::toBrokerMetrics)
                 .map(ResponseEntity::ok)
                 .onErrorReturn(ResponseEntity.notFound().build())
         )
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -80,10 +75,10 @@ public class BrokersController extends AbstractController implements BrokersApi 
         .operationParams(Map.of("brokerIds", brokerIds))
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .thenReturn(ResponseEntity.ok(
             brokerService.getAllBrokersLogdirs(getCluster(clusterName), brokerIds)))
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -97,11 +92,11 @@ public class BrokersController extends AbstractController implements BrokersApi 
         .operationParams(Map.of("brokerId", id))
         .build();
 
-    return accessControlService.validateAccess(context).thenReturn(
+    return validateAccess(context).thenReturn(
         ResponseEntity.ok(
             brokerService.getBrokerConfig(getCluster(clusterName), id)
                 .map(clusterMapper::toBrokerConfig))
-    ).doOnEach(sig -> auditService.audit(context, sig));
+    ).doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -116,11 +111,11 @@ public class BrokersController extends AbstractController implements BrokersApi 
         .operationParams(Map.of("brokerId", id))
         .build();
 
-    return accessControlService.validateAccess(context).then(
+    return validateAccess(context).then(
         brokerLogdir
             .flatMap(bld -> brokerService.updateBrokerLogDir(getCluster(clusterName), id, bld))
             .map(ResponseEntity::ok)
-    ).doOnEach(sig -> auditService.audit(context, sig));
+    ).doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -136,11 +131,11 @@ public class BrokersController extends AbstractController implements BrokersApi 
         .operationParams(Map.of("brokerId", id))
         .build();
 
-    return accessControlService.validateAccess(context).then(
+    return validateAccess(context).then(
         brokerConfig
             .flatMap(bci -> brokerService.updateBrokerConfigByName(
                 getCluster(clusterName), id, name, bci.getValue()))
             .map(ResponseEntity::ok)
-    ).doOnEach(sig -> auditService.audit(context, sig));
+    ).doOnEach(sig -> audit(context, sig));
   }
 }
