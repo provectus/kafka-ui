@@ -12,17 +12,18 @@ import { ColumnDef } from '@tanstack/react-table';
 import { clusterBrokerPath } from 'lib/paths';
 import Tooltip from 'components/common/Tooltip/Tooltip';
 import ColoredCell from 'components/common/NewTable/ColoredCell';
+import { BrokerDiskUsage } from 'generated-sources';
 
 import SkewHeader from './SkewHeader/SkewHeader';
 import * as S from './BrokersList.styled';
 
-const NA = 'N/A';
+const NA = 'N/A' as unknown as number;
 
 const BrokersList: React.FC = () => {
   const navigate = useNavigate();
   const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
   const { data: clusterStats = {} } = useClusterStats(clusterName);
-  const { data: brokers } = useBrokers(clusterName);
+  const { data: brokers = [] } = useBrokers(clusterName);
 
   const {
     brokerCount,
@@ -37,7 +38,7 @@ const BrokersList: React.FC = () => {
   } = clusterStats;
 
   const rows = React.useMemo(() => {
-    let brokersResource;
+    let brokersResource: BrokerDiskUsage[];
     if (!diskUsage || !diskUsage?.length) {
       brokersResource =
         brokers?.map((broker) => {
@@ -51,20 +52,32 @@ const BrokersList: React.FC = () => {
       brokersResource = diskUsage;
     }
 
-    return brokersResource.map(({ brokerId, segmentSize, segmentCount }) => {
-      const broker = brokers?.find(({ id }) => id === brokerId);
-      return {
-        brokerId,
-        size: segmentSize || NA,
-        count: segmentCount || NA,
-        port: broker?.port,
-        host: broker?.host,
-        partitionsLeader: broker?.partitionsLeader,
-        partitionsSkew: broker?.partitionsSkew,
-        leadersSkew: broker?.leadersSkew,
-        inSyncPartitions: broker?.inSyncPartitions,
-      };
-    });
+    return brokers?.map(
+      ({
+        id,
+        port,
+        host,
+        partitionsLeader,
+        partitionsSkew,
+        leadersSkew,
+        inSyncPartitions,
+      }) => {
+        const brokerResource = brokersResource.find(
+          ({ brokerId }) => id === brokerId
+        );
+        return {
+          brokerId: id,
+          size: brokerResource?.segmentSize || NA,
+          count: brokerResource?.segmentCount || NA,
+          port,
+          host,
+          partitionsLeader,
+          partitionsSkew,
+          leadersSkew,
+          inSyncPartitions,
+        };
+      }
+    );
   }, [diskUsage, brokers]);
 
   const columns = React.useMemo<ColumnDef<(typeof rows)[number]>[]>(
