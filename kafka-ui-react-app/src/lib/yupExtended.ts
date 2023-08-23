@@ -66,17 +66,17 @@ export const topicFormValidationSchema = yup.object().shape({
   name: yup
     .string()
     .max(249)
-    .required()
+    .required('Topic Name is required')
     .matches(
       TOPIC_NAME_VALIDATION_PATTERN,
       'Only alphanumeric, _, -, and . allowed'
     ),
   partitions: yup
     .number()
-    .min(1)
+    .min(1, 'Number of Partitions must be greater than or equal to 1')
     .max(2147483647)
     .required()
-    .typeError('Number of partitions is required and must be a number'),
+    .typeError('Number of Partitions is required and must be a number'),
   replicationFactor: yup.string(),
   minInSyncReplicas: yup.string(),
   cleanupPolicy: yup.string().required(),
