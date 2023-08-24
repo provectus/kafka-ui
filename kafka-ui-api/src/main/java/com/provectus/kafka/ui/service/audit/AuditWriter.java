@@ -65,10 +65,10 @@ record AuditWriter(String clusterName,
     return new AuditRecord(
         DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
         user.principal(),
-        ctx.getCluster(), //can be null, if it is application-level action
+        ctx.cluster(), //can be null, if it is application-level action
         AuditResource.getAccessedResources(ctx),
-        ctx.getOperationName(),
-        ctx.getOperationParams(),
+        ctx.operationName(),
+        ctx.operationParams(),
         th == null ? OperationResult.successful() : OperationResult.error(th)
     );
   }

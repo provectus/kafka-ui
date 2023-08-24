@@ -105,7 +105,7 @@ public class AccessControlService {
   }
 
   private boolean isAccessible(AuthenticatedUser user, AccessContext context) {
-    if (context.getCluster() != null && !isClusterAccessible(context.getCluster(), user)) {
+    if (context.cluster() != null && !isClusterAccessible(context.cluster(), user)) {
       return false;
     }
 

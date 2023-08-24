@@ -40,7 +40,7 @@ record AuditRecord(String timestamp,
     }
 
     static List<AuditResource> getAccessedResources(AccessContext ctx) {
-      return ctx.getAccesses().stream()
+      return ctx.accesses().stream()
           .map(r -> create(r.requestedActions(), r.resourceType(), r.resourceId()))
           .toList();
     }

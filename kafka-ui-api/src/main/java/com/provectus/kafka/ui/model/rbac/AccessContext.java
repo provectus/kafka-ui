@@ -16,11 +16,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.Value;
 import org.springframework.security.access.AccessDeniedException;
 
-@Value
-public class AccessContext {
+public record AccessContext(String cluster,
+                            List<ResourceAccess> accesses,
+                            String operationName,
+                            @Nullable Object operationParams) {
 
   public interface ResourceAccess {
     // will be used for audit, should be serializable via json object mapper
@@ -65,17 +66,12 @@ public class AccessContext {
     }
   }
 
-  String cluster;
-  List<ResourceAccess> accesses;
-  String operationName;
-  Object operationParams;
-
   public static AccessContextBuilder builder() {
     return new AccessContextBuilder();
   }
 
   public boolean isAccessible(List<Permission> allUserPermissions) {
-    return getAccesses().stream()
+    return accesses().stream()
         .allMatch(resourceAccess -> resourceAccess.isAccessible(allUserPermissions));
   }
 
