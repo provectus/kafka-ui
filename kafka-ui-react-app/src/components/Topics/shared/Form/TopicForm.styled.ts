@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Input from 'components/common/Input/Input';
 
 export const Column = styled.div`
   display: flex;
@@ -14,6 +15,10 @@ export const NameField = styled.div`
 export const CustomParamsHeading = styled.h4`
   font-weight: 500;
   color: ${({ theme }) => theme.heading.h4};
+`;
+
+export const MessageSizeInput = styled(Input)`
+  min-width: 195px;
 `;
 
 export const Label = styled.div`

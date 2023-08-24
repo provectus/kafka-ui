@@ -13,7 +13,7 @@ import { brokersPayload } from 'lib/fixtures/brokers';
 import { clusterStatsPayload } from 'lib/fixtures/clusters';
 
 const clusterName = 'local';
-const brokerId = 1;
+const brokerId = 200;
 const activeClassName = 'is-active';
 const brokerLogdir = {
   pageText: 'brokerLogdir',

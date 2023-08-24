@@ -15,7 +15,7 @@ enum Filters {
   PARTITION_COUNT = 'partitionCount',
   REPLICATION_FACTOR = 'replicationFactor',
   INSYNC_REPLICAS = 'inSyncReplicas',
-  CLEANUP_POLICY = 'Delete',
+  CLEANUP_POLICY = 'cleanUpPolicy',
 }
 
 const New: React.FC = () => {
