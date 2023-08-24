@@ -34,9 +34,9 @@ public class AccessContext {
     boolean isAccessible(List<Permission> userPermissions);
   }
 
-  private record SingleResourceAccess(@Nullable String name,
-                                      Resource resourceType,
-                                      Collection<PermissibleAction> requestedActions) implements ResourceAccess {
+  record SingleResourceAccess(@Nullable String name,
+                              Resource resourceType,
+                              Collection<PermissibleAction> requestedActions) implements ResourceAccess {
 
     SingleResourceAccess(Resource type, List<PermissibleAction> requestedActions) {
       this(null, type, requestedActions);
@@ -72,6 +72,11 @@ public class AccessContext {
 
   public static AccessContextBuilder builder() {
     return new AccessContextBuilder();
+  }
+
+  public boolean isAccessible(List<Permission> allUserPermissions) {
+    return getAccesses().stream()
+        .allMatch(resourceAccess -> resourceAccess.isAccessible(allUserPermissions));
   }
 
   public static final class AccessContextBuilder {

@@ -44,13 +44,13 @@ public class Permission {
 
   public void validate() {
     Preconditions.checkNotNull(resource, "resource cannot be null");
+    Preconditions.checkArgument(isNotEmpty(actions), "Actions list for %s can't be null or empty", resource);
   }
 
   public void transform() {
     if (value != null) {
       this.compiledValuePattern = Pattern.compile(value);
     }
-    Preconditions.checkArgument(isNotEmpty(actions), "Actions list for %s can't be null or empty", resource);
     if (actions.stream().anyMatch("ALL"::equalsIgnoreCase)) {
       this.parsedActions = resource.allActions();
     } else {

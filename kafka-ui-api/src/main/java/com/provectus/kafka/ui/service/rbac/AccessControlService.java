@@ -114,8 +114,7 @@ public class AccessControlService {
         .flatMap(role -> role.getPermissions().stream())
         .toList();
 
-    return context.getAccesses().stream()
-        .allMatch(resourceAccess -> resourceAccess.isAccessible(allUserPermissions));
+    return context.isAccessible(allUserPermissions);
   }
 
   public Mono<AuthenticatedUser> getUser() {
