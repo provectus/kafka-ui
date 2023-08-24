@@ -32,7 +32,7 @@ public class AccessController implements AuthorizationApi {
   private final AccessControlService accessControlService;
 
   public Mono<ResponseEntity<AuthenticationInfoDTO>> getUserAuthInfo(ServerWebExchange exchange) {
-    Mono<List<UserPermissionDTO>> permissions = accessControlService.getUser()
+    Mono<List<UserPermissionDTO>> permissions = AccessControlService.getUser()
         .map(user -> accessControlService.getRoles()
             .stream()
             .filter(role -> user.groups().contains(role.getName()))

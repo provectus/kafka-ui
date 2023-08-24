@@ -91,33 +91,33 @@ public class AccessControlService {
   }
 
   public Mono<Void> validateAccess(AccessContext context) {
-    if (!rbacEnabled) {
-      return Mono.empty();
-    }
-    return getUser()
-        .flatMap(user -> {
-          if (!isAccessible(user, context)) {
-            return Mono.error(new AccessDeniedException(ACCESS_DENIED));
-          }
-          return Mono.empty();
-        })
+    return isAccessible(context)
+        .flatMap(allowed -> allowed ? Mono.empty() : Mono.error(new AccessDeniedException(ACCESS_DENIED)))
         .then();
+  }
+
+  private Mono<Boolean> isAccessible(AccessContext context) {
+    if (!rbacEnabled) {
+      return Mono.just(true);
+    }
+    return getUser().map(user -> isAccessible(user, context));
   }
 
   private boolean isAccessible(AuthenticatedUser user, AccessContext context) {
     if (context.cluster() != null && !isClusterAccessible(context.cluster(), user)) {
       return false;
     }
+    return context.isAccessible(getUserPermissions(user));
+  }
 
-    List<Permission> allUserPermissions = properties.getRoles().stream()
+  private List<Permission> getUserPermissions(AuthenticatedUser user) {
+    return properties.getRoles().stream()
         .filter(filterRole(user))
         .flatMap(role -> role.getPermissions().stream())
         .toList();
-
-    return context.isAccessible(allUserPermissions);
   }
 
-  public Mono<AuthenticatedUser> getUser() {
+  public static Mono<AuthenticatedUser> getUser() {
     return ReactiveSecurityContextHolder.getContext()
         .map(SecurityContext::getAuthentication)
         .filter(authentication -> authentication.getPrincipal() instanceof RbacUser)
@@ -126,12 +126,7 @@ public class AccessControlService {
   }
 
   private boolean isClusterAccessible(String clusterName, AuthenticatedUser user) {
-    if (!rbacEnabled) {
-      return true;
-    }
-
     Assert.isTrue(StringUtils.isNotEmpty(clusterName), "cluster value is empty");
-
     return properties.getRoles()
         .stream()
         .filter(filterRole(user))
@@ -151,64 +146,46 @@ public class AccessControlService {
     }
     return getUser()
         .map(user -> topics.stream()
-            .filter(topic -> {
-                  var accessContext = AccessContext
-                      .builder()
-                      .cluster(clusterName)
-                      .topicActions(topic.getName(), TopicAction.VIEW)
-                      .build();
-                  return isAccessible(user, accessContext);
-                }
+            .filter(topic ->
+                isAccessible(
+                    user,
+                    AccessContext.builder()
+                        .cluster(clusterName)
+                        .topicActions(topic.getName(), TopicAction.VIEW)
+                        .build()
+                )
             ).toList());
   }
 
   public Mono<Boolean> isConsumerGroupAccessible(String groupId, String clusterName) {
-    if (!rbacEnabled) {
-      return Mono.just(true);
-    }
-
-    AccessContext accessContext = AccessContext
-        .builder()
-        .cluster(clusterName)
-        .consumerGroupActions(groupId, ConsumerGroupAction.VIEW)
-        .build();
-
-    return getUser().map(u -> isAccessible(u, accessContext));
+    return isAccessible(
+        AccessContext.builder()
+            .cluster(clusterName)
+            .consumerGroupActions(groupId, ConsumerGroupAction.VIEW)
+            .build()
+    );
   }
 
   public Mono<Boolean> isSchemaAccessible(String schema, String clusterName) {
-    if (!rbacEnabled) {
-      return Mono.just(true);
-    }
-
-    AccessContext accessContext = AccessContext
-        .builder()
-        .cluster(clusterName)
-        .schemaActions(schema, SchemaAction.VIEW)
-        .build();
-
-    return getUser().map(u -> isAccessible(u, accessContext));
+    return isAccessible(
+        AccessContext.builder()
+            .cluster(clusterName)
+            .schemaActions(schema, SchemaAction.VIEW)
+            .build()
+    );
   }
 
   public Mono<Boolean> isConnectAccessible(ConnectDTO dto, String clusterName) {
-    if (!rbacEnabled) {
-      return Mono.just(true);
-    }
     return isConnectAccessible(dto.getName(), clusterName);
   }
 
   public Mono<Boolean> isConnectAccessible(String connectName, String clusterName) {
-    if (!rbacEnabled) {
-      return Mono.just(true);
-    }
-
-    AccessContext accessContext = AccessContext
-        .builder()
-        .cluster(clusterName)
-        .connectActions(connectName, ConnectAction.VIEW)
-        .build();
-
-    return getUser().map(u -> isAccessible(u, accessContext));
+    return isAccessible(
+        AccessContext.builder()
+            .cluster(clusterName)
+            .connectActions(connectName, ConnectAction.VIEW)
+            .build()
+    );
   }
 
   public Set<ProviderAuthorityExtractor> getOauthExtractors() {

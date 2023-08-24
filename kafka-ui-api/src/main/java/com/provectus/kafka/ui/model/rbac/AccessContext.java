@@ -70,9 +70,9 @@ public record AccessContext(String cluster,
     return new AccessContextBuilder();
   }
 
-  public boolean isAccessible(List<Permission> allUserPermissions) {
+  public boolean isAccessible(List<Permission> userPermissions) {
     return accesses().stream()
-        .allMatch(resourceAccess -> resourceAccess.isAccessible(allUserPermissions));
+        .allMatch(resourceAccess -> resourceAccess.isAccessible(userPermissions));
   }
 
   public static final class AccessContextBuilder {
