@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.config;
 
-import com.provectus.kafka.ui.model.MetricsConfig;
+import static com.provectus.kafka.ui.model.MetricsScrapeProperties.JMX_METRICS_TYPE;
+
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class ClustersProperties {
     KsqldbServerAuth ksqldbServerAuth;
     KeystoreConfig ksqldbServerSsl;
     List<ConnectCluster> kafkaConnect;
-    MetricsConfigData metrics;
+    MetricsConfig metrics;
     Map<String, Object> properties;
     boolean readOnly = false;
     List<SerdeConfig> serde;
@@ -62,8 +63,8 @@ public class ClustersProperties {
   }
 
   @Data
-  @ToString(exclude = "password")
-  public static class MetricsConfigData {
+  @ToString(exclude = {"password", "keystorePassword"})
+  public static class MetricsConfig {
     String type;
     Integer port;
     Boolean ssl;
@@ -71,6 +72,31 @@ public class ClustersProperties {
     String password;
     String keystoreLocation;
     String keystorePassword;
+
+    Boolean prometheusExpose;
+    MetricsStorage store;
+  }
+
+  @Data
+  public static class MetricsStorage {
+    PrometheusStorage prometheus;
+    KafkaMetricsStorage kafka;
+  }
+
+  @Data
+  public static class KafkaMetricsStorage  {
+    String topic;
+  }
+
+  @Data
+  @ToString(exclude = {"pushGatewayPassword"})
+  public static class PrometheusStorage {
+    String url;
+    String pushGatewayUrl;
+    String pushGatewayUsername;
+    String pushGatewayPassword;
+    String pushGatewayJobName;
+    Boolean remoteWrite;
   }
 
   @Data
@@ -171,7 +197,7 @@ public class ClustersProperties {
   private void setMetricsDefaults() {
     for (Cluster cluster : clusters) {
       if (cluster.getMetrics() != null && !StringUtils.hasText(cluster.getMetrics().getType())) {
-        cluster.getMetrics().setType(MetricsConfig.JMX_METRICS_TYPE);
+        cluster.getMetrics().setType(JMX_METRICS_TYPE);
       }
     }
   }

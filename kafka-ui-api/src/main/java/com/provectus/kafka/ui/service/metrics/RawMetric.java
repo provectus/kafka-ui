@@ -1,10 +1,15 @@
 package com.provectus.kafka.ui.service.metrics;
 
+import static io.prometheus.client.Collector.MetricFamilySamples;
+import static io.prometheus.client.Collector.Type;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import java.util.stream.Stream;
 
 public interface RawMetric {
 
@@ -14,47 +19,27 @@ public interface RawMetric {
 
   BigDecimal value();
 
-  // Key, that can be used for metrics reductions
-  default Object identityKey() {
-    return name() + "_" + labels();
-  }
-
-  RawMetric copyWithValue(BigDecimal newValue);
-
   //--------------------------------------------------
 
   static RawMetric create(String name, Map<String, String> labels, BigDecimal value) {
     return new SimpleMetric(name, labels, value);
   }
 
-  @AllArgsConstructor
-  @EqualsAndHashCode
-  @ToString
-  class SimpleMetric implements RawMetric {
-
-    private final String name;
-    private final Map<String, String> labels;
-    private final BigDecimal value;
-
-    @Override
-    public String name() {
-      return name;
+  static Stream<MetricFamilySamples> groupIntoMfs(Collection<RawMetric> rawMetrics) {
+    Map<String, MetricFamilySamples> map = new LinkedHashMap<>();
+    for (RawMetric m : rawMetrics) {
+      var mfs = map.get(m.name());
+      if (mfs == null) {
+        mfs = new MetricFamilySamples(m.name(), Type.GAUGE, m.name(), new ArrayList<>());
+        map.put(m.name(), mfs);
+      }
+      List<String> lbls = m.labels().keySet().stream().toList();
+      List<String> lblVals = lbls.stream().map(l -> m.labels().get(l)).toList();
+      mfs.samples.add(new MetricFamilySamples.Sample(m.name(), lbls, lblVals, m.value().doubleValue()));
     }
-
-    @Override
-    public Map<String, String> labels() {
-      return labels;
-    }
-
-    @Override
-    public BigDecimal value() {
-      return value;
-    }
-
-    @Override
-    public RawMetric copyWithValue(BigDecimal newValue) {
-      return new SimpleMetric(name, labels, newValue);
-    }
+    return map.values().stream();
   }
+
+  record SimpleMetric(String name, Map<String, String> labels, BigDecimal value) implements RawMetric { }
 
 }

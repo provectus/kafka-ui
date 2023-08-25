@@ -1,6 +1,7 @@
-package com.provectus.kafka.ui.service.metrics;
+package com.provectus.kafka.ui.service.metrics.scrape.jmx;
 
-import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.MetricsScrapeProperties;
+import com.provectus.kafka.ui.service.metrics.RawMetric;
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,15 +18,15 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.common.Node;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 
-@Service
+@Component //need to be a component, since
 @Slf4j
-class JmxMetricsRetriever implements MetricsRetriever, Closeable {
+public class JmxMetricsRetriever implements Closeable {
 
   private static final boolean SSL_JMX_SUPPORTED;
 
@@ -43,35 +44,34 @@ class JmxMetricsRetriever implements MetricsRetriever, Closeable {
     JmxSslSocketFactory.clearFactoriesCache();
   }
 
-  @Override
-  public Flux<RawMetric> retrieve(KafkaCluster c, Node node) {
-    if (isSslJmxEndpoint(c) && !SSL_JMX_SUPPORTED) {
-      log.warn("Cluster {} has jmx ssl configured, but it is not supported", c.getName());
-      return Flux.empty();
+  public Mono<List<RawMetric>> retrieveFromNode(MetricsScrapeProperties scrapeProperties, Node node) {
+    if (isSslJmxEndpoint(scrapeProperties) && !SSL_JMX_SUPPORTED) {
+      log.warn("Cluster has jmx ssl configured, but it is not supported by app");
+      return Mono.just(List.of());
     }
-    return Mono.fromSupplier(() -> retrieveSync(c, node))
-        .subscribeOn(Schedulers.boundedElastic())
-        .flatMapMany(Flux::fromIterable);
+    return Mono.fromSupplier(() -> retrieveSync(scrapeProperties, node))
+        .subscribeOn(Schedulers.boundedElastic());
   }
 
-  private boolean isSslJmxEndpoint(KafkaCluster cluster) {
-    return cluster.getMetricsConfig().getKeystoreLocation() != null;
+  private boolean isSslJmxEndpoint(MetricsScrapeProperties scrapeProperties) {
+    return scrapeProperties.getKeystoreConfig() != null
+        && scrapeProperties.getKeystoreConfig().getKeystoreLocation() != null;
   }
 
   @SneakyThrows
-  private List<RawMetric> retrieveSync(KafkaCluster c, Node node) {
-    String jmxUrl = JMX_URL + node.host() + ":" + c.getMetricsConfig().getPort() + "/" + JMX_SERVICE_TYPE;
+  private List<RawMetric> retrieveSync(MetricsScrapeProperties scrapeProperties, Node node) {
+    String jmxUrl = JMX_URL + node.host() + ":" + scrapeProperties.getPort() + "/" + JMX_SERVICE_TYPE;
     log.debug("Collection JMX metrics for {}", jmxUrl);
     List<RawMetric> result = new ArrayList<>();
-    withJmxConnector(jmxUrl, c, jmxConnector -> getMetricsFromJmx(jmxConnector, result));
+    withJmxConnector(jmxUrl, scrapeProperties, jmxConnector -> getMetricsFromJmx(jmxConnector, result));
     log.debug("{} metrics collected for {}", result.size(), jmxUrl);
     return result;
   }
 
   private void withJmxConnector(String jmxUrl,
-                                KafkaCluster c,
+                                MetricsScrapeProperties scrapeProperties,
                                 Consumer<JMXConnector> consumer) {
-    var env = prepareJmxEnvAndSetThreadLocal(c);
+    var env = prepareJmxEnvAndSetThreadLocal(scrapeProperties);
     try (JMXConnector connector = JMXConnectorFactory.newJMXConnector(new JMXServiceURL(jmxUrl), env)) {
       try {
         connector.connect(env);
@@ -87,25 +87,25 @@ class JmxMetricsRetriever implements MetricsRetriever, Closeable {
     }
   }
 
-  private Map<String, Object> prepareJmxEnvAndSetThreadLocal(KafkaCluster cluster) {
-    var metricsConfig = cluster.getMetricsConfig();
+  private Map<String, Object> prepareJmxEnvAndSetThreadLocal(MetricsScrapeProperties scrapeProperties) {
     Map<String, Object> env = new HashMap<>();
-    if (isSslJmxEndpoint(cluster)) {
-      var clusterSsl = cluster.getOriginalProperties().getSsl();
+    if (isSslJmxEndpoint(scrapeProperties)) {
+      var truststoreConfig = scrapeProperties.getTruststoreConfig();
+      var keystoreConfig = scrapeProperties.getKeystoreConfig();
       JmxSslSocketFactory.setSslContextThreadLocal(
-          clusterSsl != null ? clusterSsl.getTruststoreLocation() : null,
-          clusterSsl != null ? clusterSsl.getTruststorePassword() : null,
-          metricsConfig.getKeystoreLocation(),
-          metricsConfig.getKeystorePassword()
+          truststoreConfig != null ? truststoreConfig.getTruststoreLocation() : null,
+          truststoreConfig != null ? truststoreConfig.getTruststorePassword() : null,
+          keystoreConfig != null ? keystoreConfig.getKeystoreLocation() : null,
+          keystoreConfig != null ? keystoreConfig.getKeystorePassword() : null
       );
       JmxSslSocketFactory.editJmxConnectorEnv(env);
     }
 
-    if (StringUtils.isNotEmpty(metricsConfig.getUsername())
-        && StringUtils.isNotEmpty(metricsConfig.getPassword())) {
+    if (StringUtils.isNotEmpty(scrapeProperties.getUsername())
+        && StringUtils.isNotEmpty(scrapeProperties.getPassword())) {
       env.put(
           JMXConnector.CREDENTIALS,
-          new String[] {metricsConfig.getUsername(), metricsConfig.getPassword()}
+          new String[] {scrapeProperties.getUsername(), scrapeProperties.getPassword()}
       );
     }
     return env;

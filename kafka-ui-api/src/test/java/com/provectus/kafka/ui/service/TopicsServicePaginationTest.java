@@ -71,7 +71,7 @@ class TopicsServicePaginationTest {
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, false, List.of()))
             .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
-                Metrics.empty(), InternalLogDirStats.empty(), "_"))
+                Metrics.empty(), null, null, "_"))
             .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
@@ -97,7 +97,7 @@ class TopicsServicePaginationTest {
         .map(Objects::toString)
         .map(name -> new TopicDescription(name, false, List.of()))
         .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
-            Metrics.empty(), InternalLogDirStats.empty(), "_"))
+            Metrics.empty(), null, null, "_"))
         .collect(Collectors.toMap(InternalTopic::getName, Function.identity()));
     init(internalTopics);
 
@@ -124,7 +124,7 @@ class TopicsServicePaginationTest {
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, false, List.of()))
             .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
-                Metrics.empty(), InternalLogDirStats.empty(), "_"))
+                Metrics.empty(), null, null, "_"))
             .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
@@ -143,7 +143,7 @@ class TopicsServicePaginationTest {
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, false, List.of()))
             .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
-                Metrics.empty(), InternalLogDirStats.empty(), "_"))
+                Metrics.empty(), null, null, "_"))
             .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
@@ -162,7 +162,7 @@ class TopicsServicePaginationTest {
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, Integer.parseInt(name) % 10 == 0, List.of()))
             .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
-                Metrics.empty(), InternalLogDirStats.empty(), "_"))
+                Metrics.empty(), null, null, "_"))
             .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
@@ -183,7 +183,7 @@ class TopicsServicePaginationTest {
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, Integer.parseInt(name) % 5 == 0, List.of()))
             .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
-                Metrics.empty(), InternalLogDirStats.empty(), "_"))
+                Metrics.empty(), null, null, "_"))
             .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
@@ -204,7 +204,7 @@ class TopicsServicePaginationTest {
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, false, List.of()))
             .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
-                Metrics.empty(), InternalLogDirStats.empty(), "_"))
+                Metrics.empty(), null, null, "_"))
             .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
@@ -226,7 +226,7 @@ class TopicsServicePaginationTest {
                     new TopicPartitionInfo(p, null, List.of(), List.of()))
                 .collect(Collectors.toList())))
         .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), InternalPartitionsOffsets.empty(),
-            Metrics.empty(), InternalLogDirStats.empty(), "_"))
+            Metrics.empty(), null, null, "_"))
         .collect(Collectors.toMap(InternalTopic::getName, Function.identity()));
 
     init(internalTopics);

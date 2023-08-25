@@ -4,6 +4,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.Value;
 import org.apache.kafka.common.TopicPartition;
 
@@ -28,6 +29,13 @@ public class InternalPartitionsOffsets {
 
   public Optional<Offsets> get(String topic, int partition) {
     return Optional.ofNullable(offsets.get(topic, partition));
+  }
+
+  public Map<Integer, Long> topicOffsets(String topic, boolean earliest) {
+    return offsets.row(topic)
+        .entrySet()
+        .stream()
+        .collect(Collectors.toMap(Map.Entry::getKey, e -> earliest ? e.getValue().earliest : e.getValue().getLatest()));
   }
 
 }

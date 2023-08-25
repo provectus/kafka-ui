@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.service.integration.odd;
 
+import static com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState.TopicState;
+import static com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -9,6 +11,7 @@ import static org.mockito.Mockito.when;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Statistics;
 import com.provectus.kafka.ui.service.StatisticsCache;
+import com.provectus.kafka.ui.service.metrics.scrape.ScrapedClusterState;
 import com.provectus.kafka.ui.sr.api.KafkaSrClientApi;
 import com.provectus.kafka.ui.sr.model.SchemaSubject;
 import com.provectus.kafka.ui.sr.model.SchemaType;
@@ -59,15 +62,22 @@ class TopicsExporterTest {
         .thenReturn(Mono.error(WebClientResponseException.create(404, "NF", new HttpHeaders(), null, null, null)));
     stats = Statistics.empty()
         .toBuilder()
-        .topicDescriptions(
-            Map.of(
-                "_hidden", new TopicDescription("_hidden", false, List.of(
-                    new TopicPartitionInfo(0, null, List.of(), List.of())
-                )),
-                "visible", new TopicDescription("visible", false, List.of(
-                    new TopicPartitionInfo(0, null, List.of(), List.of())
-                ))
-            )
+        .clusterState(
+            empty().toBuilder().topicStates(
+                Map.of(
+                    "_hidden",
+                    new TopicState(
+                        "_hidden",
+                        new TopicDescription("_hidden", false, List.of(
+                            new TopicPartitionInfo(0, null, List.of(), List.of())
+                        )), null, null, null, null, null),
+                    "visible",
+                    new TopicState("visible",
+                        new TopicDescription("visible", false, List.of(
+                            new TopicPartitionInfo(0, null, List.of(), List.of())
+                        )), null, null, null, null, null)
+                )
+            ).build()
         )
         .build();
 
@@ -101,40 +111,44 @@ class TopicsExporterTest {
 
     stats = Statistics.empty()
         .toBuilder()
-        .topicDescriptions(
-            Map.of(
-                "testTopic",
-                new TopicDescription(
-                    "testTopic",
-                    false,
-                    List.of(
-                        new TopicPartitionInfo(
-                            0,
-                            null,
-                            List.of(
-                                new Node(1, "host1", 9092),
-                                new Node(2, "host2", 9092)
+        .clusterState(
+            ScrapedClusterState.empty().toBuilder()
+                .topicStates(
+                    Map.of(
+                        "testTopic",
+                        new TopicState(
+                            "testTopic",
+                            new TopicDescription(
+                                "testTopic",
+                                false,
+                                List.of(
+                                    new TopicPartitionInfo(
+                                        0,
+                                        null,
+                                        List.of(
+                                            new Node(1, "host1", 9092),
+                                            new Node(2, "host2", 9092)
+                                        ),
+                                        List.of())
+                                )
                             ),
-                            List.of())
-                    ))
-            )
-        )
-        .topicConfigs(
-            Map.of(
-                "testTopic", List.of(
-                    new ConfigEntry(
-                        "custom.config",
-                        "100500",
-                        ConfigEntry.ConfigSource.DYNAMIC_TOPIC_CONFIG,
-                        false,
-                        false,
-                        List.of(),
-                        ConfigEntry.ConfigType.INT,
-                        null
+                            List.of(
+                                new ConfigEntry(
+                                    "custom.config",
+                                    "100500",
+                                    ConfigEntry.ConfigSource.DYNAMIC_TOPIC_CONFIG,
+                                    false,
+                                    false,
+                                    List.of(),
+                                    ConfigEntry.ConfigType.INT,
+                                    null
+                                )
+                            ),
+                            null, null, null, null
+                        )
                     )
                 )
-            )
-        )
+                .build())
         .build();
 
     StepVerifier.create(topicsExporter.export(cluster))

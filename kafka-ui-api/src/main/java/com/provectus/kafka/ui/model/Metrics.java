@@ -1,13 +1,11 @@
 package com.provectus.kafka.ui.model;
 
-import static java.util.stream.Collectors.toMap;
+import static io.prometheus.client.Collector.MetricFamilySamples;
 
-import com.provectus.kafka.ui.service.metrics.RawMetric;
+import com.provectus.kafka.ui.service.metrics.scrape.inferred.InferredMetrics;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.Value;
 
@@ -16,28 +14,32 @@ import lombok.Value;
 @Value
 public class Metrics {
 
-  Map<Integer, BigDecimal> brokerBytesInPerSec;
-  Map<Integer, BigDecimal> brokerBytesOutPerSec;
-  Map<String, BigDecimal> topicBytesInPerSec;
-  Map<String, BigDecimal> topicBytesOutPerSec;
-  Map<Integer, List<RawMetric>> perBrokerMetrics;
+  IoRates ioRates;
+  InferredMetrics inferredMetrics;
+  Map<Integer, List<MetricFamilySamples>> perBrokerScrapedMetrics;
 
   public static Metrics empty() {
     return Metrics.builder()
-        .brokerBytesInPerSec(Map.of())
-        .brokerBytesOutPerSec(Map.of())
-        .topicBytesInPerSec(Map.of())
-        .topicBytesOutPerSec(Map.of())
-        .perBrokerMetrics(Map.of())
+        .ioRates(IoRates.empty())
+        .perBrokerScrapedMetrics(Map.of())
+        .inferredMetrics(InferredMetrics.empty())
         .build();
   }
 
-  public Stream<RawMetric> getSummarizedMetrics() {
-    return perBrokerMetrics.values().stream()
-        .flatMap(Collection::stream)
-        .collect(toMap(RawMetric::identityKey, m -> m, (m1, m2) -> m1.copyWithValue(m1.value().add(m2.value()))))
-        .values()
-        .stream();
+  @Builder
+  public record IoRates(Map<Integer, BigDecimal> brokerBytesInPerSec,
+                        Map<Integer, BigDecimal> brokerBytesOutPerSec,
+                        Map<String, BigDecimal> topicBytesInPerSec,
+                        Map<String, BigDecimal> topicBytesOutPerSec) {
+
+    static IoRates empty() {
+      return IoRates.builder()
+          .brokerBytesOutPerSec(Map.of())
+          .brokerBytesInPerSec(Map.of())
+          .topicBytesOutPerSec(Map.of())
+          .topicBytesInPerSec(Map.of())
+          .build();
+    }
   }
 
 }

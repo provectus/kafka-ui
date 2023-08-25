@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.service.metrics;
+package com.provectus.kafka.ui.service.metrics.scrape.jmx;
 
 import com.google.common.base.Preconditions;
 import java.io.FileInputStream;
@@ -61,9 +61,8 @@ class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
     } catch (Exception e) {
       log.error("----------------------------------");
       log.error("SSL can't be enabled for JMX retrieval. "
-              + "Make sure your java app run with '--add-opens java.rmi/javax.rmi.ssl=ALL-UNNAMED' arg. Err: {}",
+              + "Make sure your java app is running with '--add-opens java.rmi/javax.rmi.ssl=ALL-UNNAMED' arg. Err: {}",
           e.getMessage());
-      log.trace("SSL can't be enabled for JMX retrieval", e);
       log.error("----------------------------------");
     }
     SSL_JMX_SUPPORTED = sslJmxSupported;

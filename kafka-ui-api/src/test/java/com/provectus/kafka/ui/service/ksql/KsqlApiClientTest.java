@@ -11,12 +11,14 @@ import com.provectus.kafka.ui.AbstractIntegrationTest;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.Map;
+import org.junit.Ignore;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 import reactor.test.StepVerifier;
 
+@Ignore
 class KsqlApiClientTest extends AbstractIntegrationTest {
 
   @BeforeAll

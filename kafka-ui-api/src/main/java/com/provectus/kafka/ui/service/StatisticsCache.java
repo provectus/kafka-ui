@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service;
 
+import com.provectus.kafka.ui.model.InternalPartitionsOffsets;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.ServerStatusDTO;
 import com.provectus.kafka.ui.model.Statistics;
@@ -28,38 +29,29 @@ public class StatisticsCache {
 
   public synchronized void update(KafkaCluster c,
                                   Map<String, TopicDescription> descriptions,
-                                  Map<String, List<ConfigEntry>> configs) {
-    var metrics = get(c);
-    var updatedDescriptions = new HashMap<>(metrics.getTopicDescriptions());
-    updatedDescriptions.putAll(descriptions);
-    var updatedConfigs = new HashMap<>(metrics.getTopicConfigs());
-    updatedConfigs.putAll(configs);
+                                  Map<String, List<ConfigEntry>> configs,
+                                  InternalPartitionsOffsets partitionsOffsets) {
+    var stats = get(c);
     replace(
         c,
-        metrics.toBuilder()
-            .topicDescriptions(updatedDescriptions)
-            .topicConfigs(updatedConfigs)
+        stats.toBuilder()
+            .clusterState(stats.getClusterState().updateTopics(descriptions, configs, partitionsOffsets))
             .build()
     );
   }
 
   public synchronized void onTopicDelete(KafkaCluster c, String topic) {
-    var metrics = get(c);
-    var updatedDescriptions = new HashMap<>(metrics.getTopicDescriptions());
-    updatedDescriptions.remove(topic);
-    var updatedConfigs = new HashMap<>(metrics.getTopicConfigs());
-    updatedConfigs.remove(topic);
+    var stats = get(c);
     replace(
         c,
-        metrics.toBuilder()
-            .topicDescriptions(updatedDescriptions)
-            .topicConfigs(updatedConfigs)
+        stats.toBuilder()
+            .clusterState(stats.getClusterState().topicDeleted(topic))
             .build()
     );
   }
 
   public Statistics get(KafkaCluster c) {
-    return Objects.requireNonNull(cache.get(c.getName()), "Unknown cluster metrics requested");
+    return Objects.requireNonNull(cache.get(c.getName()), "Statistics for unknown cluster requested");
   }
 
 }

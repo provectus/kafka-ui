@@ -1,0 +1,365 @@
+openapi: 3.0.1
+info:
+  title: |
+    Prometheus query HTTP API
+  version: 0.1.0
+  contact: { }
+
+tags:
+  - name: /promclient
+servers:
+  - url: /localhost
+
+
+paths:
+  /api/v1/label/{label_name}/values:
+    get:
+      tags:
+        - PrometheusClient
+      summary: Returns label values
+      description: "returns a list of label values for a provided label name"
+      operationId: getLabelValues
+      parameters:
+        - name: label_name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: Start timestamp.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: end
+          in: query
+          description: End timestamp.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: match[]
+          in: query
+          description: Repeated series selector argument that selects the series from which to read the label values.
+          schema:
+            type: string
+            format: series_selector
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelValuesResponse'
+
+  /api/v1/labels:
+    get:
+      tags:
+        - PrometheusClient
+      summary: Returns label names
+      description: returns a list of label names
+      operationId: getLabelNames
+      parameters:
+        - name: start
+          in: query
+          description: |
+            Start timestamp.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: end
+          in: query
+          description: |
+            End timestamp.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: match[]
+          in: query
+          description: Repeated series selector argument that selects the series from which to read the label values. Optional.
+          schema:
+            type: string
+            format: series_selector
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelNamesResponse'
+
+  /api/v1/metadata:
+    get:
+      tags:
+        - PrometheusClient
+      summary: Returns metric metadata
+      description: returns a list of label names
+      operationId: getMetricMetadata
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of metrics to return.
+          required: true
+          schema:
+            type: integer
+        - name: metric
+          in: query
+          description: A metric name to filter metadata for. All metric metadata is retrieved if left empty.
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetadataResponse'
+        201:
+          description: |
+            Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetadataResponse'
+
+  /api/v1/query:
+    get:
+      tags:
+        - PrometheusClient
+      summary: Evaluates instant query
+      description: |
+        Evaluates an instant query at a single point in time
+      operationId: query
+      parameters:
+        - name: query
+          in: query
+          description: |
+            Prometheus expression query string.
+          required: true
+          schema:
+            type: string
+        - name: time
+          in: query
+          description: |
+            Evaluation timestamp. Optional.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: timeout
+          in: query
+          description: |
+            Evaluation timeout. Optional.
+          schema:
+            type: string
+            format: duration
+      responses:
+        200:
+          description: |
+            Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+
+
+  /api/v1/query_range:
+    get:
+      tags:
+        - PrometheusClient
+      summary: Evaluates query over range of time.
+      description: Evaluates an expression query over a range of time
+      operationId: queryRange
+      parameters:
+        - name: query
+          in: query
+          description: Prometheus expression query string.
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: Start timestamp.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: end
+          in: query
+          description: End timestamp.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: step
+          in: query
+          description: |
+            Query resolution step width in ```duration``` format or float number of seconds.
+          schema:
+            type: string
+            format: duration | float
+        - name: timeout
+          in: query
+          description: |
+            Evaluation timeout. Optional. Defaults to and is capped by the value of the ```-query.timeout``` flag.
+          schema:
+            type: string
+            format: duration
+      responses:
+        200:
+          description: |
+            Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueryResponse"
+
+
+  /api/v1/series:
+    get:
+      tags:
+        - PrometheusClient
+      summary: Returns time series
+      operationId: getSeries
+      parameters:
+        - name: start
+          in: query
+          description: |
+            Start timestamp. Optional.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: end
+          in: query
+          description: |
+            End timestamp. Optional.
+          schema:
+            type: string
+            format: rfc3339 | unix_timestamp
+        - name: match[]
+          in: query
+          description: |
+            Repeated series selector argument that selects the series to return. At least one ```match[]``` argument must be provided.
+          required: true
+          schema:
+            type: string
+            format: series_selector
+      responses:
+        200:
+          description: |
+            Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeriesResponse'
+
+components:
+  schemas:
+    BaseResponse:
+      type: object
+      required: [ status ]
+      properties:
+        status:
+          type: string
+          enum: [ "success", "error" ]
+        error:
+          type: string
+        errorType:
+          type: string
+        warnings:
+          type: array
+          items:
+            type: string
+
+    QueryResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+      properties:
+        data:
+          $ref: '#/components/schemas/QueryResponseData'
+
+    QueryResponseData:
+      type: object
+      required: [ "resultType" ]
+      properties:
+        resultType:
+          type: string
+          enum: [ "matrix", "vector", "scalar", "string"]
+        result:
+          type: array
+          items: { }
+          description: |
+            Depending on resultType format can vary:
+            "vector":
+              [
+                {
+                  "metric": { "<label_name>": "<label_value>", ... },
+                  "value": [ <unix_time>, "<sample_value>" ],
+                  "histogram": [ <unix_time>, <histogram> ]
+               }, ...
+              ]
+            "matrix":
+              [
+                {
+                  "metric": { "<label_name>": "<label_value>", ... },
+                  "values": [ [ <unix_time>, "<sample_value>" ], ... ],
+                  "histograms": [ [ <unix_time>, <histogram> ], ... ]
+                }, ...
+              ]
+            "scalar":
+              [ <unix_time>, "<scalar_value>" ]
+            "string":
+              [ <unix_time>, "<string_value>" ]
+
+    SeriesResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+      properties:
+        data:
+          type: array
+          description: a list of objects that contain the label name/value pairs which
+            identify each series
+          items:
+            type: object
+            properties:
+              __name__:
+                type: string
+              job:
+                type: string
+              instance:
+                type: string
+
+    MetadataResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: object
+              additionalProperties: true
+
+    LabelValuesResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+      properties:
+        data:
+          type: array
+          description: a list of string label values
+          items:
+            type: string
+
+    LabelNamesResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+      properties:
+        data:
+          type: array
+          description: a list of string label names
+          items:
+            type: string
+
+

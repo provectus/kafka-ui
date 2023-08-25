@@ -46,6 +46,11 @@
                     <artifactId>javax.annotation-api</artifactId>
                     <version>1.3.2</version>
                 </dependency>
+                <dependency>
+                    <groupId>com.google.protobuf</groupId>
+                    <artifactId>protobuf-java</artifactId>
+                    <version>3.22.4</version>
+                </dependency>
             </dependencies>
 
             <build>
@@ -151,6 +156,30 @@
                                     </configOptions>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>generate-prometheus-query-api</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <inputSpec>${project.basedir}/src/main/resources/swagger/prometheus-query-api.yaml
+                                    </inputSpec>
+                                    <output>${project.build.directory}/generated-sources/prometheus-query-api</output>
+                                    <generatorName>java</generatorName>
+                                    <generateApiTests>false</generateApiTests>
+                                    <generateModelTests>false</generateModelTests>
+                                    <configOptions>
+                                        <modelPackage>prometheus.query.model</modelPackage>
+                                        <apiPackage>prometheus.query.api</apiPackage>
+                                        <sourceFolder>prometheus-query</sourceFolder>
+                                        <asyncNative>true</asyncNative>
+                                        <library>webclient</library>
+                                        <useJakartaEe>true</useJakartaEe>
+                                        <useBeanValidation>true</useBeanValidation>
+                                        <dateLibrary>java8</dateLibrary>
+                                    </configOptions>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
@@ -229,7 +258,40 @@
                                 </configuration>
                             </execution>
                         </executions>
-
+                    </plugin>
+                    <plugin>
+                        <groupId>kr.motd.maven</groupId>
+                        <artifactId>os-maven-plugin</artifactId>
+                        <version>1.7.0</version>
+                        <executions>
+                            <execution>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>detect</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.xolstice.maven.plugins</groupId>
+                        <artifactId>protobuf-maven-plugin</artifactId>
+                        <version>0.6.1</version>
+                        <executions>
+                            <execution>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <attachProtoSources>false</attachProtoSources>
+                            <protoSourceRoot>${project.basedir}/src/main/resources/proto/prometheus-remote-write-api</protoSourceRoot>
+                            <includes>
+                                <include>**/*.proto</include>
+                            </includes>
+                            <protocArtifact>com.google.protobuf:protoc:3.21.12:exe:${os.detected.classifier}</protocArtifact>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

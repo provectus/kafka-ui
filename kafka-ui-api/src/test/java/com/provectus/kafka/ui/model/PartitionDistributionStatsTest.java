@@ -23,28 +23,23 @@ class PartitionDistributionStatsTest {
     Node n4 = new Node(4, "n4", 9092);
 
     var stats = PartitionDistributionStats.create(
-        Statistics.builder()
-            .clusterDescription(
-                new ReactiveAdminClient.ClusterDescription(null, "test", Set.of(n1, n2, n3), null))
-            .topicDescriptions(
-                Map.of(
-                    "t1", new TopicDescription(
-                        "t1", false,
-                        List.of(
-                            new TopicPartitionInfo(0, n1, List.of(n1, n2), List.of(n1, n2)),
-                            new TopicPartitionInfo(1, n2, List.of(n2, n3), List.of(n2, n3))
-                        )
-                    ),
-                    "t2", new TopicDescription(
-                        "t2", false,
-                        List.of(
-                            new TopicPartitionInfo(0, n1, List.of(n1, n2), List.of(n1, n2)),
-                            new TopicPartitionInfo(1, null, List.of(n2, n1), List.of(n1))
-                        )
-                    )
+        List.of(
+            new TopicDescription(
+                "t1", false,
+                List.of(
+                    new TopicPartitionInfo(0, n1, List.of(n1, n2), List.of(n1, n2)),
+                    new TopicPartitionInfo(1, n2, List.of(n2, n3), List.of(n2, n3))
+                )
+            ),
+            new TopicDescription(
+                "t2", false,
+                List.of(
+                    new TopicPartitionInfo(0, n1, List.of(n1, n2), List.of(n1, n2)),
+                    new TopicPartitionInfo(1, null, List.of(n2, n1), List.of(n1))
                 )
             )
-            .build(), 4
+        ),
+        4
     );
 
     assertThat(stats.getPartitionLeaders())

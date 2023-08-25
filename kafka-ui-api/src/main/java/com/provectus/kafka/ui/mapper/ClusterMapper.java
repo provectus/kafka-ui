@@ -1,9 +1,12 @@
 package com.provectus.kafka.ui.mapper;
 
+import static io.prometheus.client.Collector.MetricFamilySamples;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.BrokerConfigDTO;
 import com.provectus.kafka.ui.model.BrokerDTO;
-import com.provectus.kafka.ui.model.BrokerDiskUsageDTO;
 import com.provectus.kafka.ui.model.BrokerMetricsDTO;
 import com.provectus.kafka.ui.model.ClusterDTO;
 import com.provectus.kafka.ui.model.ClusterFeature;
@@ -14,7 +17,6 @@ import com.provectus.kafka.ui.model.ConfigSynonymDTO;
 import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.InternalBroker;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
-import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
 import com.provectus.kafka.ui.model.InternalClusterState;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
@@ -30,10 +32,13 @@ import com.provectus.kafka.ui.model.ReplicaDTO;
 import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
-import com.provectus.kafka.ui.service.metrics.RawMetric;
+import com.provectus.kafka.ui.service.metrics.SummarizedMetrics;
+import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.common.acl.AccessControlEntry;
 import org.apache.kafka.common.acl.AclBinding;
@@ -52,21 +57,28 @@ public interface ClusterMapper {
 
   ClusterStatsDTO toClusterStats(InternalClusterState clusterState);
 
+  @Deprecated
   default ClusterMetricsDTO toClusterMetrics(Metrics metrics) {
     return new ClusterMetricsDTO()
-        .items(metrics.getSummarizedMetrics().map(this::convert).collect(Collectors.toList()));
+        .items(convert(new SummarizedMetrics(metrics).asStream()).toList());
   }
 
-  private MetricDTO convert(RawMetric rawMetric) {
-    return new MetricDTO()
-        .name(rawMetric.name())
-        .labels(rawMetric.labels())
-        .value(rawMetric.value());
+  private Stream<MetricDTO> convert(Stream<MetricFamilySamples> metrics) {
+    return metrics
+        .flatMap(m -> m.samples.stream())
+        .map(s ->
+            new MetricDTO()
+                .name(s.name)
+                .labels(IntStream.range(0, s.labelNames.size())
+                    .boxed()
+                    //collecting to map, keeping order
+                    .collect(toMap(s.labelNames::get, s.labelValues::get, (m1, m2) -> null, LinkedHashMap::new)))
+                .value(BigDecimal.valueOf(s.value))
+        );
   }
 
-  default BrokerMetricsDTO toBrokerMetrics(List<RawMetric> metrics) {
-    return new BrokerMetricsDTO()
-        .metrics(metrics.stream().map(this::convert).collect(Collectors.toList()));
+  default BrokerMetricsDTO toBrokerMetrics(List<MetricFamilySamples> metrics) {
+    return new BrokerMetricsDTO().metrics(convert(metrics.stream()).toList());
   }
 
   @Mapping(target = "isSensitive", source = "sensitive")
@@ -107,15 +119,7 @@ public interface ClusterMapper {
   List<ClusterDTO.FeaturesEnum> toFeaturesEnum(List<ClusterFeature> features);
 
   default List<PartitionDTO> map(Map<Integer, InternalPartition> map) {
-    return map.values().stream().map(this::toPartition).collect(Collectors.toList());
-  }
-
-  default BrokerDiskUsageDTO map(Integer id, InternalBrokerDiskUsage internalBrokerDiskUsage) {
-    final BrokerDiskUsageDTO brokerDiskUsage = new BrokerDiskUsageDTO();
-    brokerDiskUsage.setBrokerId(id);
-    brokerDiskUsage.segmentCount((int) internalBrokerDiskUsage.getSegmentCount());
-    brokerDiskUsage.segmentSize(internalBrokerDiskUsage.getSegmentSize());
-    return brokerDiskUsage;
+    return map.values().stream().map(this::toPartition).collect(toList());
   }
 
   static KafkaAclDTO.OperationEnum mapAclOperation(AclOperation operation) {
