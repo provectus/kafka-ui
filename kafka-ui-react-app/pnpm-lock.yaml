@@ -156,7 +156,7 @@ devDependencies:
     version: 14.4.3(@testing-library/dom@9.0.0)
   '@types/eventsource':
     specifier: ^1.1.8
-    version: 1.1.8
+    version: 1.1.11
   '@types/lodash':
     specifier: ^4.14.172
     version: 4.14.177
@@ -1782,8 +1782,8 @@ packages:
       '@babel/types': 7.18.9
     dev: false
 
-  /@types/eventsource@1.1.8:
-    resolution: {integrity: sha512-fJQNt9LijJCZwYvM6O30uLzdpAK9zs52Uc9iUW9M2Zsg0HQM6DLf6QysjC/wuFX+0798B8AppVMvgdO6IftPKQ==}
+  /@types/eventsource@1.1.11:
+    resolution: {integrity: sha512-L7wLDZlWm5mROzv87W0ofIYeQP5K2UhoFnnUyEWLKM6UBb0ZNRgAqp98qE5DkgfBXdWfc2kYmw9KZm4NLjRbsw==}
     dev: true
 
   /@types/graceful-fs@4.1.5:
