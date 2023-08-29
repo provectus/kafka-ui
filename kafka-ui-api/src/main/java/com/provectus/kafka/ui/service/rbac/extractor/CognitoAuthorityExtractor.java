@@ -59,8 +59,8 @@ public class CognitoAuthorityExtractor implements ProviderAuthorityExtractor {
             .stream()
             .filter(s -> s.getProvider().equals(Provider.OAUTH_COGNITO))
             .filter(s -> s.getType().equals("group"))
-            .anyMatch(subject -> Stream.of(groups)
-                .map(Object::toString)
+            .anyMatch(subject -> groups
+                .stream()
                 .anyMatch(cognitoGroup -> cognitoGroup.equals(subject.getValue()))
             ))
         .map(Role::getName)
