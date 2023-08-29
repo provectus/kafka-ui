@@ -37,6 +37,9 @@ import reactor.util.function.Tuples;
 
 public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.Descriptor> {
 
+  private static final String MAXIMUM = "maximum";
+  private static final String MINIMUM = "minimum";
+
   private final Set<String> simpleTypesWrapperNames = Set.of(
       BoolValue.getDescriptor().getFullName(),
       Int32Value.getDescriptor().getFullName(),
@@ -156,15 +159,15 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
       case INT32, FIXED32, SFIXED32, SINT32 -> new SimpleJsonType(
           JsonType.Type.INTEGER,
           Map.of(
-              "maximum", IntNode.valueOf(Integer.MAX_VALUE),
-              "minimum", IntNode.valueOf(Integer.MIN_VALUE)
+              MAXIMUM, IntNode.valueOf(Integer.MAX_VALUE),
+              MINIMUM, IntNode.valueOf(Integer.MIN_VALUE)
           )
       );
       case UINT32 -> new SimpleJsonType(
           JsonType.Type.INTEGER,
           Map.of(
-              "maximum", LongNode.valueOf(UnsignedInteger.MAX_VALUE.longValue()),
-              "minimum", IntNode.valueOf(0)
+              MAXIMUM, LongNode.valueOf(UnsignedInteger.MAX_VALUE.longValue()),
+              MINIMUM, IntNode.valueOf(0)
           )
       );
       //TODO: actually all *64 types will be printed with quotes (as strings),
@@ -173,15 +176,15 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
       case INT64, FIXED64, SFIXED64, SINT64 -> new SimpleJsonType(
           JsonType.Type.INTEGER,
           Map.of(
-              "maximum", LongNode.valueOf(Long.MAX_VALUE),
-              "minimum", LongNode.valueOf(Long.MIN_VALUE)
+              MAXIMUM, LongNode.valueOf(Long.MAX_VALUE),
+              MINIMUM, LongNode.valueOf(Long.MIN_VALUE)
           )
       );
       case UINT64 -> new SimpleJsonType(
           JsonType.Type.INTEGER,
           Map.of(
-              "maximum", new BigIntegerNode(UnsignedLong.MAX_VALUE.bigIntegerValue()),
-              "minimum", LongNode.valueOf(0)
+              MAXIMUM, new BigIntegerNode(UnsignedLong.MAX_VALUE.bigIntegerValue()),
+              MINIMUM, LongNode.valueOf(0)
           )
       );
       case MESSAGE, GROUP -> new SimpleJsonType(JsonType.Type.OBJECT);

@@ -44,7 +44,7 @@ public class InternalLogDirStats {
                 topicMap.getValue().replicaInfos.entrySet().stream()
                     .map(e -> Tuples.of(b.getKey(), e.getKey(), e.getValue().size))
             )
-        ).collect(toList());
+        ).toList();
 
     partitionsStats = topicPartitions.stream().collect(
         groupingBy(

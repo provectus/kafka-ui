@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +37,7 @@ public class AccessController implements AuthorizationApi {
             .filter(role -> user.groups().contains(role.getName()))
             .map(role -> mapPermissions(role.getPermissions(), role.getClusters()))
             .flatMap(Collection::stream)
-            .collect(Collectors.toList())
+            .toList()
         )
         .switchIfEmpty(Mono.just(Collections.emptyList()));
 
@@ -70,10 +69,10 @@ public class AccessController implements AuthorizationApi {
               .map(p -> p.name().toUpperCase())
               .map(this::mapAction)
               .filter(Objects::nonNull)
-              .collect(Collectors.toList()));
+              .toList());
           return dto;
         })
-        .collect(Collectors.toList());
+        .toList();
   }
 
   @Nullable
