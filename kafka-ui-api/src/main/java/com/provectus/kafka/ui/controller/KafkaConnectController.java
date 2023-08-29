@@ -36,6 +36,7 @@ import reactor.core.publisher.Mono;
 public class KafkaConnectController extends AbstractController implements KafkaConnectApi {
   private static final Set<ConnectorActionDTO> RESTART_ACTIONS
       = Set.of(RESTART, RESTART_FAILED_TASKS, RESTART_ALL_TASKS);
+  private static final String CONNECTOR_NAME = "connectorName";
 
   private final KafkaConnectService kafkaConnectService;
 
@@ -112,7 +113,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
         .connect(connectName)
         .connectActions(ConnectAction.VIEW, ConnectAction.EDIT)
         .operationName("deleteConnector")
-        .operationParams(Map.of("connectorName", connectName))
+        .operationParams(Map.of(CONNECTOR_NAME, connectName))
         .build();
 
     return validateAccess(context).then(
@@ -180,7 +181,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
         .connect(connectName)
         .connectActions(ConnectAction.VIEW, ConnectAction.EDIT)
         .operationName("setConnectorConfig")
-        .operationParams(Map.of("connectorName", connectorName))
+        .operationParams(Map.of(CONNECTOR_NAME, connectorName))
         .build();
 
     return validateAccess(context).then(
@@ -207,7 +208,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
         .connect(connectName)
         .connectActions(connectActions)
         .operationName("updateConnectorState")
-        .operationParams(Map.of("connectorName", connectorName))
+        .operationParams(Map.of(CONNECTOR_NAME, connectorName))
         .build();
 
     return validateAccess(context).then(
@@ -227,7 +228,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
         .connect(connectName)
         .connectActions(ConnectAction.VIEW)
         .operationName("getConnectorTasks")
-        .operationParams(Map.of("connectorName", connectorName))
+        .operationParams(Map.of(CONNECTOR_NAME, connectorName))
         .build();
 
     return validateAccess(context).thenReturn(
@@ -247,7 +248,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
         .connect(connectName)
         .connectActions(ConnectAction.VIEW, ConnectAction.RESTART)
         .operationName("restartConnectorTask")
-        .operationParams(Map.of("connectorName", connectorName))
+        .operationParams(Map.of(CONNECTOR_NAME, connectorName))
         .build();
 
     return validateAccess(context).then(

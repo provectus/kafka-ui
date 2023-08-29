@@ -43,6 +43,8 @@ public class JsonAvroConversion {
 
   private static final JsonMapper MAPPER = new JsonMapper();
   private static final Schema NULL_SCHEMA = Schema.create(Schema.Type.NULL);
+  private static final String FORMAT = "format";
+  private static final String DATE_TIME = "date-time";
 
   // converts json into Object that is expected input for KafkaAvroSerializer
   // (with AVRO_USE_LOGICAL_TYPE_CONVERTERS flat enabled!)
@@ -347,7 +349,7 @@ public class JsonAvroConversion {
         new SimpleFieldSchema(
             new SimpleJsonType(
                 JsonType.Type.STRING,
-                Map.of("format", new TextNode("uuid"))))
+                Map.of(FORMAT, new TextNode("uuid"))))
     ),
 
     DECIMAL("decimal",
@@ -385,7 +387,7 @@ public class JsonAvroConversion {
         new SimpleFieldSchema(
             new SimpleJsonType(
                 JsonType.Type.STRING,
-                Map.of("format", new TextNode("date"))))
+                Map.of(FORMAT, new TextNode("date"))))
     ),
 
     TIME_MILLIS("time-millis",
@@ -406,7 +408,7 @@ public class JsonAvroConversion {
         new SimpleFieldSchema(
             new SimpleJsonType(
                 JsonType.Type.STRING,
-                Map.of("format", new TextNode("time"))))
+                Map.of(FORMAT, new TextNode("time"))))
     ),
 
     TIME_MICROS("time-micros",
@@ -427,7 +429,7 @@ public class JsonAvroConversion {
         new SimpleFieldSchema(
             new SimpleJsonType(
                 JsonType.Type.STRING,
-                Map.of("format", new TextNode("time"))))
+                Map.of(FORMAT, new TextNode("time"))))
     ),
 
     TIMESTAMP_MILLIS("timestamp-millis",
@@ -448,7 +450,7 @@ public class JsonAvroConversion {
         new SimpleFieldSchema(
             new SimpleJsonType(
                 JsonType.Type.STRING,
-                Map.of("format", new TextNode("date-time"))))
+                Map.of(FORMAT, new TextNode(DATE_TIME))))
     ),
 
     TIMESTAMP_MICROS("timestamp-micros",
@@ -473,7 +475,7 @@ public class JsonAvroConversion {
         new SimpleFieldSchema(
             new SimpleJsonType(
                 JsonType.Type.STRING,
-                Map.of("format", new TextNode("date-time"))))
+                Map.of(FORMAT, new TextNode(DATE_TIME))))
     ),
 
     LOCAL_TIMESTAMP_MILLIS("local-timestamp-millis",
@@ -491,7 +493,7 @@ public class JsonAvroConversion {
         new SimpleFieldSchema(
             new SimpleJsonType(
                 JsonType.Type.STRING,
-                Map.of("format", new TextNode("date-time"))))
+                Map.of(FORMAT, new TextNode(DATE_TIME))))
     ),
 
     LOCAL_TIMESTAMP_MICROS("local-timestamp-micros",
@@ -508,7 +510,7 @@ public class JsonAvroConversion {
         new SimpleFieldSchema(
             new SimpleJsonType(
                 JsonType.Type.STRING,
-                Map.of("format", new TextNode("date-time"))))
+                Map.of(FORMAT, new TextNode(DATE_TIME))))
     );
 
     private final String name;
