@@ -44,7 +44,6 @@ export interface TopicFormData {
   minInSyncReplicas: number;
   cleanupPolicy: string;
   retentionMs: number;
-  retentionBytes: number;
   maxMessageBytes: number;
   customParams: {
     name: string;
