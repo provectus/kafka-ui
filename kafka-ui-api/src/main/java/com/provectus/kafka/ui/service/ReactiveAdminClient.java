@@ -77,6 +77,9 @@ import org.apache.kafka.common.errors.SecurityDisabledException;
 import org.apache.kafka.common.errors.TopicAuthorizationException;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.errors.UnsupportedVersionException;
+import org.apache.kafka.common.quota.ClientQuotaAlteration;
+import org.apache.kafka.common.quota.ClientQuotaEntity;
+import org.apache.kafka.common.quota.ClientQuotaFilter;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import org.apache.kafka.common.resource.ResourcePatternFilter;
 import reactor.core.publisher.Flux;
@@ -94,7 +97,8 @@ public class ReactiveAdminClient implements Closeable {
     INCREMENTAL_ALTER_CONFIGS(2.3f),
     CONFIG_DOCUMENTATION_RETRIEVAL(2.6f),
     DESCRIBE_CLUSTER_INCLUDE_AUTHORIZED_OPERATIONS(2.3f),
-    AUTHORIZED_SECURITY_ENABLED(ReactiveAdminClient::isAuthorizedSecurityEnabled);
+    AUTHORIZED_SECURITY_ENABLED(ReactiveAdminClient::isAuthorizedSecurityEnabled),
+    CLIENT_QUOTA_MANAGEMENT(2.6f);
 
     private final BiFunction<AdminClient, Float, Mono<Boolean>> predicate;
 
@@ -656,6 +660,14 @@ public class ReactiveAdminClient implements Closeable {
 
   public Mono<Void> alterReplicaLogDirs(Map<TopicPartitionReplica, String> replicaAssignment) {
     return toMono(client.alterReplicaLogDirs(replicaAssignment).all());
+  }
+
+  public Mono<Map<ClientQuotaEntity, Map<String, Double>>> getClientQuotas(ClientQuotaFilter filter) {
+    return toMono(client.describeClientQuotas(filter).entities());
+  }
+
+  public Mono<Void> alterClientQuota(ClientQuotaAlteration alteration) {
+    return toMono(client.alterClientQuotas(List.of(alteration)).all());
   }
 
   private Mono<Void> incrementalAlterConfig(String topicName,

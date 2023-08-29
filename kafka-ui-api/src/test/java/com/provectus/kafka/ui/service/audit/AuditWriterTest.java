@@ -8,6 +8,7 @@ import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.AccessContext.AccessContextBuilder;
 import com.provectus.kafka.ui.model.rbac.permission.AclAction;
+import com.provectus.kafka.ui.model.rbac.permission.ClientQuotaAction;
 import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
@@ -55,9 +56,11 @@ class AuditWriterTest {
           SchemaAction.ALTER_ACTIONS.stream().map(a -> c -> c.schema("sc").schemaActions(a));
       Stream<UnaryOperator<AccessContextBuilder>> connEditActions =
           ConnectAction.ALTER_ACTIONS.stream().map(a -> c -> c.connect("conn").connectActions(a));
+      Stream<UnaryOperator<AccessContextBuilder>> quotaEditActions =
+          ClientQuotaAction.ALTER_ACTIONS.stream().map(a -> c -> c.clientQuotaActions(a));
       return Stream.of(
               topicEditActions, clusterConfigEditActions, aclEditActions,
-              cgEditActions, connEditActions, schemaEditActions
+              cgEditActions, connEditActions, schemaEditActions, quotaEditActions
           )
           .flatMap(c -> c)
           .map(setter -> setter.apply(AccessContext.builder().cluster("test").operationName("test")).build());
@@ -78,7 +81,8 @@ class AuditWriterTest {
           c -> c.aclActions(AclAction.VIEW),
           c -> c.consumerGroup("cg").consumerGroupActions(ConsumerGroupAction.VIEW),
           c -> c.schema("sc").schemaActions(SchemaAction.VIEW),
-          c -> c.connect("conn").connectActions(ConnectAction.VIEW)
+          c -> c.connect("conn").connectActions(ConnectAction.VIEW),
+          c -> c.clientQuotaActions(ClientQuotaAction.VIEW)
       ).map(setter -> setter.apply(AccessContext.builder().cluster("test").operationName("test")).build());
     }
   }
