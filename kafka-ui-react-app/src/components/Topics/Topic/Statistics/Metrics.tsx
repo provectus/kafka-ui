@@ -44,9 +44,11 @@ const Metrics: React.FC = () => {
   if (data.progress) {
     return (
       <S.ProgressContainer>
+        <S.ProgressPct>
+          {Math.floor(data.progress.completenessPercent || 0)}%
+        </S.ProgressPct>
         <S.ProgressBarWrapper>
           <ProgressBar completed={data.progress.completenessPercent || 0} />
-          <span> {Math.floor(data.progress.completenessPercent || 0)} %</span>
         </S.ProgressBarWrapper>
         <ActionButton
           onClick={async () => {
