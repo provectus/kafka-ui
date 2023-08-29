@@ -7,16 +7,22 @@ import org.jetbrains.annotations.Nullable;
 public enum TopicAction implements PermissibleAction {
 
   VIEW,
-  CREATE,
-  EDIT,
-  DELETE,
-  MESSAGES_READ,
-  MESSAGES_PRODUCE,
-  MESSAGES_DELETE,
+  CREATE(VIEW),
+  EDIT(VIEW),
+  DELETE(VIEW),
+  MESSAGES_READ(VIEW),
+  MESSAGES_PRODUCE(VIEW),
+  MESSAGES_DELETE(VIEW, EDIT),
 
   ;
 
   public static final Set<TopicAction> ALTER_ACTIONS = Set.of(CREATE, EDIT, DELETE, MESSAGES_PRODUCE, MESSAGES_DELETE);
+
+  private final TopicAction[] dependantActions;
+
+  TopicAction(TopicAction... dependantActions) {
+    this.dependantActions = dependantActions;
+  }
 
   @Nullable
   public static TopicAction fromString(String name) {
@@ -26,5 +32,10 @@ public enum TopicAction implements PermissibleAction {
   @Override
   public boolean isAlter() {
     return ALTER_ACTIONS.contains(this);
+  }
+
+  @Override
+  public PermissibleAction[] dependantActions() {
+    return dependantActions;
   }
 }

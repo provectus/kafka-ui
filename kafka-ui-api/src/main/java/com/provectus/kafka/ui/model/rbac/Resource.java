@@ -11,6 +11,7 @@ import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
 import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import jakarta.annotation.Nullable;
 import java.util.List;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.EnumUtils;
 
 public enum Resource {
@@ -48,7 +49,7 @@ public enum Resource {
     return EnumUtils.getEnum(Resource.class, name);
   }
 
-  public List<PermissibleAction> parseActions(List<String> actionsToParse) {
+  public List<PermissibleAction> parseActionsWithDependantsUnnest(List<String> actionsToParse) {
     return actionsToParse.stream()
         .map(toParse -> actions.stream()
             .filter(a -> toParse.equalsIgnoreCase(a.name()))
@@ -56,6 +57,8 @@ public enum Resource {
             .orElseThrow(() -> new IllegalArgumentException(
                 "'%s' actions not applicable for resource %s".formatted(toParse, name())))
         )
+        // unnesting all dependant actions
+        .flatMap(a -> Stream.concat(Stream.of(a), a.unnestAllDependants()))
         .toList();
   }
 

@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import org.apache.commons.collections.CollectionUtils;
 
 @Getter
 @ToString
@@ -20,7 +19,7 @@ public class Permission {
   Resource resource;
 
   List<String> actions;
-  transient List<PermissibleAction> parsedActions;
+  transient List<PermissibleAction> parsedActions; //includes all dependant actions
 
   @Nullable
   String value;
@@ -54,7 +53,7 @@ public class Permission {
     if (actions.stream().anyMatch("ALL"::equalsIgnoreCase)) {
       this.parsedActions = resource.allActions();
     } else {
-      this.parsedActions = resource.parseActions(actions);
+      this.parsedActions = resource.parseActionsWithDependantsUnnest(actions);
     }
   }
 

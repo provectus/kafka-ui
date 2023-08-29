@@ -7,14 +7,20 @@ import org.jetbrains.annotations.Nullable;
 public enum SchemaAction implements PermissibleAction {
 
   VIEW,
-  CREATE,
-  DELETE,
-  EDIT,
+  CREATE(VIEW),
+  DELETE(VIEW),
+  EDIT(VIEW),
   MODIFY_GLOBAL_COMPATIBILITY
 
   ;
 
   public static final Set<SchemaAction> ALTER_ACTIONS = Set.of(CREATE, DELETE, EDIT, MODIFY_GLOBAL_COMPATIBILITY);
+
+  private final SchemaAction[] dependantActions;
+
+  SchemaAction(SchemaAction... dependantActions) {
+    this.dependantActions = dependantActions;
+  }
 
   @Nullable
   public static SchemaAction fromString(String name) {
@@ -24,5 +30,10 @@ public enum SchemaAction implements PermissibleAction {
   @Override
   public boolean isAlter() {
     return ALTER_ACTIONS.contains(this);
+  }
+
+  @Override
+  public PermissibleAction[] dependantActions() {
+    return dependantActions;
   }
 }

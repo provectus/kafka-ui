@@ -7,12 +7,18 @@ import org.jetbrains.annotations.Nullable;
 public enum ConsumerGroupAction implements PermissibleAction {
 
   VIEW,
-  DELETE,
-  RESET_OFFSETS
+  DELETE(VIEW),
+  RESET_OFFSETS(VIEW)
 
   ;
 
   public static final Set<ConsumerGroupAction> ALTER_ACTIONS = Set.of(DELETE, RESET_OFFSETS);
+
+  private final ConsumerGroupAction[] dependantActions;
+
+  ConsumerGroupAction(ConsumerGroupAction... dependantActions) {
+    this.dependantActions = dependantActions;
+  }
 
   @Nullable
   public static ConsumerGroupAction fromString(String name) {
@@ -22,5 +28,10 @@ public enum ConsumerGroupAction implements PermissibleAction {
   @Override
   public boolean isAlter() {
     return ALTER_ACTIONS.contains(this);
+  }
+
+  @Override
+  public PermissibleAction[] dependantActions() {
+    return dependantActions;
   }
 }

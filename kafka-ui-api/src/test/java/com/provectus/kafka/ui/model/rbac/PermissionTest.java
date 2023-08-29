@@ -37,4 +37,16 @@ class PermissionTest {
         .isEqualTo(List.of(TopicAction.values()));
   }
 
+  @Test
+  void transformUnnestsDependantActions() {
+    var p = new Permission();
+    p.setResource("toPic");
+    p.setActions(List.of("EDIT"));
+
+    p.transform();
+
+    assertThat(p.getParsedActions())
+        .containsExactlyInAnyOrder(TopicAction.VIEW, TopicAction.EDIT);
+  }
+
 }
