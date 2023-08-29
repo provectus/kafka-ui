@@ -10,7 +10,7 @@ dependencies:
     version: 0.19.2(@types/react@18.0.9)(react-dom@18.1.0)(react@18.1.0)
   '@hookform/error-message':
     specifier: ^2.0.0
-    version: 2.0.0(react-dom@18.1.0)(react-hook-form@7.43.1)(react@18.1.0)
+    version: 2.0.1(react-dom@18.1.0)(react-hook-form@7.43.1)(react@18.1.0)
   '@hookform/resolvers':
     specifier: ^2.7.1
     version: 2.8.9(react-hook-form@7.43.1)
@@ -980,8 +980,8 @@ packages:
       - '@types/react'
     dev: false
 
-  /@hookform/error-message@2.0.0(react-dom@18.1.0)(react-hook-form@7.43.1)(react@18.1.0):
-    resolution: {integrity: sha512-Y90nHzjgL2MP7GFy75kscdvxrCTjtyxGmOLLxX14nd08OXRIh9lMH/y9Kpdo0p1IPowJBiZMHyueg7p+yrqynQ==}
+  /@hookform/error-message@2.0.1(react-dom@18.1.0)(react-hook-form@7.43.1)(react@18.1.0):
+    resolution: {integrity: sha512-U410sAr92xgxT1idlu9WWOVjndxLdgPUHEB8Schr27C9eh7/xUnITWpCMF93s+lGiG++D4JnbSnrb5A21AdSNg==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
