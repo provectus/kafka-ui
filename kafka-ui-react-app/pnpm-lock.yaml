@@ -198,7 +198,7 @@ devDependencies:
     version: 8.16.0
   eslint-config-airbnb:
     specifier: ^19.0.4
-    version: 19.0.4(eslint-plugin-import@2.26.0)(eslint-plugin-jsx-a11y@6.5.1)(eslint-plugin-react-hooks@4.5.0)(eslint-plugin-react@7.30.1)(eslint@8.16.0)
+    version: 19.0.4(eslint-plugin-import@2.26.0)(eslint-plugin-jsx-a11y@6.5.1)(eslint-plugin-react-hooks@4.6.0)(eslint-plugin-react@7.30.1)(eslint@8.16.0)
   eslint-config-airbnb-typescript:
     specifier: ^17.0.0
     version: 17.0.0(@typescript-eslint/eslint-plugin@5.29.0)(@typescript-eslint/parser@5.29.0)(eslint-plugin-import@2.26.0)(eslint@8.16.0)
@@ -228,7 +228,7 @@ devDependencies:
     version: 7.30.1(eslint@8.16.0)
   eslint-plugin-react-hooks:
     specifier: ^4.5.0
-    version: 4.5.0(eslint@8.16.0)
+    version: 4.6.0(eslint@8.16.0)
   jest-environment-jsdom:
     specifier: ^29.4.3
     version: 29.5.0
@@ -3091,7 +3091,7 @@ packages:
       eslint-plugin-import: 2.26.0(@typescript-eslint/parser@5.29.0)(eslint-import-resolver-typescript@3.2.7)(eslint@8.16.0)
     dev: true
 
-  /eslint-config-airbnb@19.0.4(eslint-plugin-import@2.26.0)(eslint-plugin-jsx-a11y@6.5.1)(eslint-plugin-react-hooks@4.5.0)(eslint-plugin-react@7.30.1)(eslint@8.16.0):
+  /eslint-config-airbnb@19.0.4(eslint-plugin-import@2.26.0)(eslint-plugin-jsx-a11y@6.5.1)(eslint-plugin-react-hooks@4.6.0)(eslint-plugin-react@7.30.1)(eslint@8.16.0):
     resolution: {integrity: sha512-T75QYQVQX57jiNgpF9r1KegMICE94VYwoFQyMGhrvc+lB8YF2E/M/PYDaQe1AJcWaEgqLE+ErXV1Og/+6Vyzew==}
     engines: {node: ^10.12.0 || ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
@@ -3106,7 +3106,7 @@ packages:
       eslint-plugin-import: 2.26.0(@typescript-eslint/parser@5.29.0)(eslint-import-resolver-typescript@3.2.7)(eslint@8.16.0)
       eslint-plugin-jsx-a11y: 6.5.1(eslint@8.16.0)
       eslint-plugin-react: 7.30.1(eslint@8.16.0)
-      eslint-plugin-react-hooks: 4.5.0(eslint@8.16.0)
+      eslint-plugin-react-hooks: 4.6.0(eslint@8.16.0)
       object.assign: 4.1.2
       object.entries: 1.1.5
     dev: true
@@ -3257,8 +3257,8 @@ packages:
       prettier-linter-helpers: 1.0.0
     dev: true
 
-  /eslint-plugin-react-hooks@4.5.0(eslint@8.16.0):
-    resolution: {integrity: sha512-8k1gRt7D7h03kd+SAAlzXkQwWK22BnK6GKZG+FJA6BAGy22CFvl8kCIXKpVux0cCxMWDQUPqSok0LKaZ0aOcCw==}
+  /eslint-plugin-react-hooks@4.6.0(eslint@8.16.0):
+    resolution: {integrity: sha512-oFc7Itz9Qxh2x4gNHStv3BqJq54ExXmfC+a1NjAta66IAN87Wu0R/QArgIS9qKzX3dXKPI9H5crl9QchNMY9+g==}
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
