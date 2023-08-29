@@ -18,18 +18,15 @@ public class ForwardEmitter extends RangePollingEmitter {
                         int messagesPerPage,
                         ConsumerRecordDeserializer deserializer,
                         Predicate<TopicMessageDTO> filter,
-                        PollingSettings pollingSettings) {
+                        PollingSettings pollingSettings,
+                        Cursor.Tracking cursor) {
     super(
         consumerSupplier,
         consumerPosition,
         messagesPerPage,
-        new MessagesProcessing(
-            deserializer,
-            filter,
-            true,
-            messagesPerPage
-        ),
-        pollingSettings
+        new MessagesProcessing(deserializer, filter, true, messagesPerPage),
+        pollingSettings,
+        cursor
     );
   }
 

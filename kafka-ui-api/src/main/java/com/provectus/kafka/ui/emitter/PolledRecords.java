@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.emitter;
 import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.TopicPartition;
@@ -30,6 +31,10 @@ public record PolledRecords(int count,
   @Override
   public Iterator<ConsumerRecord<Bytes, Bytes>> iterator() {
     return records.iterator();
+  }
+
+  public Set<TopicPartition> partitions() {
+    return records.partitions();
   }
 
   private static int calculatePolledRecSize(Iterable<ConsumerRecord<Bytes, Bytes>> recs) {

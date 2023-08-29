@@ -2,6 +2,8 @@ package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.TopicMessageConsumingDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
+import com.provectus.kafka.ui.model.TopicMessageNextPageCursorDTO;
+import javax.annotation.Nullable;
 import reactor.core.publisher.FluxSink;
 
 class ConsumingStats {
@@ -26,10 +28,15 @@ class ConsumingStats {
     filterApplyErrors++;
   }
 
-  void sendFinishEvent(FluxSink<TopicMessageEventDTO> sink) {
+  void sendFinishEvent(FluxSink<TopicMessageEventDTO> sink, @Nullable Cursor.Tracking cursor) {
     sink.next(
         new TopicMessageEventDTO()
             .type(TopicMessageEventDTO.TypeEnum.DONE)
+            .cursor(
+                cursor != null
+                    ? new TopicMessageNextPageCursorDTO().id(cursor.registerCursor())
+                    : null
+            )
             .consuming(createConsumingStats())
     );
   }

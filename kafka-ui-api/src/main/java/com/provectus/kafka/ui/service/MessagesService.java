@@ -1,8 +1,13 @@
 package com.provectus.kafka.ui.service;
 
+import com.google.common.base.Charsets;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.hash.Hashing;
 import com.google.common.util.concurrent.RateLimiter;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.emitter.BackwardEmitter;
+import com.provectus.kafka.ui.emitter.Cursor;
 import com.provectus.kafka.ui.emitter.ForwardEmitter;
 import com.provectus.kafka.ui.emitter.MessageFilters;
 import com.provectus.kafka.ui.emitter.TailingEmitter;
@@ -11,12 +16,12 @@ import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
-import com.provectus.kafka.ui.model.SeekDirectionDTO;
+import com.provectus.kafka.ui.model.PollingModeDTO;
 import com.provectus.kafka.ui.model.SmartFilterTestExecutionDTO;
 import com.provectus.kafka.ui.model.SmartFilterTestExecutionResultDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
 import com.provectus.kafka.ui.util.SslPropertiesUtil;
 import java.time.Instant;
@@ -27,12 +32,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -50,8 +55,11 @@ import reactor.core.scheduler.Schedulers;
 @Slf4j
 public class MessagesService {
 
+  private static final long SALT_FOR_HASHING = ThreadLocalRandom.current().nextLong();
+
   private static final int DEFAULT_MAX_PAGE_SIZE = 500;
   private static final int DEFAULT_PAGE_SIZE = 100;
+
   // limiting UI messages rate to 20/sec in tailing mode
   private static final int TAILING_UI_MESSAGE_THROTTLE_RATE = 20;
 
@@ -60,6 +68,12 @@ public class MessagesService {
   private final ConsumerGroupService consumerGroupService;
   private final int maxPageSize;
   private final int defaultPageSize;
+
+  private final Cache<String, Predicate<TopicMessageDTO>> registeredFilters = CacheBuilder.newBuilder()
+      .maximumSize(PollingCursorsStorage.MAX_SIZE)
+      .build();
+
+  private final PollingCursorsStorage cursorsStorage = new PollingCursorsStorage();
 
   public MessagesService(AdminClientService adminClientService,
                          DeserializationService deserializationService,
@@ -86,10 +100,7 @@ public class MessagesService {
   public static SmartFilterTestExecutionResultDTO execSmartFilterTest(SmartFilterTestExecutionDTO execData) {
     Predicate<TopicMessageDTO> predicate;
     try {
-      predicate = MessageFilters.createMsgFilter(
-          execData.getFilterCode(),
-          MessageFilterTypeDTO.GROOVY_SCRIPT
-      );
+      predicate = MessageFilters.groovyScriptFilter(execData.getFilterCode());
     } catch (Exception e) {
       log.info("Smart filter '{}' compilation error", execData.getFilterCode(), e);
       return new SmartFilterTestExecutionResultDTO()
@@ -197,67 +208,103 @@ public class MessagesService {
     return new KafkaProducer<>(properties);
   }
 
-  public Flux<TopicMessageEventDTO> loadMessages(KafkaCluster cluster, String topic,
+  public Flux<TopicMessageEventDTO> loadMessages(KafkaCluster cluster,
+                                                 String topic,
                                                  ConsumerPosition consumerPosition,
-                                                 @Nullable String query,
-                                                 MessageFilterTypeDTO filterQueryType,
-                                                 @Nullable Integer pageSize,
-                                                 SeekDirectionDTO seekDirection,
+                                                 @Nullable String containsStringFilter,
+                                                 @Nullable String filterId,
+                                                 @Nullable Integer limit,
                                                  @Nullable String keySerde,
                                                  @Nullable String valueSerde) {
+    return loadMessages(
+        cluster,
+        topic,
+        deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde),
+        consumerPosition,
+        getMsgFilter(containsStringFilter, filterId),
+        fixPageSize(limit)
+    );
+  }
+
+  public Flux<TopicMessageEventDTO> loadMessages(KafkaCluster cluster, String topic, String cursorId) {
+    Cursor cursor = cursorsStorage.getCursor(cursorId)
+        .orElseThrow(() -> new ValidationException("Next page cursor not found. Maybe it was evicted from cache."));
+    return loadMessages(
+        cluster,
+        topic,
+        cursor.deserializer(),
+        cursor.consumerPosition(),
+        cursor.filter(),
+        cursor.limit()
+    );
+  }
+
+  private Flux<TopicMessageEventDTO> loadMessages(KafkaCluster cluster,
+                                                  String topic,
+                                                  ConsumerRecordDeserializer deserializer,
+                                                  ConsumerPosition consumerPosition,
+                                                  Predicate<TopicMessageDTO> filter,
+                                                  int limit) {
     return withExistingTopic(cluster, topic)
         .flux()
         .publishOn(Schedulers.boundedElastic())
-        .flatMap(td -> loadMessagesImpl(cluster, topic, consumerPosition, query,
-            filterQueryType, fixPageSize(pageSize), seekDirection, keySerde, valueSerde));
-  }
-
-  private int fixPageSize(@Nullable Integer pageSize) {
-    return Optional.ofNullable(pageSize)
-        .filter(ps -> ps > 0 && ps <= maxPageSize)
-        .orElse(defaultPageSize);
+        .flatMap(td -> loadMessagesImpl(cluster, deserializer, consumerPosition, filter, limit));
   }
 
   private Flux<TopicMessageEventDTO> loadMessagesImpl(KafkaCluster cluster,
-                                                      String topic,
+                                                      ConsumerRecordDeserializer deserializer,
                                                       ConsumerPosition consumerPosition,
-                                                      @Nullable String query,
-                                                      MessageFilterTypeDTO filterQueryType,
-                                                      int limit,
-                                                      SeekDirectionDTO seekDirection,
-                                                      @Nullable String keySerde,
-                                                      @Nullable String valueSerde) {
-
-    var deserializer = deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde);
-    var filter = getMsgFilter(query, filterQueryType);
-    var emitter = switch (seekDirection) {
-      case FORWARD -> new ForwardEmitter(
+                                                      Predicate<TopicMessageDTO> filter,
+                                                      int limit) {
+    var emitter = switch (consumerPosition.pollingMode()) {
+      case TO_OFFSET, TO_TIMESTAMP, LATEST -> new BackwardEmitter(
           () -> consumerGroupService.createConsumer(cluster),
-          consumerPosition, limit, deserializer, filter, cluster.getPollingSettings()
+          consumerPosition,
+          limit,
+          deserializer,
+          filter,
+          cluster.getPollingSettings(),
+          cursorsStorage.createNewCursor(deserializer, consumerPosition, filter, limit)
       );
-      case BACKWARD -> new BackwardEmitter(
+      case FROM_OFFSET, FROM_TIMESTAMP, EARLIEST -> new ForwardEmitter(
           () -> consumerGroupService.createConsumer(cluster),
-          consumerPosition, limit, deserializer, filter, cluster.getPollingSettings()
+          consumerPosition,
+          limit,
+          deserializer,
+          filter,
+          cluster.getPollingSettings(),
+          cursorsStorage.createNewCursor(deserializer, consumerPosition, filter, limit)
       );
       case TAILING -> new TailingEmitter(
           () -> consumerGroupService.createConsumer(cluster),
-          consumerPosition, deserializer, filter, cluster.getPollingSettings()
+          consumerPosition,
+          deserializer,
+          filter,
+          cluster.getPollingSettings()
       );
     };
     return Flux.create(emitter)
-        .map(throttleUiPublish(seekDirection));
+        .map(throttleUiPublish(consumerPosition.pollingMode()));
   }
 
-  private Predicate<TopicMessageDTO> getMsgFilter(String query,
-                                                  MessageFilterTypeDTO filterQueryType) {
-    if (StringUtils.isEmpty(query)) {
-      return evt -> true;
+  private Predicate<TopicMessageDTO> getMsgFilter(@Nullable String containsStrFilter,
+                                                  @Nullable String smartFilterId) {
+    Predicate<TopicMessageDTO> messageFilter = MessageFilters.noop();
+    if (containsStrFilter != null) {
+      messageFilter = messageFilter.and(MessageFilters.containsStringFilter(containsStrFilter));
     }
-    return MessageFilters.createMsgFilter(query, filterQueryType);
+    if (smartFilterId != null) {
+      var registered = registeredFilters.getIfPresent(smartFilterId);
+      if (registered == null) {
+        throw new ValidationException("No filter was registered with id " + smartFilterId);
+      }
+      messageFilter = messageFilter.and(registered);
+    }
+    return messageFilter;
   }
 
-  private <T> UnaryOperator<T> throttleUiPublish(SeekDirectionDTO seekDirection) {
-    if (seekDirection == SeekDirectionDTO.TAILING) {
+  private <T> UnaryOperator<T> throttleUiPublish(PollingModeDTO pollingMode) {
+    if (pollingMode == PollingModeDTO.TAILING) {
       RateLimiter rateLimiter = RateLimiter.create(TAILING_UI_MESSAGE_THROTTLE_RATE);
       return m -> {
         rateLimiter.acquire(1);
@@ -267,6 +314,24 @@ public class MessagesService {
     // there is no need to throttle UI production rate for non-tailing modes, since max number of produced
     // messages is limited for them (with page size)
     return UnaryOperator.identity();
+  }
+
+  private int fixPageSize(@Nullable Integer pageSize) {
+    return Optional.ofNullable(pageSize)
+        .filter(ps -> ps > 0 && ps <= maxPageSize)
+        .orElse(defaultPageSize);
+  }
+
+  public String registerMessageFilter(String groovyCode) {
+    String saltedCode = groovyCode + SALT_FOR_HASHING;
+    String filterId = Hashing.sha256()
+        .hashString(saltedCode, Charsets.UTF_8)
+        .toString()
+        .substring(0, 8);
+    if (registeredFilters.getIfPresent(filterId) == null) {
+      registeredFilters.put(filterId, MessageFilters.groovyScriptFilter(groovyCode));
+    }
+    return filterId;
   }
 
 }

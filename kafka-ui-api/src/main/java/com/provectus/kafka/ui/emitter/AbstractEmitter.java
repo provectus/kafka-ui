@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
+import jakarta.annotation.Nullable;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
@@ -21,12 +22,14 @@ abstract class AbstractEmitter implements java.util.function.Consumer<FluxSink<T
     return records;
   }
 
-  protected boolean sendLimitReached() {
+  protected boolean isSendLimitReached() {
     return messagesProcessing.limitReached();
   }
 
-  protected void send(FluxSink<TopicMessageEventDTO> sink, Iterable<ConsumerRecord<Bytes, Bytes>> records) {
-    messagesProcessing.send(sink, records);
+  protected void send(FluxSink<TopicMessageEventDTO> sink,
+                      Iterable<ConsumerRecord<Bytes, Bytes>> records,
+                      @Nullable Cursor.Tracking cursor) {
+    messagesProcessing.send(sink, records, cursor);
   }
 
   protected void sendPhase(FluxSink<TopicMessageEventDTO> sink, String name) {
@@ -37,8 +40,9 @@ abstract class AbstractEmitter implements java.util.function.Consumer<FluxSink<T
     messagesProcessing.sentConsumingInfo(sink, records);
   }
 
-  protected void sendFinishStatsAndCompleteSink(FluxSink<TopicMessageEventDTO> sink) {
-    messagesProcessing.sendFinishEvent(sink);
+  // cursor is null if target partitions were fully polled (no, need to do paging)
+  protected void sendFinishStatsAndCompleteSink(FluxSink<TopicMessageEventDTO> sink, @Nullable Cursor.Tracking cursor) {
+    messagesProcessing.sendFinishEvents(sink, cursor);
     sink.complete();
   }
 }

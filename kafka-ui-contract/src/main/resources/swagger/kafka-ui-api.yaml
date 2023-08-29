@@ -763,6 +763,119 @@ paths:
         404:
           description: Not found
 
+  /api/clusters/{clusterName}/topics/{topicName}/smartfilters:
+    post:
+      tags:
+        - Messages
+      summary: registerFilter
+      operationId: registerFilter
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageFilterRegistration'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageFilterId'
+
+
+  /api/clusters/{clusterName}/topics/{topicName}/messages/v2:
+    get:
+      tags:
+        - Messages
+      summary: getTopicMessagesV2
+      operationId: getTopicMessagesV2
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: mode
+          in: query
+          description: Messages polling mode
+          required: true
+          schema:
+            $ref: "#/components/schemas/PollingMode"
+        - name: partitions
+          in: query
+          schema:
+            type: array
+            description: List of target partitions (all partitions if not provided)
+            items:
+              type: integer
+        - name: limit
+          in: query
+          description: Max number of messages can be returned
+          schema:
+            type: integer
+        - name: stringFilter
+          in: query
+          description: query string to contains string filtration
+          schema:
+            type: string
+        - name: smartFilterId
+          in: query
+          description: filter id, that was registered beforehand
+          schema:
+            type: string
+        - name: offset
+          in: query
+          description: message offset to read from / to
+          schema:
+            type: integer
+            format: int64
+        - name: timestamp
+          in: query
+          description: timestamp (in ms) to read from / to
+          schema:
+            type: integer
+            format: int64
+        - name: keySerde
+          in: query
+          description: "Serde that should be used for deserialization. Will be chosen automatically if not set."
+          schema:
+            type: string
+        - name: valueSerde
+          in: query
+          description: "Serde that should be used for deserialization. Will be chosen automatically if not set."
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          description: "id of the cursor for pagination"
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            text/event-stream:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicMessageEvent'
+
   /api/clusters/{clusterName}/topics/{topicName}/consumer-groups:
     get:
       tags:
@@ -2731,13 +2844,14 @@ components:
             - MESSAGE
             - CONSUMING
             - DONE
-            - EMIT_THROTTLING
         message:
           $ref: "#/components/schemas/TopicMessage"
         phase:
           $ref: "#/components/schemas/TopicMessagePhase"
         consuming:
           $ref: "#/components/schemas/TopicMessageConsuming"
+        cursor:
+          $ref: "#/components/schemas/TopicMessageNextPageCursor"
 
     TopicMessagePhase:
       type: object
@@ -2767,6 +2881,11 @@ components:
         filterApplyErrors:
           type: integer
 
+    TopicMessageNextPageCursor:
+      type: object
+      properties:
+        id:
+          type: string
 
     TopicMessage:
       type: object
@@ -2838,6 +2957,29 @@ components:
         - OFFSET
         - TIMESTAMP
         - LATEST
+
+    MessageFilterRegistration:
+      type: object
+      properties:
+        filterCode:
+          type: string
+
+    MessageFilterId:
+      type: object
+      properties:
+        id:
+          type: string
+
+    PollingMode:
+      type: string
+      enum:
+        - FROM_OFFSET
+        - TO_OFFSET
+        - FROM_TIMESTAMP
+        - TO_TIMESTAMP
+        - LATEST
+        - EARLIEST
+        - TAILING
 
     MessageFilterType:
       type: string

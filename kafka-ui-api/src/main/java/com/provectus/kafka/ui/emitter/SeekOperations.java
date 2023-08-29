@@ -1,13 +1,13 @@
 package com.provectus.kafka.ui.emitter;
 
+import static com.provectus.kafka.ui.model.PollingModeDTO.TO_TIMESTAMP;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.model.ConsumerPosition;
-import com.provectus.kafka.ui.model.SeekTypeDTO;
+import com.provectus.kafka.ui.model.PollingModeDTO;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.mutable.MutableLong;
@@ -22,17 +22,11 @@ public class SeekOperations {
   private final Map<TopicPartition, Long> offsetsForSeek; //only contains non-empty partitions!
 
   public static SeekOperations create(Consumer<?, ?> consumer, ConsumerPosition consumerPosition) {
-    OffsetsInfo offsetsInfo;
-    if (consumerPosition.getSeekTo() == null) {
-      offsetsInfo = new OffsetsInfo(consumer, consumerPosition.getTopic());
-    } else {
-      offsetsInfo = new OffsetsInfo(consumer, consumerPosition.getSeekTo().keySet());
-    }
-    return new SeekOperations(
-        consumer,
-        offsetsInfo,
-        getOffsetsForSeek(consumer, offsetsInfo, consumerPosition.getSeekType(), consumerPosition.getSeekTo())
-    );
+    OffsetsInfo offsetsInfo = consumerPosition.partitions().isEmpty()
+        ? new OffsetsInfo(consumer, consumerPosition.topic())
+        : new OffsetsInfo(consumer, consumerPosition.partitions());
+    var offsetsToSeek = getOffsetsForSeek(consumer, offsetsInfo, consumerPosition);
+    return new SeekOperations(consumer, offsetsInfo, offsetsToSeek);
   }
 
   public void assignAndSeekNonEmptyPartitions() {
@@ -75,27 +69,26 @@ public class SeekOperations {
   @VisibleForTesting
   static Map<TopicPartition, Long> getOffsetsForSeek(Consumer<?, ?> consumer,
                                                      OffsetsInfo offsetsInfo,
-                                                     SeekTypeDTO seekType,
-                                                     @Nullable Map<TopicPartition, Long> seekTo) {
-    switch (seekType) {
-      case LATEST:
-        return consumer.endOffsets(offsetsInfo.getNonEmptyPartitions());
-      case BEGINNING:
-        return consumer.beginningOffsets(offsetsInfo.getNonEmptyPartitions());
-      case OFFSET:
-        Preconditions.checkNotNull(seekTo);
-        return fixOffsets(offsetsInfo, seekTo);
-      case TIMESTAMP:
-        Preconditions.checkNotNull(seekTo);
-        return offsetsForTimestamp(consumer, offsetsInfo, seekTo);
-      default:
-        throw new IllegalStateException();
-    }
+                                                     ConsumerPosition position) {
+    return switch (position.pollingMode()) {
+      case TAILING -> consumer.endOffsets(offsetsInfo.allTargetPartitions());
+      case LATEST -> consumer.endOffsets(offsetsInfo.getNonEmptyPartitions());
+      case EARLIEST -> consumer.beginningOffsets(offsetsInfo.getNonEmptyPartitions());
+      case FROM_OFFSET, TO_OFFSET -> fixOffsets(offsetsInfo, requireNonNull(position.offsets()));
+      case FROM_TIMESTAMP, TO_TIMESTAMP ->
+          offsetsForTimestamp(consumer, position.pollingMode(), offsetsInfo, requireNonNull(position.timestamp()));
+    };
   }
 
-  private static Map<TopicPartition, Long> fixOffsets(OffsetsInfo offsetsInfo, Map<TopicPartition, Long> offsets) {
-    offsets = new HashMap<>(offsets);
-    offsets.keySet().retainAll(offsetsInfo.getNonEmptyPartitions());
+  private static Map<TopicPartition, Long> fixOffsets(OffsetsInfo offsetsInfo,
+                                                      ConsumerPosition.Offsets positionOffset) {
+    var offsets = new HashMap<TopicPartition, Long>();
+    if (positionOffset.offset() != null) {
+      offsetsInfo.getNonEmptyPartitions().forEach(tp -> offsets.put(tp, positionOffset.offset()));
+    } else {
+      offsets.putAll(requireNonNull(positionOffset.tpOffsets()));
+      offsets.keySet().retainAll(offsetsInfo.getNonEmptyPartitions());
+    }
 
     Map<TopicPartition, Long> result = new HashMap<>();
     offsets.forEach((tp, targetOffset) -> {
@@ -112,13 +105,25 @@ public class SeekOperations {
     return result;
   }
 
-  private static Map<TopicPartition, Long> offsetsForTimestamp(Consumer<?, ?> consumer, OffsetsInfo offsetsInfo,
-                                                               Map<TopicPartition, Long> timestamps) {
-    timestamps = new HashMap<>(timestamps);
-    timestamps.keySet().retainAll(offsetsInfo.getNonEmptyPartitions());
+  private static Map<TopicPartition, Long> offsetsForTimestamp(Consumer<?, ?> consumer,
+                                                               PollingModeDTO pollingMode,
+                                                               OffsetsInfo offsetsInfo,
+                                                               Long timestamp) {
+    Map<TopicPartition, Long> timestamps = new HashMap<>();
+    offsetsInfo.getNonEmptyPartitions().forEach(tp -> timestamps.put(tp, timestamp));
 
-    return consumer.offsetsForTimes(timestamps).entrySet().stream()
-        .filter(e -> e.getValue() != null)
-        .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().offset()));
+    Map<TopicPartition, Long> result = new HashMap<>();
+    consumer.offsetsForTimes(timestamps).forEach((tp, offsetAndTimestamp) -> {
+      if (offsetAndTimestamp == null) {
+        if (pollingMode == TO_TIMESTAMP && offsetsInfo.getNonEmptyPartitions().contains(tp)) {
+          // if no offset was returned this means that *all* timestamps are lower
+          // than target timestamp. Is case of TO_OFFSET mode we need to read from the ending of tp
+          result.put(tp, offsetsInfo.getEndOffsets().get(tp));
+        }
+      } else {
+        result.put(tp, offsetAndTimestamp.offset());
+      }
+    });
+    return result;
   }
 }
