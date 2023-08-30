@@ -52,6 +52,7 @@ import reactor.core.publisher.Mono;
 public class AccessControlService {
 
   private static final String ACCESS_DENIED = "Access denied";
+  private static final String ACTIONS_ARE_EMPTY = "actions are empty";
 
   @Nullable
   private final InMemoryReactiveClientRegistrationRepository clientRegistrationRepository;
@@ -206,7 +207,7 @@ public class AccessControlService {
     if (context.getTopic() == null && context.getTopicActions().isEmpty()) {
       return true;
     }
-    Assert.isTrue(!context.getTopicActions().isEmpty(), "actions are empty");
+    Assert.isTrue(!context.getTopicActions().isEmpty(), ACTIONS_ARE_EMPTY);
 
     Set<String> requiredActions = context.getTopicActions()
         .stream()
@@ -243,7 +244,7 @@ public class AccessControlService {
     if (context.getConsumerGroup() == null && context.getConsumerGroupActions().isEmpty()) {
       return true;
     }
-    Assert.isTrue(!context.getConsumerGroupActions().isEmpty(), "actions are empty");
+    Assert.isTrue(!context.getConsumerGroupActions().isEmpty(), ACTIONS_ARE_EMPTY);
 
     Set<String> requiredActions = context.getConsumerGroupActions()
         .stream()
@@ -276,7 +277,7 @@ public class AccessControlService {
     if (context.getSchema() == null && context.getSchemaActions().isEmpty()) {
       return true;
     }
-    Assert.isTrue(!context.getSchemaActions().isEmpty(), "actions are empty");
+    Assert.isTrue(!context.getSchemaActions().isEmpty(), ACTIONS_ARE_EMPTY);
 
     Set<String> requiredActions = context.getSchemaActions()
         .stream()
@@ -309,7 +310,7 @@ public class AccessControlService {
     if (context.getConnect() == null && context.getConnectActions().isEmpty()) {
       return true;
     }
-    Assert.isTrue(!context.getConnectActions().isEmpty(), "actions are empty");
+    Assert.isTrue(!context.getConnectActions().isEmpty(), ACTIONS_ARE_EMPTY);
 
     Set<String> requiredActions = context.getConnectActions()
         .stream()

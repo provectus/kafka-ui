@@ -15,7 +15,6 @@ import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
 import com.provectus.kafka.ui.service.SchemaRegistryService;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -235,7 +234,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
           List<String> subjectsToRender = filteredSubjects.stream()
               .skip(subjectToSkip)
               .limit(pageSize)
-              .collect(Collectors.toList());
+              .toList();
           return schemaRegistryService.getAllLatestVersionSchemas(getCluster(clusterName), subjectsToRender)
               .map(subjs -> subjs.stream().map(kafkaSrMapper::toDto).toList())
               .map(subjs -> new SchemaSubjectsResponseDTO().pageCount(totalPages).schemas(subjs));

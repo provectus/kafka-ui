@@ -19,6 +19,8 @@ import io.qameta.allure.Step;
 
 public class TopicCreateEditForm extends BasePage {
 
+  private static final String RETENTION_BYTES = "retentionBytes";
+
   protected SelenideElement timeToRetainField = $x("//input[@id='timeToRetain']");
   protected SelenideElement partitionsField = $x("//input[@name='partitions']");
   protected SelenideElement nameField = $(id("topicFormName"));
@@ -138,12 +140,12 @@ public class TopicCreateEditForm extends BasePage {
 
   @Step
   public TopicCreateEditForm selectRetentionBytes(String visibleValue) {
-    return selectFromDropDownByVisibleText("retentionBytes", visibleValue);
+    return selectFromDropDownByVisibleText(RETENTION_BYTES, visibleValue);
   }
 
   @Step
   public TopicCreateEditForm selectRetentionBytes(Long optionValue) {
-    return selectFromDropDownByOptionValue("retentionBytes", optionValue.toString());
+    return selectFromDropDownByOptionValue(RETENTION_BYTES, optionValue.toString());
   }
 
   @Step
@@ -202,7 +204,7 @@ public class TopicCreateEditForm extends BasePage {
 
   @Step
   public String getMaxSizeOnDisk() {
-    return new KafkaUiSelectElement("retentionBytes").getCurrentValue();
+    return new KafkaUiSelectElement(RETENTION_BYTES).getCurrentValue();
   }
 
   @Step
