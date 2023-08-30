@@ -31,6 +31,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import lombok.AccessLevel;
@@ -55,6 +56,7 @@ import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.OffsetSpec;
+import org.apache.kafka.clients.admin.ProducerState;
 import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -656,6 +658,21 @@ public class ReactiveAdminClient implements Closeable {
 
   public Mono<Void> alterReplicaLogDirs(Map<TopicPartitionReplica, String> replicaAssignment) {
     return toMono(client.alterReplicaLogDirs(replicaAssignment).all());
+  }
+
+  // returns tp -> list of active producer's states (if any)
+  public Mono<Map<TopicPartition, List<ProducerState>>> getActiveProducersState(String topic) {
+    return describeTopic(topic)
+        .map(td -> client.describeProducers(
+                IntStream.range(0, td.partitions().size())
+                    .mapToObj(i -> new TopicPartition(topic, i))
+                    .toList()
+            ).all()
+        )
+        .flatMap(ReactiveAdminClient::toMono)
+        .map(map -> map.entrySet().stream()
+            .filter(e -> !e.getValue().activeProducers().isEmpty()) // skipping partitions without producers
+            .collect(toMap(Map.Entry::getKey, e -> e.getValue().activeProducers())));
   }
 
   private Mono<Void> incrementalAlterConfig(String topicName,

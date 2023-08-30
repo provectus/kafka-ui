@@ -5,4 +5,5 @@ package com.provectus.kafka.ui.util.annotation;
  * should be marked with this annotation to make further update process easier.
  */
 public @interface KafkaClientInternalsDependant {
+  String value() default "";
 }
