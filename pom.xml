@@ -49,8 +49,8 @@
         <testcontainers.version>1.17.5</testcontainers.version>
 
         <!-- Frontend dependency versions -->
-        <node.version>v16.15.0</node.version>
-        <pnpm.version>v7.4.0</pnpm.version>
+        <node.version>v18.17.1</node.version>
+        <pnpm.version>v8.6.12</pnpm.version>
 
         <!-- Plugin versions -->
         <fabric8-maven-plugin.version>0.42.1</fabric8-maven-plugin.version>

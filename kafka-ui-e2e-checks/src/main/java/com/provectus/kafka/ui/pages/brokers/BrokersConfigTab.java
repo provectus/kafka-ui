@@ -16,6 +16,8 @@ import java.util.stream.Stream;
 
 public class BrokersConfigTab extends BasePage {
 
+  protected List<SelenideElement> editBtn = $$x("//button[@aria-label='editAction']");
+  protected SelenideElement searchByKeyField = $x("//input[@placeholder='Search by Key or Value']");
   protected SelenideElement sourceInfoIcon = $x("//div[text()='Source']/..//div/div[@class]");
   protected SelenideElement sourceInfoTooltip = $x("//div[text()='Source']/..//div/div[@style]");
   protected ElementsCollection editBtns = $$x("//button[@aria-label='editAction']");

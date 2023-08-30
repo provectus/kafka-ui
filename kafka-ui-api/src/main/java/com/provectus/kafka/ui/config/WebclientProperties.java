@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.config;
 
 import com.provectus.kafka.ui.exception.ValidationException;
-import java.beans.Transient;
 import javax.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

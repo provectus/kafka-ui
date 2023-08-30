@@ -43,6 +43,8 @@ public class SchemaRegistrySerde implements BuiltInSerde {
     return "SchemaRegistry";
   }
 
+  private static final String SCHEMA_REGISTRY = "schemaRegistry";
+
   private SchemaRegistryClient schemaRegistryClient;
   private List<String> schemaRegistryUrls;
   private String valueSchemaNameTemplate;
@@ -54,7 +56,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
   @Override
   public boolean canBeAutoConfigured(PropertyResolver kafkaClusterProperties,
                                      PropertyResolver globalProperties) {
-    return kafkaClusterProperties.getListProperty("schemaRegistry", String.class)
+    return kafkaClusterProperties.getListProperty(SCHEMA_REGISTRY, String.class)
         .filter(lst -> !lst.isEmpty())
         .isPresent();
   }
@@ -62,7 +64,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
   @Override
   public void autoConfigure(PropertyResolver kafkaClusterProperties,
                             PropertyResolver globalProperties) {
-    var urls = kafkaClusterProperties.getListProperty("schemaRegistry", String.class)
+    var urls = kafkaClusterProperties.getListProperty(SCHEMA_REGISTRY, String.class)
         .filter(lst -> !lst.isEmpty())
         .orElseThrow(() -> new ValidationException("No urls provided for schema registry"));
     configure(
@@ -88,7 +90,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
                         PropertyResolver kafkaClusterProperties,
                         PropertyResolver globalProperties) {
     var urls = serdeProperties.getListProperty("url", String.class)
-        .or(() -> kafkaClusterProperties.getListProperty("schemaRegistry", String.class))
+        .or(() -> kafkaClusterProperties.getListProperty(SCHEMA_REGISTRY, String.class))
         .filter(lst -> !lst.isEmpty())
         .orElseThrow(() -> new ValidationException("No urls provided for schema registry"));
     configure(

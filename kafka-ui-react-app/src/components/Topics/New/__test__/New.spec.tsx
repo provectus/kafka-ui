@@ -60,16 +60,16 @@ describe('New', () => {
     await userEvent.clear(screen.getByPlaceholderText('Topic Name'));
     await userEvent.tab();
     await expect(
-      screen.getByText('name is a required field')
+      screen.getByText('Topic Name is required')
     ).toBeInTheDocument();
     await userEvent.type(
-      screen.getByLabelText('Number of partitions *'),
+      screen.getByLabelText('Number of Partitions *'),
       minValue
     );
-    await userEvent.clear(screen.getByLabelText('Number of partitions *'));
+    await userEvent.clear(screen.getByLabelText('Number of Partitions *'));
     await userEvent.tab();
     await expect(
-      screen.getByText('Number of partitions is required and must be a number')
+      screen.getByText('Number of Partitions is required and must be a number')
     ).toBeInTheDocument();
 
     expect(createTopicMock).not.toHaveBeenCalled();
@@ -89,7 +89,7 @@ describe('New', () => {
     renderComponent(clusterTopicNewPath(clusterName));
     await userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
     await userEvent.type(
-      screen.getByLabelText('Number of partitions *'),
+      screen.getByLabelText('Number of Partitions *'),
       minValue
     );
     await userEvent.click(screen.getByText('Create topic'));
