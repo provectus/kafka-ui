@@ -22,6 +22,7 @@ import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicCreationDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
+import com.provectus.kafka.ui.model.TopicProducerStateDTO;
 import com.provectus.kafka.ui.model.TopicUpdateDTO;
 import com.provectus.kafka.ui.model.TopicsResponseDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
@@ -324,6 +325,34 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .thenReturn(topicAnalysisService.getTopicAnalysis(getCluster(clusterName), topicName)
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.notFound().build()))
+        .doOnEach(sig -> audit(context, sig));
+  }
+
+  @Override
+  public Mono<ResponseEntity<Flux<TopicProducerStateDTO>>> getActiveProducerStates(String clusterName,
+                                                                                   String topicName,
+                                                                                   ServerWebExchange exchange) {
+    var context = AccessContext.builder()
+        .cluster(clusterName)
+        .topic(topicName)
+        .topicActions(VIEW)
+        .operationName("getActiveProducerStates")
+        .build();
+
+    Comparator<TopicProducerStateDTO> ordering =
+        Comparator.comparingInt(TopicProducerStateDTO::getPartition)
+            .thenComparing(Comparator.comparing(TopicProducerStateDTO::getProducerId).reversed());
+
+    Flux<TopicProducerStateDTO> states = topicsService.getActiveProducersState(getCluster(clusterName), topicName)
+        .flatMapMany(statesMap ->
+            Flux.fromStream(
+                statesMap.entrySet().stream()
+                    .flatMap(e -> e.getValue().stream().map(p -> clusterMapper.map(e.getKey().partition(), p)))
+                    .sorted(ordering)));
+
+    return validateAccess(context)
+        .thenReturn(states)
+        .map(ResponseEntity::ok)
         .doOnEach(sig -> audit(context, sig));
   }
 
