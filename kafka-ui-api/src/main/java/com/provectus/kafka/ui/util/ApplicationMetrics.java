@@ -18,6 +18,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = PRIVATE)
 public class ApplicationMetrics {
 
+  // kafka-ui specific metrics prefix. Added to make it easier to distinguish kui metrics from
+  // other metrics, exposed by spring boot (like http stats, jvm, etc.)
+  private static final String COMMON_PREFIX = "kui_";
+
   private final String clusterName;
   private final MeterRegistry registry;
 
@@ -40,7 +44,7 @@ public class ApplicationMetrics {
   }
 
   private Counter polledRecords(String topic) {
-    return Counter.builder("topic_records_polled")
+    return Counter.builder(COMMON_PREFIX + "topic_records_polled")
         .description("Number of records polled from topic")
         .tag("cluster", clusterName)
         .tag("topic", topic)
@@ -48,7 +52,7 @@ public class ApplicationMetrics {
   }
 
   private DistributionSummary polledBytes(String topic) {
-    return DistributionSummary.builder("topic_polled_bytes")
+    return DistributionSummary.builder(COMMON_PREFIX + "topic_polled_bytes")
         .description("Bytes polled from kafka topic")
         .tag("cluster", clusterName)
         .tag("topic", topic)
@@ -56,7 +60,7 @@ public class ApplicationMetrics {
   }
 
   private Timer pollTimer(String topic) {
-    return Timer.builder("topic_poll_time")
+    return Timer.builder(COMMON_PREFIX + "topic_poll_time")
         .description("Time spend in polling for topic")
         .tag("cluster", clusterName)
         .tag("topic", topic)
@@ -64,7 +68,7 @@ public class ApplicationMetrics {
   }
 
   private Counter pollThrottlingActivations() {
-    return Counter.builder("poll_throttling_activations")
+    return Counter.builder(COMMON_PREFIX + "poll_throttling_activations")
         .description("Number of poll throttling activations")
         .tag("cluster", clusterName)
         .register(registry);
@@ -72,7 +76,7 @@ public class ApplicationMetrics {
 
   public AtomicInteger activeConsumers() {
     var count = new AtomicInteger();
-    Gauge.builder("active_consumers", () -> count)
+    Gauge.builder(COMMON_PREFIX + "active_consumers", () -> count)
         .description("Number of active consumers")
         .tag("cluster", clusterName)
         .register(registry);
