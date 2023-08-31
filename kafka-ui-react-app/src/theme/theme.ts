@@ -291,6 +291,7 @@ const baseTheme = {
   },
   statictics: {
     createdAtColor: Colors.neutral[50],
+    progressPctColor: Colors.neutral[100],
   },
   progressBar: {
     backgroundColor: Colors.neutral[3],

@@ -14,6 +14,7 @@ describe('Permission Helpers', () => {
       clusters: [clusterName1],
       resource: ResourceType.TOPIC,
       actions: [Action.VIEW, Action.CREATE],
+      value: '.*',
     },
     {
       clusters: [clusterName1],
@@ -24,11 +25,18 @@ describe('Permission Helpers', () => {
       clusters: [clusterName1, clusterName2],
       resource: ResourceType.SCHEMA,
       actions: [Action.VIEW],
+      value: '.*',
     },
     {
       clusters: [clusterName1, clusterName2],
       resource: ResourceType.CONNECT,
       actions: [Action.VIEW],
+      value: '.*',
+    },
+    {
+      clusters: [clusterName1],
+      resource: ResourceType.APPLICATIONCONFIG,
+      actions: [Action.EDIT],
     },
     {
       clusters: [clusterName1],
@@ -39,12 +47,23 @@ describe('Permission Helpers', () => {
       clusters: [clusterName1],
       resource: ResourceType.CONSUMER,
       actions: [Action.DELETE],
+      value: '.*',
     },
     {
       clusters: [clusterName1],
       resource: ResourceType.SCHEMA,
       actions: [Action.EDIT, Action.DELETE, Action.CREATE],
       value: '123.*',
+    },
+    {
+      clusters: [clusterName1],
+      resource: ResourceType.ACL,
+      actions: [Action.VIEW],
+    },
+    {
+      clusters: [clusterName1],
+      resource: ResourceType.AUDIT,
+      actions: [Action.VIEW],
     },
     {
       clusters: [clusterName1, clusterName2],
@@ -57,6 +76,12 @@ describe('Permission Helpers', () => {
       resource: ResourceType.TOPIC,
       value: '.*',
       actions: [Action.EDIT, Action.DELETE],
+    },
+    {
+      clusters: [clusterName1, clusterName2],
+      resource: ResourceType.TOPIC,
+      value: 'bobross.*',
+      actions: [Action.VIEW, Action.MESSAGES_READ],
     },
   ];
 
@@ -100,11 +125,11 @@ describe('Permission Helpers', () => {
 
       expect(result.size).toBe(2);
 
-      expect(cluster1Map?.size).toBe(6);
+      expect(cluster1Map?.size).toBe(9);
       expect(cluster2Map?.size).toBe(3);
 
       // clusterMap1
-      expect(cluster1Map?.get(ResourceType.TOPIC)).toHaveLength(3);
+      expect(cluster1Map?.get(ResourceType.TOPIC)).toHaveLength(4);
       expect(cluster1Map?.get(ResourceType.SCHEMA)).toHaveLength(2);
       expect(cluster1Map?.get(ResourceType.CONSUMER)).toHaveLength(1);
       expect(cluster1Map?.get(ResourceType.CLUSTERCONFIG)).toHaveLength(1);
@@ -177,33 +202,13 @@ describe('Permission Helpers', () => {
       ).toBeFalsy();
     });
 
-    it('should check if the isPermitted returns the correct value without name values', () => {
+    it('should check if the isPermitted returns the correct value without resource values (exempt list)', () => {
       expect(
         isPermitted({
           roles,
           clusterName: clusterName1,
-          resource: ResourceType.TOPIC,
-          action: Action.VIEW,
-          rbacFlag: true,
-        })
-      ).toBeTruthy();
-
-      expect(
-        isPermitted({
-          roles,
-          clusterName: clusterName2,
-          resource: ResourceType.TOPIC,
-          action: Action.VIEW,
-          rbacFlag: true,
-        })
-      ).toBeFalsy();
-
-      expect(
-        isPermitted({
-          roles,
-          clusterName: clusterName1,
-          resource: ResourceType.SCHEMA,
-          action: Action.VIEW,
+          resource: ResourceType.KSQL,
+          action: Action.EXECUTE,
           rbacFlag: true,
         })
       ).toBeTruthy();
@@ -222,8 +227,8 @@ describe('Permission Helpers', () => {
         isPermitted({
           roles,
           clusterName: clusterName1,
-          resource: ResourceType.KSQL,
-          action: Action.EXECUTE,
+          resource: ResourceType.APPLICATIONCONFIG,
+          action: Action.EDIT,
           rbacFlag: true,
         })
       ).toBeTruthy();
@@ -231,9 +236,29 @@ describe('Permission Helpers', () => {
       expect(
         isPermitted({
           roles,
-          clusterName: clusterName2,
-          resource: ResourceType.KSQL,
-          action: Action.EXECUTE,
+          clusterName: clusterName1,
+          resource: ResourceType.ACL,
+          action: Action.VIEW,
+          rbacFlag: true,
+        })
+      ).toBeTruthy();
+
+      expect(
+        isPermitted({
+          roles,
+          clusterName: clusterName1,
+          resource: ResourceType.AUDIT,
+          action: Action.VIEW,
+          rbacFlag: true,
+        })
+      ).toBeTruthy();
+
+      expect(
+        isPermitted({
+          roles,
+          clusterName: clusterName1,
+          resource: ResourceType.TOPIC,
+          action: Action.VIEW,
           rbacFlag: true,
         })
       ).toBeFalsy();
@@ -241,32 +266,22 @@ describe('Permission Helpers', () => {
       expect(
         isPermitted({
           roles,
-          clusterName: clusterName2,
-          resource: ResourceType.SCHEMA,
-          action: Action.VIEW,
-          rbacFlag: true,
-        })
-      ).toBeTruthy();
-
-      expect(
-        isPermitted({
-          roles,
           clusterName: clusterName1,
           resource: ResourceType.SCHEMA,
           action: Action.VIEW,
           rbacFlag: true,
         })
-      ).toBeTruthy();
+      ).toBeFalsy();
 
       expect(
         isPermitted({
           roles,
-          clusterName: clusterName2,
-          resource: ResourceType.CONNECT,
+          clusterName: clusterName1,
+          resource: ResourceType.CONSUMER,
           action: Action.VIEW,
           rbacFlag: true,
         })
-      ).toBeTruthy();
+      ).toBeFalsy();
 
       expect(
         isPermitted({
@@ -276,7 +291,7 @@ describe('Permission Helpers', () => {
           action: Action.VIEW,
           rbacFlag: true,
         })
-      ).toBeTruthy();
+      ).toBeFalsy();
     });
 
     it('should check if the isPermitted returns the correct value with name values', () => {
@@ -445,7 +460,7 @@ describe('Permission Helpers', () => {
           value: '123456',
           rbacFlag: true,
         })
-      ).toBeFalsy();
+      ).toBeTruthy();
 
       expect(
         isPermitted({
@@ -465,6 +480,17 @@ describe('Permission Helpers', () => {
           resource: ResourceType.SCHEMA,
           action: [],
           value: '123456',
+          rbacFlag: true,
+        })
+      ).toBeTruthy();
+
+      expect(
+        isPermitted({
+          roles,
+          clusterName: clusterName1,
+          resource: ResourceType.TOPIC,
+          action: [Action.MESSAGES_READ],
+          value: 'bobross-test',
           rbacFlag: true,
         })
       ).toBeTruthy();

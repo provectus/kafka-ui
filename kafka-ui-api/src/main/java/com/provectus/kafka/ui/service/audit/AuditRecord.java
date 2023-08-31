@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.exception.CustomBaseException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.Resource;
+import com.provectus.kafka.ui.model.rbac.permission.PermissibleAction;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,16 +34,20 @@ record AuditRecord(String timestamp,
     return MAPPER.writeValueAsString(this);
   }
 
-  record AuditResource(String accessType, Resource type, @Nullable Object id) {
+  record AuditResource(String accessType, boolean alter, Resource type, @Nullable Object id) {
+
+    private static AuditResource create(PermissibleAction action, Resource type, @Nullable Object id) {
+      return new AuditResource(action.name(), action.isAlter(), type, id);
+    }
 
     static List<AuditResource> getAccessedResources(AccessContext ctx) {
       List<AuditResource> resources = new ArrayList<>();
       ctx.getClusterConfigActions()
-          .forEach(a -> resources.add(new AuditResource(a.name(), Resource.CLUSTERCONFIG, null)));
+          .forEach(a -> resources.add(create(a, Resource.CLUSTERCONFIG, null)));
       ctx.getTopicActions()
-          .forEach(a -> resources.add(new AuditResource(a.name(), Resource.TOPIC, nameId(ctx.getTopic()))));
+          .forEach(a -> resources.add(create(a, Resource.TOPIC, nameId(ctx.getTopic()))));
       ctx.getConsumerGroupActions()
-          .forEach(a -> resources.add(new AuditResource(a.name(), Resource.CONSUMER, nameId(ctx.getConsumerGroup()))));
+          .forEach(a -> resources.add(create(a, Resource.CONSUMER, nameId(ctx.getConsumerGroup()))));
       ctx.getConnectActions()
           .forEach(a -> {
             Map<String, String> resourceId = new LinkedHashMap<>();
@@ -50,16 +55,16 @@ record AuditRecord(String timestamp,
             if (ctx.getConnector() != null) {
               resourceId.put("connector", ctx.getConnector());
             }
-            resources.add(new AuditResource(a.name(), Resource.CONNECT, resourceId));
+            resources.add(create(a, Resource.CONNECT, resourceId));
           });
       ctx.getSchemaActions()
-          .forEach(a -> resources.add(new AuditResource(a.name(), Resource.SCHEMA, nameId(ctx.getSchema()))));
+          .forEach(a -> resources.add(create(a, Resource.SCHEMA, nameId(ctx.getSchema()))));
       ctx.getKsqlActions()
-          .forEach(a -> resources.add(new AuditResource(a.name(), Resource.KSQL, null)));
+          .forEach(a -> resources.add(create(a, Resource.KSQL, null)));
       ctx.getAclActions()
-          .forEach(a -> resources.add(new AuditResource(a.name(), Resource.ACL, null)));
+          .forEach(a -> resources.add(create(a, Resource.ACL, null)));
       ctx.getAuditAction()
-          .forEach(a -> resources.add(new AuditResource(a.name(), Resource.AUDIT, null)));
+          .forEach(a -> resources.add(create(a, Resource.AUDIT, null)));
       return resources;
     }
 

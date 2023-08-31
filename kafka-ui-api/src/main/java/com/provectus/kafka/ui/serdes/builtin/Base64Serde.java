@@ -6,7 +6,6 @@ import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.kafka.common.header.Headers;
 
 public class Base64Serde implements BuiltInSerde {
 

@@ -1,11 +1,11 @@
 package com.provectus.kafka.ui.service.audit;
 
+import static com.provectus.kafka.ui.config.ClustersProperties.AuditProperties.LogLevel.ALTER_ONLY;
 import static com.provectus.kafka.ui.service.MessagesService.createProducer;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
-import com.provectus.kafka.ui.config.auth.RbacUser;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.service.AdminClientService;
@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -27,7 +28,9 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Signal;
@@ -80,12 +83,13 @@ public class AuditService implements Closeable {
     }
     boolean topicAudit = Optional.ofNullable(auditProps.getTopicAuditEnabled()).orElse(false);
     boolean consoleAudit = Optional.ofNullable(auditProps.getConsoleAuditEnabled()).orElse(false);
+    boolean alterLogOnly = Optional.ofNullable(auditProps.getLevel()).map(lvl -> lvl == ALTER_ONLY).orElse(true);
     if (!topicAudit && !consoleAudit) {
       return Optional.empty();
     }
     if (!topicAudit) {
       log.info("Audit initialization finished for cluster '{}' (console only)", cluster.getName());
-      return Optional.of(consoleOnlyWriter(cluster));
+      return Optional.of(consoleOnlyWriter(cluster, alterLogOnly));
     }
     String auditTopicName = Optional.ofNullable(auditProps.getTopic()).orElse(DEFAULT_AUDIT_TOPIC_NAME);
     boolean topicAuditCanBeDone = createTopicIfNeeded(cluster, acSupplier, auditTopicName, auditProps);
@@ -95,7 +99,7 @@ public class AuditService implements Closeable {
             "Audit initialization finished for cluster '{}' (console only, topic audit init failed)",
             cluster.getName()
         );
-        return Optional.of(consoleOnlyWriter(cluster));
+        return Optional.of(consoleOnlyWriter(cluster, alterLogOnly));
       }
       return Optional.empty();
     }
@@ -103,6 +107,7 @@ public class AuditService implements Closeable {
     return Optional.of(
         new AuditWriter(
             cluster.getName(),
+            alterLogOnly,
             auditTopicName,
             producerFactory.get(),
             consoleAudit ? AUDIT_LOGGER : null
@@ -110,8 +115,8 @@ public class AuditService implements Closeable {
     );
   }
 
-  private static AuditWriter consoleOnlyWriter(KafkaCluster cluster) {
-    return new AuditWriter(cluster.getName(), null, null, AUDIT_LOGGER);
+  private static AuditWriter consoleOnlyWriter(KafkaCluster cluster, boolean alterLogOnly) {
+    return new AuditWriter(cluster.getName(), alterLogOnly, null, null, AUDIT_LOGGER);
   }
 
   /**
@@ -192,8 +197,11 @@ public class AuditService implements Closeable {
     if (sig.getContextView().hasKey(key)) {
       return sig.getContextView().<Mono<SecurityContext>>get(key)
           .map(context -> context.getAuthentication().getPrincipal())
-          .cast(RbacUser.class)
-          .map(user -> new AuthenticatedUser(user.name(), user.groups()))
+          .cast(UserDetails.class)
+          .map(user -> {
+            var roles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+            return new AuthenticatedUser(user.getUsername(), roles);
+          })
           .switchIfEmpty(NO_AUTH_USER);
     } else {
       return NO_AUTH_USER;

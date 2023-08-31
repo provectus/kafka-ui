@@ -92,14 +92,12 @@ class AnalysisTasksStore {
         .result(completedState);
   }
 
-  @Value
   @Builder(toBuilder = true)
-  private static class RunningAnalysis {
-    Instant startedAt;
-    double completenessPercent;
-    long msgsScanned;
-    long bytesScanned;
-    Closeable task;
+  private record RunningAnalysis(Instant startedAt,
+                                 double completenessPercent,
+                                 long msgsScanned,
+                                 long bytesScanned,
+                                 Closeable task) {
 
     TopicAnalysisProgressDTO toDto() {
       return new TopicAnalysisProgressDTO()

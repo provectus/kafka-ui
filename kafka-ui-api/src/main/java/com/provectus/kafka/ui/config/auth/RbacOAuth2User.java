@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.config.auth;
 
 import java.util.Collection;
 import java.util.Map;
-import lombok.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 

@@ -6,8 +6,6 @@ import com.provectus.kafka.ui.model.ClusterMetricsDTO;
 import com.provectus.kafka.ui.model.ClusterStatsDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.service.ClusterService;
-import com.provectus.kafka.ui.service.audit.AuditService;
-import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +19,6 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class ClustersController extends AbstractController implements ClustersApi {
   private final ClusterService clusterService;
-  private final AccessControlService accessControlService;
-  private final AuditService auditService;
 
   @Override
   public Mono<ResponseEntity<Flux<ClusterDTO>>> getClusters(ServerWebExchange exchange) {
@@ -40,13 +36,13 @@ public class ClustersController extends AbstractController implements ClustersAp
         .operationName("getClusterMetrics")
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(
             clusterService.getClusterMetrics(getCluster(clusterName))
                 .map(ResponseEntity::ok)
                 .onErrorReturn(ResponseEntity.notFound().build())
         )
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -57,13 +53,13 @@ public class ClustersController extends AbstractController implements ClustersAp
         .operationName("getClusterStats")
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(
             clusterService.getClusterStats(getCluster(clusterName))
                 .map(ResponseEntity::ok)
                 .onErrorReturn(ResponseEntity.notFound().build())
         )
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -75,8 +71,8 @@ public class ClustersController extends AbstractController implements ClustersAp
         .operationName("updateClusterInfo")
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(clusterService.updateCluster(getCluster(clusterName)).map(ResponseEntity::ok))
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> audit(context, sig));
   }
 }

@@ -106,7 +106,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
           err.setFieldName(e.getKey());
           err.setRestrictions(List.copyOf(e.getValue()));
           return err;
-        }).collect(Collectors.toList());
+        }).toList();
 
     var message = fieldsErrors.isEmpty()
         ? exception.getMessage()

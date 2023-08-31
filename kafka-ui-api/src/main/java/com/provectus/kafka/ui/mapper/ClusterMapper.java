@@ -30,11 +30,12 @@ import com.provectus.kafka.ui.model.ReplicaDTO;
 import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
+import com.provectus.kafka.ui.model.TopicProducerStateDTO;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.ConfigEntry;
+import org.apache.kafka.clients.admin.ProducerState;
 import org.apache.kafka.common.acl.AccessControlEntry;
 import org.apache.kafka.common.acl.AclBinding;
 import org.apache.kafka.common.acl.AclOperation;
@@ -54,7 +55,7 @@ public interface ClusterMapper {
 
   default ClusterMetricsDTO toClusterMetrics(Metrics metrics) {
     return new ClusterMetricsDTO()
-        .items(metrics.getSummarizedMetrics().map(this::convert).collect(Collectors.toList()));
+        .items(metrics.getSummarizedMetrics().map(this::convert).toList());
   }
 
   private MetricDTO convert(RawMetric rawMetric) {
@@ -66,7 +67,7 @@ public interface ClusterMapper {
 
   default BrokerMetricsDTO toBrokerMetrics(List<RawMetric> metrics) {
     return new BrokerMetricsDTO()
-        .metrics(metrics.stream().map(this::convert).collect(Collectors.toList()));
+        .metrics(metrics.stream().map(this::convert).toList());
   }
 
   @Mapping(target = "isSensitive", source = "sensitive")
@@ -107,7 +108,7 @@ public interface ClusterMapper {
   List<ClusterDTO.FeaturesEnum> toFeaturesEnum(List<ClusterFeature> features);
 
   default List<PartitionDTO> map(Map<Integer, InternalPartition> map) {
-    return map.values().stream().map(this::toPartition).collect(Collectors.toList());
+    return map.values().stream().map(this::toPartition).toList();
   }
 
   default BrokerDiskUsageDTO map(Integer id, InternalBrokerDiskUsage internalBrokerDiskUsage) {
@@ -116,6 +117,17 @@ public interface ClusterMapper {
     brokerDiskUsage.segmentCount((int) internalBrokerDiskUsage.getSegmentCount());
     brokerDiskUsage.segmentSize(internalBrokerDiskUsage.getSegmentSize());
     return brokerDiskUsage;
+  }
+
+  default TopicProducerStateDTO map(int partition, ProducerState state) {
+    return new TopicProducerStateDTO()
+        .partition(partition)
+        .producerId(state.producerId())
+        .producerEpoch(state.producerEpoch())
+        .lastSequence(state.lastSequence())
+        .lastTimestampMs(state.lastTimestamp())
+        .coordinatorEpoch(state.coordinatorEpoch().stream().boxed().findAny().orElse(null))
+        .currentTransactionStartOffset(state.currentTransactionStartOffset().stream().boxed().findAny().orElse(null));
   }
 
   static KafkaAclDTO.OperationEnum mapAclOperation(AclOperation operation) {

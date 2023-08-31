@@ -19,12 +19,9 @@ import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import com.provectus.kafka.ui.service.ConsumerGroupService;
 import com.provectus.kafka.ui.service.OffsetsResetService;
-import com.provectus.kafka.ui.service.audit.AuditService;
-import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,8 +39,6 @@ public class ConsumerGroupsController extends AbstractController implements Cons
 
   private final ConsumerGroupService consumerGroupService;
   private final OffsetsResetService offsetsResetService;
-  private final AccessControlService accessControlService;
-  private final AuditService auditService;
 
   @Value("${consumer.groups.page.size:25}")
   private int defaultConsumerGroupsPageSize;
@@ -59,9 +54,9 @@ public class ConsumerGroupsController extends AbstractController implements Cons
         .operationName("deleteConsumerGroup")
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(consumerGroupService.deleteConsumerGroupById(getCluster(clusterName), id))
-        .doOnEach(sig -> auditService.audit(context, sig))
+        .doOnEach(sig -> audit(context, sig))
         .thenReturn(ResponseEntity.ok().build());
   }
 
@@ -76,11 +71,11 @@ public class ConsumerGroupsController extends AbstractController implements Cons
         .operationName("getConsumerGroup")
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(consumerGroupService.getConsumerGroupDetail(getCluster(clusterName), consumerGroupId)
             .map(ConsumerGroupMapper::toDetailsDto)
             .map(ResponseEntity::ok))
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -104,9 +99,9 @@ public class ConsumerGroupsController extends AbstractController implements Cons
             .map(ResponseEntity::ok)
             .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(job)
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -125,7 +120,7 @@ public class ConsumerGroupsController extends AbstractController implements Cons
         .operationName("getConsumerGroupsPage")
         .build();
 
-    return accessControlService.validateAccess(context).then(
+    return validateAccess(context).then(
         consumerGroupService.getConsumerGroupsPage(
                 getCluster(clusterName),
                 Optional.ofNullable(page).filter(i -> i > 0).orElse(1),
@@ -136,7 +131,7 @@ public class ConsumerGroupsController extends AbstractController implements Cons
             )
             .map(this::convertPage)
             .map(ResponseEntity::ok)
-    ).doOnEach(sig -> auditService.audit(context, sig));
+    ).doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -191,9 +186,9 @@ public class ConsumerGroupsController extends AbstractController implements Cons
         }
       };
 
-      return accessControlService.validateAccess(context)
+      return validateAccess(context)
           .then(mono.get())
-          .doOnEach(sig -> auditService.audit(context, sig));
+          .doOnEach(sig -> audit(context, sig));
     }).thenReturn(ResponseEntity.ok().build());
   }
 
@@ -204,7 +199,7 @@ public class ConsumerGroupsController extends AbstractController implements Cons
         .consumerGroups(consumerGroupConsumerGroupsPage.consumerGroups()
             .stream()
             .map(ConsumerGroupMapper::toDto)
-            .collect(Collectors.toList()));
+            .toList());
   }
 
 }

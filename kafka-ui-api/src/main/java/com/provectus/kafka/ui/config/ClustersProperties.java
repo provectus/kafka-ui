@@ -57,8 +57,6 @@ public class ClustersProperties {
   @Data
   public static class PollingProperties {
     Integer pollTimeoutMs;
-    Integer partitionPollTimeout;
-    Integer noDataEmptyPolls;
     Integer maxPageSize;
     Integer defaultPageSize;
   }
@@ -152,7 +150,13 @@ public class ClustersProperties {
     Integer auditTopicsPartitions;
     Boolean topicAuditEnabled;
     Boolean consoleAuditEnabled;
+    LogLevel level;
     Map<String, String> auditTopicProperties;
+
+    public enum LogLevel {
+      ALL,
+      ALTER_ONLY //default
+    }
   }
 
   @PostConstruct

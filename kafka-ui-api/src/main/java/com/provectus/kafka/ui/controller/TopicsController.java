@@ -22,13 +22,12 @@ import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicCreationDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
+import com.provectus.kafka.ui.model.TopicProducerStateDTO;
 import com.provectus.kafka.ui.model.TopicUpdateDTO;
 import com.provectus.kafka.ui.model.TopicsResponseDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.service.TopicsService;
 import com.provectus.kafka.ui.service.analyze.TopicAnalysisService;
-import com.provectus.kafka.ui.service.audit.AuditService;
-import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -53,8 +52,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
   private final TopicsService topicsService;
   private final TopicAnalysisService topicAnalysisService;
   private final ClusterMapper clusterMapper;
-  private final AccessControlService accessControlService;
-  private final AuditService auditService;
 
   @Override
   public Mono<ResponseEntity<TopicDTO>> createTopic(
@@ -67,12 +64,12 @@ public class TopicsController extends AbstractController implements TopicsApi {
           .operationParams(topicCreation)
           .build();
 
-      return accessControlService.validateAccess(context)
+      return validateAccess(context)
           .then(topicsService.createTopic(getCluster(clusterName), topicCreation))
           .map(clusterMapper::toTopic)
           .map(s -> new ResponseEntity<>(s, HttpStatus.OK))
           .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()))
-          .doOnEach(sig -> auditService.audit(context, sig));
+          .doOnEach(sig -> audit(context, sig));
     });
   }
 
@@ -86,11 +83,11 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .operationName("recreateTopic")
         .build();
 
-    return accessControlService.validateAccess(context).then(
+    return validateAccess(context).then(
         topicsService.recreateTopic(getCluster(clusterName), topicName)
             .map(clusterMapper::toTopic)
             .map(s -> new ResponseEntity<>(s, HttpStatus.CREATED))
-    ).doOnEach(sig -> auditService.audit(context, sig));
+    ).doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -105,11 +102,11 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .operationParams(Map.of("newTopicName", newTopicName))
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(topicsService.cloneTopic(getCluster(clusterName), topicName, newTopicName)
             .map(clusterMapper::toTopic)
             .map(s -> new ResponseEntity<>(s, HttpStatus.CREATED))
-        ).doOnEach(sig -> auditService.audit(context, sig));
+        ).doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -123,11 +120,11 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .operationName("deleteTopic")
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(
             topicsService.deleteTopic(getCluster(clusterName), topicName)
                 .thenReturn(ResponseEntity.ok().<Void>build())
-        ).doOnEach(sig -> auditService.audit(context, sig));
+        ).doOnEach(sig -> audit(context, sig));
   }
 
 
@@ -142,15 +139,15 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .operationName("getTopicConfigs")
         .build();
 
-    return accessControlService.validateAccess(context).then(
+    return validateAccess(context).then(
         topicsService.getTopicConfigs(getCluster(clusterName), topicName)
             .map(lst -> lst.stream()
                 .map(InternalTopicConfig::from)
                 .map(clusterMapper::toTopicConfig)
-                .collect(toList()))
+                .toList())
             .map(Flux::fromIterable)
             .map(ResponseEntity::ok)
-    ).doOnEach(sig -> auditService.audit(context, sig));
+    ).doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -164,11 +161,11 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .operationName("getTopicDetails")
         .build();
 
-    return accessControlService.validateAccess(context).then(
+    return validateAccess(context).then(
         topicsService.getTopicDetails(getCluster(clusterName), topicName)
             .map(clusterMapper::toTopicDetails)
             .map(ResponseEntity::ok)
-    ).doOnEach(sig -> auditService.audit(context, sig));
+    ).doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -211,11 +208,11 @@ public class TopicsController extends AbstractController implements TopicsApi {
           return topicsService.loadTopics(getCluster(clusterName), topicsPage)
               .map(topicsToRender ->
                   new TopicsResponseDTO()
-                      .topics(topicsToRender.stream().map(clusterMapper::toTopic).collect(toList()))
+                      .topics(topicsToRender.stream().map(clusterMapper::toTopic).toList())
                       .pageCount(totalPages));
         })
         .map(ResponseEntity::ok)
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -230,12 +227,12 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .operationName("updateTopic")
         .build();
 
-    return accessControlService.validateAccess(context).then(
+    return validateAccess(context).then(
         topicsService
             .updateTopic(getCluster(clusterName), topicName, topicUpdate)
             .map(clusterMapper::toTopic)
             .map(ResponseEntity::ok)
-    ).doOnEach(sig -> auditService.audit(context, sig));
+    ).doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -250,11 +247,11 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .topicActions(VIEW, EDIT)
         .build();
 
-    return accessControlService.validateAccess(context).then(
+    return validateAccess(context).then(
         partitionsIncrease.flatMap(partitions ->
             topicsService.increaseTopicPartitions(getCluster(clusterName), topicName, partitions)
         ).map(ResponseEntity::ok)
-    ).doOnEach(sig -> auditService.audit(context, sig));
+    ).doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -270,12 +267,12 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .operationName("changeReplicationFactor")
         .build();
 
-    return accessControlService.validateAccess(context).then(
+    return validateAccess(context).then(
         replicationFactorChange
             .flatMap(rfc ->
                 topicsService.changeReplicationFactor(getCluster(clusterName), topicName, rfc))
             .map(ResponseEntity::ok)
-    ).doOnEach(sig -> auditService.audit(context, sig));
+    ).doOnEach(sig -> audit(context, sig));
   }
 
   @Override
@@ -288,9 +285,9 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .operationName("analyzeTopic")
         .build();
 
-    return accessControlService.validateAccess(context).then(
+    return validateAccess(context).then(
         topicAnalysisService.analyze(getCluster(clusterName), topicName)
-            .doOnEach(sig -> auditService.audit(context, sig))
+            .doOnEach(sig -> audit(context, sig))
             .thenReturn(ResponseEntity.ok().build())
     );
   }
@@ -305,9 +302,9 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .operationName("cancelTopicAnalysis")
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .then(Mono.fromRunnable(() -> topicAnalysisService.cancelAnalysis(getCluster(clusterName), topicName)))
-        .doOnEach(sig -> auditService.audit(context, sig))
+        .doOnEach(sig -> audit(context, sig))
         .thenReturn(ResponseEntity.ok().build());
   }
 
@@ -324,11 +321,39 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .operationName("getTopicAnalysis")
         .build();
 
-    return accessControlService.validateAccess(context)
+    return validateAccess(context)
         .thenReturn(topicAnalysisService.getTopicAnalysis(getCluster(clusterName), topicName)
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.notFound().build()))
-        .doOnEach(sig -> auditService.audit(context, sig));
+        .doOnEach(sig -> audit(context, sig));
+  }
+
+  @Override
+  public Mono<ResponseEntity<Flux<TopicProducerStateDTO>>> getActiveProducerStates(String clusterName,
+                                                                                   String topicName,
+                                                                                   ServerWebExchange exchange) {
+    var context = AccessContext.builder()
+        .cluster(clusterName)
+        .topic(topicName)
+        .topicActions(VIEW)
+        .operationName("getActiveProducerStates")
+        .build();
+
+    Comparator<TopicProducerStateDTO> ordering =
+        Comparator.comparingInt(TopicProducerStateDTO::getPartition)
+            .thenComparing(Comparator.comparing(TopicProducerStateDTO::getProducerId).reversed());
+
+    Flux<TopicProducerStateDTO> states = topicsService.getActiveProducersState(getCluster(clusterName), topicName)
+        .flatMapMany(statesMap ->
+            Flux.fromStream(
+                statesMap.entrySet().stream()
+                    .flatMap(e -> e.getValue().stream().map(p -> clusterMapper.map(e.getKey().partition(), p)))
+                    .sorted(ordering)));
+
+    return validateAccess(context)
+        .thenReturn(states)
+        .map(ResponseEntity::ok)
+        .doOnEach(sig -> audit(context, sig));
   }
 
   private Comparator<InternalTopic> getComparatorForTopic(
