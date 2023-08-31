@@ -76,7 +76,6 @@ const formatTopicCreation = (form: TopicFormData): TopicCreation => {
     partitions,
     replicationFactor,
     cleanupPolicy,
-    retentionBytes,
     retentionMs,
     maxMessageBytes,
     minInSyncReplicas,
@@ -86,7 +85,6 @@ const formatTopicCreation = (form: TopicFormData): TopicCreation => {
   const configs = {
     'cleanup.policy': cleanupPolicy,
     'retention.ms': retentionMs.toString(),
-    'retention.bytes': retentionBytes.toString(),
     'max.message.bytes': maxMessageBytes.toString(),
     'min.insync.replicas': minInSyncReplicas.toString(),
     ...Object.values(customParams || {}).reduce(topicReducer, {}),

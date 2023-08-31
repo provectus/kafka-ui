@@ -11,6 +11,9 @@ import org.apache.kafka.common.Node;
 
 class WellKnownMetrics {
 
+  private static final String BROKER_TOPIC_METRICS = "BrokerTopicMetrics";
+  private static final String FIFTEEN_MINUTE_RATE = "FifteenMinuteRate";
+
   // per broker
   final Map<Integer, BigDecimal> brokerBytesInFifteenMinuteRate = new HashMap<>();
   final Map<Integer, BigDecimal> brokerBytesOutFifteenMinuteRate = new HashMap<>();
@@ -36,15 +39,15 @@ class WellKnownMetrics {
     if (!brokerBytesInFifteenMinuteRate.containsKey(node.id())
         && rawMetric.labels().size() == 1
         && "BytesInPerSec".equalsIgnoreCase(rawMetric.labels().get("name"))
-        && containsIgnoreCase(name, "BrokerTopicMetrics")
-        && endsWithIgnoreCase(name, "FifteenMinuteRate")) {
+        && containsIgnoreCase(name, BROKER_TOPIC_METRICS)
+        && endsWithIgnoreCase(name, FIFTEEN_MINUTE_RATE)) {
       brokerBytesInFifteenMinuteRate.put(node.id(),  rawMetric.value());
     }
     if (!brokerBytesOutFifteenMinuteRate.containsKey(node.id())
         && rawMetric.labels().size() == 1
         && "BytesOutPerSec".equalsIgnoreCase(rawMetric.labels().get("name"))
-        && containsIgnoreCase(name, "BrokerTopicMetrics")
-        && endsWithIgnoreCase(name, "FifteenMinuteRate")) {
+        && containsIgnoreCase(name, BROKER_TOPIC_METRICS)
+        && endsWithIgnoreCase(name, FIFTEEN_MINUTE_RATE)) {
       brokerBytesOutFifteenMinuteRate.put(node.id(), rawMetric.value());
     }
   }
@@ -53,8 +56,8 @@ class WellKnownMetrics {
     String name = rawMetric.name();
     String topic = rawMetric.labels().get("topic");
     if (topic != null
-        && containsIgnoreCase(name, "BrokerTopicMetrics")
-        && endsWithIgnoreCase(name, "FifteenMinuteRate")) {
+        && containsIgnoreCase(name, BROKER_TOPIC_METRICS)
+        && endsWithIgnoreCase(name, FIFTEEN_MINUTE_RATE)) {
       String nameProperty = rawMetric.labels().get("name");
       if ("BytesInPerSec".equalsIgnoreCase(nameProperty)) {
         bytesInFifteenMinuteRate.compute(topic, (k, v) -> v == null ? rawMetric.value() : v.add(rawMetric.value()));

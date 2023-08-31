@@ -37,7 +37,7 @@ describe('TopicForm', () => {
 
     expectByRoleAndNameToBeInDocument('textbox', 'Topic Name *');
 
-    expectByRoleAndNameToBeInDocument('spinbutton', 'Number of partitions *');
+    expectByRoleAndNameToBeInDocument('spinbutton', 'Number of Partitions *');
     expectByRoleAndNameToBeInDocument('spinbutton', 'Replication Factor');
 
     expectByRoleAndNameToBeInDocument('spinbutton', 'Min In Sync Replicas');

@@ -25,11 +25,11 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - uses: pnpm/action-setup@v2.4.0
         with:
-          version: 7.4.0
+          version: 8.6.12
       - name: Install node
-        uses: actions/setup-node@v3.7.0
+        uses: actions/setup-node@v3.8.1
         with:
-          node-version: "16.15.0"
+          node-version: "18.17.1"
           cache: "pnpm"
           cache-dependency-path: "./kafka-ui-react-app/pnpm-lock.yaml"
       - name: Install Node dependencies

@@ -32,15 +32,15 @@ export const clustersPayload: Cluster[] = [
 
 export const clusterStatsPayload = {
   brokerCount: 2,
-  activeControllers: 1,
+  activeControllers: 100,
   onlinePartitionCount: 138,
   offlinePartitionCount: 0,
   inSyncReplicasCount: 239,
   outOfSyncReplicasCount: 0,
   underReplicatedPartitionCount: 0,
   diskUsage: [
-    { brokerId: 0, segmentSize: 334567, segmentCount: 245 },
-    { brokerId: 1, segmentSize: 12345678, segmentCount: 121 },
+    { brokerId: 100, segmentSize: 334567, segmentCount: 245 },
+    { brokerId: 200, segmentSize: 12345678, segmentCount: 121 },
   ],
   version: '2.2.1',
 };

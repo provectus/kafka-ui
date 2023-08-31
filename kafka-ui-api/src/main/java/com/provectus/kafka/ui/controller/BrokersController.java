@@ -26,6 +26,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class BrokersController extends AbstractController implements BrokersApi {
+  private static final String BROKER_ID = "brokerId";
+
   private final BrokerService brokerService;
   private final ClusterMapper clusterMapper;
 
@@ -89,7 +91,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
         .cluster(clusterName)
         .clusterConfigActions(ClusterConfigAction.VIEW)
         .operationName("getBrokerConfig")
-        .operationParams(Map.of("brokerId", id))
+        .operationParams(Map.of(BROKER_ID, id))
         .build();
 
     return validateAccess(context).thenReturn(
@@ -108,7 +110,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
         .cluster(clusterName)
         .clusterConfigActions(ClusterConfigAction.VIEW, ClusterConfigAction.EDIT)
         .operationName("updateBrokerTopicPartitionLogDir")
-        .operationParams(Map.of("brokerId", id))
+        .operationParams(Map.of(BROKER_ID, id))
         .build();
 
     return validateAccess(context).then(
@@ -128,7 +130,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
         .cluster(clusterName)
         .clusterConfigActions(ClusterConfigAction.VIEW, ClusterConfigAction.EDIT)
         .operationName("updateBrokerConfigByName")
-        .operationParams(Map.of("brokerId", id))
+        .operationParams(Map.of(BROKER_ID, id))
         .build();
 
     return validateAccess(context).then(

@@ -52,6 +52,8 @@ public class AccessContext {
   }
 
   public static final class AccessContextBuilder {
+    private static final String ACTIONS_NOT_PRESENT = "actions not present";
+
     private Collection<ApplicationConfigAction> applicationConfigActions = Collections.emptySet();
     private String cluster;
     private Collection<ClusterConfigAction> clusterConfigActions = Collections.emptySet();
@@ -75,7 +77,7 @@ public class AccessContext {
     }
 
     public AccessContextBuilder applicationConfigActions(ApplicationConfigAction... actions) {
-      Assert.isTrue(actions.length > 0, "actions not present");
+      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
       this.applicationConfigActions = List.of(actions);
       return this;
     }
@@ -86,7 +88,7 @@ public class AccessContext {
     }
 
     public AccessContextBuilder clusterConfigActions(ClusterConfigAction... actions) {
-      Assert.isTrue(actions.length > 0, "actions not present");
+      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
       this.clusterConfigActions = List.of(actions);
       return this;
     }
@@ -97,7 +99,7 @@ public class AccessContext {
     }
 
     public AccessContextBuilder topicActions(TopicAction... actions) {
-      Assert.isTrue(actions.length > 0, "actions not present");
+      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
       this.topicActions = List.of(actions);
       return this;
     }
@@ -108,7 +110,7 @@ public class AccessContext {
     }
 
     public AccessContextBuilder consumerGroupActions(ConsumerGroupAction... actions) {
-      Assert.isTrue(actions.length > 0, "actions not present");
+      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
       this.consumerGroupActions = List.of(actions);
       return this;
     }
@@ -119,7 +121,7 @@ public class AccessContext {
     }
 
     public AccessContextBuilder connectActions(ConnectAction... actions) {
-      Assert.isTrue(actions.length > 0, "actions not present");
+      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
       this.connectActions = List.of(actions);
       return this;
     }
@@ -135,25 +137,25 @@ public class AccessContext {
     }
 
     public AccessContextBuilder schemaActions(SchemaAction... actions) {
-      Assert.isTrue(actions.length > 0, "actions not present");
+      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
       this.schemaActions = List.of(actions);
       return this;
     }
 
     public AccessContextBuilder ksqlActions(KsqlAction... actions) {
-      Assert.isTrue(actions.length > 0, "actions not present");
+      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
       this.ksqlActions = List.of(actions);
       return this;
     }
 
     public AccessContextBuilder aclActions(AclAction... actions) {
-      Assert.isTrue(actions.length > 0, "actions not present");
+      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
       this.aclActions = List.of(actions);
       return this;
     }
 
     public AccessContextBuilder auditActions(AuditAction... actions) {
-      Assert.isTrue(actions.length > 0, "actions not present");
+      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
       this.auditActions = List.of(actions);
       return this;
     }
