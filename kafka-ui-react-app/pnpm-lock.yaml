@@ -58,7 +58,7 @@ dependencies:
     version: 2.2.2(jest@29.6.4)
   json-schema-faker:
     specifier: ^0.5.0-rcv.44
-    version: 0.5.0-rcv.44
+    version: 0.5.3
   jsonpath-plus:
     specifier: ^7.2.0
     version: 7.2.0
@@ -4792,16 +4792,17 @@ packages:
   /json-parse-even-better-errors@2.3.1:
     resolution: {integrity: sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==}
 
-  /json-schema-faker@0.5.0-rcv.44:
-    resolution: {integrity: sha512-MbDxYFsPXTVMawW1Y6zEU7QhfwsT+ZJ2d+LI8n57Y8+Xw1Cdx1hITgsFTLNOJ1lDMHZqWeXGGgMbc1hW0BGisg==}
+  /json-schema-faker@0.5.3:
+    resolution: {integrity: sha512-BeIrR0+YSrTbAR9dOMnjbFl1MvHyXnq+Wpdw1FpWZDHWKLzK229hZ5huyPcmzFUfVq1ODwf40WdGVoE266UBUg==}
     hasBin: true
     dependencies:
       json-schema-ref-parser: 6.1.0
-      jsonpath-plus: 5.1.0
+      jsonpath-plus: 7.2.0
     dev: false
 
   /json-schema-ref-parser@6.1.0:
     resolution: {integrity: sha512-pXe9H1m6IgIpXmE5JSb8epilNTGsmTb2iPohAXpOdhqGFbQjNeHHsZxU+C8w6T81GZxSPFLeUoqDJmzxx5IGuw==}
+    deprecated: Please switch to @apidevtools/json-schema-ref-parser
     dependencies:
       call-me-maybe: 1.0.1
       js-yaml: 3.14.1
@@ -4843,11 +4844,6 @@ packages:
     optionalDependencies:
       graceful-fs: 4.2.10
     dev: true
-
-  /jsonpath-plus@5.1.0:
-    resolution: {integrity: sha512-890w2Pjtj0iswAxalRlt2kHthi6HKrXEfZcn+ZNZptv7F3rUGIeDuZo+C+h4vXBHLEsVjJrHeCm35nYeZLzSBQ==}
-    engines: {node: '>=10.0.0'}
-    dev: false
 
   /jsonpath-plus@7.2.0:
     resolution: {integrity: sha512-zBfiUPM5nD0YZSBT/o/fbCUlCcepMIdP0CJZxM1+KgA4f2T206f6VAg9e7mX35+KlMaIc5qXW34f3BnwJ3w+RA==}
