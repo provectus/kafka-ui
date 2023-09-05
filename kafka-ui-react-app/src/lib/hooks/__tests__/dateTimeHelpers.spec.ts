@@ -13,10 +13,10 @@ describe('dateTimeHelpers', () => {
     it('should output the correct date', () => {
       const date = new Date();
       expect(formatTimestamp(date)).toBe(
-        date.toLocaleString([], { hour12: false })
+        date.toLocaleString([], { hourCycle: 'h23' })
       );
       expect(formatTimestamp(date.getTime())).toBe(
-        date.toLocaleString([], { hour12: false })
+        date.toLocaleString([], { hourCycle: 'h23' })
       );
     });
   });
