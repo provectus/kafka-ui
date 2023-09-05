@@ -231,7 +231,7 @@ devDependencies:
     version: 4.6.0(eslint@8.16.0)
   jest-environment-jsdom:
     specifier: ^29.4.3
-    version: 29.5.0
+    version: 29.6.4
   jest-sonar-reporter:
     specifier: ^2.0.0
     version: 2.0.0
@@ -1023,16 +1023,6 @@ packages:
       '@jest/types': 27.5.1
     dev: true
 
-  /@jest/environment@29.5.0:
-    resolution: {integrity: sha512-5FXw2+wD29YU1d4I2htpRX7jYnAyTRjP2CsXQdo9SAM8g3ifxWPSV0HnClSn71xwctr0U3oZIIH+dtbfmnbXVQ==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    dependencies:
-      '@jest/fake-timers': 29.6.4
-      '@jest/types': 29.6.3
-      '@types/node': 16.11.7
-      jest-mock: 29.6.3
-    dev: true
-
   /@jest/environment@29.6.4:
     resolution: {integrity: sha512-sQ0SULEjA1XUTHmkBRl7A1dyITM9yb1yb3ZNKPX3KlTd6IG7mWUe3e2yfExtC2Zz1Q+mMckOLHmL/qLiuQJrBQ==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
@@ -1041,7 +1031,6 @@ packages:
       '@jest/types': 29.6.3
       '@types/node': 16.11.7
       jest-mock: 29.6.3
-    dev: false
 
   /@jest/expect-utils@29.6.4:
     resolution: {integrity: sha512-FEhkJhqtvBwgSpiTrocquJCdXPsyvNKcl/n7A3u7X4pVoF4bswm11c9d4AV+kfq2Gpv/mM8x7E7DsRvH+djkrg==}
@@ -1058,18 +1047,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: false
-
-  /@jest/fake-timers@29.5.0:
-    resolution: {integrity: sha512-9ARvuAAQcBwDAqOnglWq2zwNIRUDtk/SCkp/ToGEhFv5r86K21l+VEs0qNTaXtyiY0lEePl3kylijSYJQqdbDg==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    dependencies:
-      '@jest/types': 29.6.3
-      '@sinonjs/fake-timers': 10.0.2
-      '@types/node': 16.11.7
-      jest-message-util: 29.6.3
-      jest-mock: 29.6.3
-      jest-util: 29.6.3
-    dev: true
 
   /@jest/fake-timers@29.6.4:
     resolution: {integrity: sha512-6UkCwzoBK60edXIIWb0/KWkuj7R7Qq91vVInOe3De6DSpaEiqjKcJw4F7XUet24Wupahj9J6PlR09JqJ5ySDHw==}
@@ -4357,8 +4334,8 @@ packages:
       pretty-format: 29.6.3
     dev: false
 
-  /jest-environment-jsdom@29.5.0:
-    resolution: {integrity: sha512-/KG8yEK4aN8ak56yFVdqFDzKNHgF4BAymCx2LbPNPsUshUlfAl0eX402Xm1pt+eoG9SLZEUVifqXtX8SK74KCw==}
+  /jest-environment-jsdom@29.6.4:
+    resolution: {integrity: sha512-K6wfgUJ16DoMs02JYFid9lOsqfpoVtyJxpRlnTxUHzvZWBnnh2VNGRB9EC1Cro96TQdq5TtSjb3qUjNaJP9IyA==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     peerDependencies:
       canvas: ^2.5.0
@@ -4366,13 +4343,13 @@ packages:
       canvas:
         optional: true
     dependencies:
-      '@jest/environment': 29.5.0
-      '@jest/fake-timers': 29.5.0
+      '@jest/environment': 29.6.4
+      '@jest/fake-timers': 29.6.4
       '@jest/types': 29.6.3
       '@types/jsdom': 20.0.0
       '@types/node': 16.11.7
-      jest-mock: 29.5.0
-      jest-util: 29.5.0
+      jest-mock: 29.6.3
+      jest-util: 29.6.3
       jsdom: 20.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -4445,15 +4422,6 @@ packages:
       pretty-format: 29.6.3
       slash: 3.0.0
       stack-utils: 2.0.5
-
-  /jest-mock@29.5.0:
-    resolution: {integrity: sha512-GqOzvdWDE4fAV2bWQLQCkujxYWL7RxjCnj71b5VhDAGOevB3qj3Ovg26A5NI84ZpODxyzaozXLOh2NCgkbvyaw==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    dependencies:
-      '@jest/types': 29.6.3
-      '@types/node': 16.11.7
-      jest-util: 29.6.3
-    dev: true
 
   /jest-mock@29.6.3:
     resolution: {integrity: sha512-Z7Gs/mOyTSR4yPsaZ72a/MtuK6RnC3JYqWONe48oLaoEcYwEDxqvbXz85G4SJrm2Z5Ar9zp6MiHF4AlFlRM4Pg==}
@@ -4612,18 +4580,6 @@ packages:
     dependencies:
       '@adobe/css-tools': 4.2.0
       styled-components: 5.3.1(react-dom@18.1.0)(react-is@18.2.0)(react@18.2.0)
-    dev: true
-
-  /jest-util@29.5.0:
-    resolution: {integrity: sha512-RYMgG/MTadOr5t8KdhejfvUU82MxsCu5MF6KuDUHl+NuwzUt+Sm6jJWxTJVrDR1j5M/gJVCPKQEpWXY+yIQ6lQ==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    dependencies:
-      '@jest/types': 29.6.3
-      '@types/node': 16.11.7
-      chalk: 4.1.2
-      ci-info: 3.3.1
-      graceful-fs: 4.2.10
-      picomatch: 2.3.1
     dev: true
 
   /jest-util@29.6.3:
