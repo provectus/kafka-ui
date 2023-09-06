@@ -59,4 +59,27 @@ describe('UserInfo', () => {
     renderComponent();
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
+
+  it('should render the role names with correct data', () => {
+    const map = new Map();
+    map.set(
+      'someCluster',
+      new Map([
+        ['CONFIG', [{ roleName: 'someRole1' }, { roleName: 'someRole2' }]],
+      ])
+    );
+
+    (useUserInfo as jest.Mock).mockImplementation(() => ({
+      username: 'someName',
+      roles: map,
+    }));
+
+    renderComponent();
+
+    expect(screen.getByText('someName')).toBeInTheDocument();
+    expect(screen.getByText('Assigned roles')).toBeInTheDocument();
+    expect(screen.getByText('someRole1')).toBeInTheDocument();
+    expect(screen.getByText('someRole2')).toBeInTheDocument();
+    expect(screen.getByText('Log out')).toBeInTheDocument();
+  });
 });

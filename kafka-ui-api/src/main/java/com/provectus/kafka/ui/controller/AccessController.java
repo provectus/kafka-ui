@@ -36,7 +36,7 @@ public class AccessController implements AuthorizationApi {
         .map(user -> accessControlService.getRoles()
             .stream()
             .filter(role -> user.groups().contains(role.getName()))
-            .map(role -> mapPermissions(role.getPermissions(), role.getClusters()))
+            .map(role -> mapPermissions(role.getName(), role.getPermissions(), role.getClusters()))
             .flatMap(Collection::stream)
             .collect(Collectors.toList())
         )
@@ -57,11 +57,12 @@ public class AccessController implements AuthorizationApi {
         .map(ResponseEntity::ok);
   }
 
-  private List<UserPermissionDTO> mapPermissions(List<Permission> permissions, List<String> clusters) {
+  private List<UserPermissionDTO> mapPermissions(String name, List<Permission> permissions, List<String> clusters) {
     return permissions
         .stream()
         .map(permission -> {
           UserPermissionDTO dto = new UserPermissionDTO();
+          dto.setRoleName(name);
           dto.setClusters(clusters);
           dto.setResource(ResourceTypeDTO.fromValue(permission.getResource().toString().toUpperCase()));
           dto.setValue(permission.getValue());

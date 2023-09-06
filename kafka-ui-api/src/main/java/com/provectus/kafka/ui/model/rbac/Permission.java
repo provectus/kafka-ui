@@ -37,10 +37,17 @@ public class Permission {
   Resource resource;
   List<String> actions;
 
+  String roleName;
+
   @Nullable
   String value;
   @Nullable
   transient Pattern compiledValuePattern;
+
+  @SuppressWarnings("unused")
+  public void setRoleName(String roleName) {
+    this.roleName = roleName;
+  }
 
   @SuppressWarnings("unused")
   public void setResource(String resource) {

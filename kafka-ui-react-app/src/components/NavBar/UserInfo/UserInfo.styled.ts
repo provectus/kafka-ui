@@ -9,8 +9,18 @@ export const Wrapper = styled.div`
     position: relative;
   }
 `;
-
 export const Text = styled.div(
+  ({ theme }) => css`
+    color: ${theme.menu.color.normal};
+  `
+);
+export const HeaderText = styled.div(
+  ({ theme }) => css`
+    color: ${theme.menu.titleColor};
+  `
+);
+
+export const LinkText = styled.div(
   ({ theme }) => css`
     color: ${theme.button.primary.invertedColors.normal};
   `

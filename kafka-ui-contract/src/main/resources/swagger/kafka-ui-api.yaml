@@ -3554,6 +3554,8 @@ components:
     UserPermission:
       type: object
       properties:
+        roleName:
+          type: string
         clusters:
           type: array
           items:
