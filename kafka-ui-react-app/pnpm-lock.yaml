@@ -162,7 +162,7 @@ devDependencies:
     version: 4.14.177
   '@types/lossless-json':
     specifier: ^1.0.1
-    version: 1.0.1
+    version: 1.0.2
   '@types/node':
     specifier: ^16.4.13
     version: 16.11.7
@@ -1776,8 +1776,8 @@ packages:
     resolution: {integrity: sha512-0fDwydE2clKe9MNfvXHBHF9WEahRuj+msTuQqOmAApNORFvhMYZKNGGJdCzuhheVjMps/ti0Ak/iJPACMaevvw==}
     dev: true
 
-  /@types/lossless-json@1.0.1:
-    resolution: {integrity: sha512-zPE8kmpeL5/6L5gtTQHSOkAW/OSYYNTDRt6/2oEgLO1Zd3Rj5WVDoMloTtLJxQJhZGLGbL4pktKSh3NbzdaWdw==}
+  /@types/lossless-json@1.0.2:
+    resolution: {integrity: sha512-RdV8M8qlWUpmk7gnY3fBB4TNn3Ab8hMMqhJC/sG77t8Zk+hjVwvZGTFv+upEBUkxXbq0+UxGAPhOml83w1IkIQ==}
     dev: true
 
   /@types/node@16.11.7:
