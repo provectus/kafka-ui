@@ -121,7 +121,7 @@ dependencies:
     version: 4.0.5(@types/node@16.11.7)(sass@1.66.1)
   vite-tsconfig-paths:
     specifier: ^4.0.2
-    version: 4.2.0(typescript@4.7.4)(vite@4.0.5)
+    version: 4.2.1(typescript@4.7.4)(vite@4.0.5)
   whatwg-fetch:
     specifier: ^3.6.2
     version: 3.6.2
@@ -6706,8 +6706,8 @@ packages:
       ejs: 3.1.8
     dev: true
 
-  /vite-tsconfig-paths@4.2.0(typescript@4.7.4)(vite@4.0.5):
-    resolution: {integrity: sha512-jGpus0eUy5qbbMVGiTxCL1iB9ZGN6Bd37VGLJU39kTDD6ZfULTTb1bcc5IeTWqWJKiWV5YihCaibeASPiGi8kw==}
+  /vite-tsconfig-paths@4.2.1(typescript@4.7.4)(vite@4.0.5):
+    resolution: {integrity: sha512-GNUI6ZgPqT3oervkvzU+qtys83+75N/OuDaQl7HmOqFTb0pjZsuARrRipsyJhJ3enqV8beI1xhGbToR4o78nSQ==}
     peerDependencies:
       vite: '*'
     peerDependenciesMeta:
