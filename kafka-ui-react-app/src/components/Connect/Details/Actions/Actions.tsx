@@ -138,7 +138,7 @@ const Actions: React.FC = () => {
           danger
           permission={{
             resource: ResourceType.CONNECT,
-            action: Action.DELETE,
+            action: Action.EDIT,
             value: routerProps.connectorName,
           }}
         >
