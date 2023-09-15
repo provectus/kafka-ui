@@ -49,8 +49,7 @@ public class ConsumerGroupsController extends AbstractController implements Cons
                                                         ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .consumerGroup(id)
-        .consumerGroupActions(DELETE)
+        .consumerGroupActions(id, DELETE)
         .operationName("deleteConsumerGroup")
         .build();
 
@@ -66,8 +65,7 @@ public class ConsumerGroupsController extends AbstractController implements Cons
                                                                         ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .consumerGroup(consumerGroupId)
-        .consumerGroupActions(VIEW)
+        .consumerGroupActions(consumerGroupId, VIEW)
         .operationName("getConsumerGroup")
         .build();
 
@@ -84,8 +82,7 @@ public class ConsumerGroupsController extends AbstractController implements Cons
                                                                              ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .topic(topicName)
-        .topicActions(TopicAction.VIEW)
+        .topicActions(topicName, TopicAction.VIEW)
         .operationName("getTopicConsumerGroups")
         .build();
 
@@ -142,9 +139,8 @@ public class ConsumerGroupsController extends AbstractController implements Cons
     return resetDto.flatMap(reset -> {
       var context = AccessContext.builder()
           .cluster(clusterName)
-          .topic(reset.getTopic())
-          .topicActions(TopicAction.VIEW)
-          .consumerGroupActions(RESET_OFFSETS)
+          .topicActions(reset.getTopic(), TopicAction.VIEW)
+          .consumerGroupActions(group, RESET_OFFSETS)
           .operationName("resetConsumerGroupOffsets")
           .build();
 

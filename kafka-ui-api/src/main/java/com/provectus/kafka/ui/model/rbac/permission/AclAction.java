@@ -7,11 +7,17 @@ import org.jetbrains.annotations.Nullable;
 public enum AclAction implements PermissibleAction {
 
   VIEW,
-  EDIT
+  EDIT(VIEW)
 
   ;
 
   public static final Set<AclAction> ALTER_ACTIONS = Set.of(EDIT);
+
+  private final PermissibleAction[] dependantActions;
+
+  AclAction(AclAction... dependantActions) {
+    this.dependantActions = dependantActions;
+  }
 
   @Nullable
   public static AclAction fromString(String name) {
@@ -21,5 +27,10 @@ public enum AclAction implements PermissibleAction {
   @Override
   public boolean isAlter() {
     return ALTER_ACTIONS.contains(this);
+  }
+
+  @Override
+  public PermissibleAction[] dependantActions() {
+    return dependantActions;
   }
 }

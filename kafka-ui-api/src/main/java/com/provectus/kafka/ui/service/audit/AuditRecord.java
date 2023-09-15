@@ -7,10 +7,8 @@ import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.Resource;
 import com.provectus.kafka.ui.model.rbac.permission.PermissibleAction;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.Nullable;
 import lombok.SneakyThrows;
 import org.springframework.security.access.AccessDeniedException;
@@ -34,43 +32,17 @@ record AuditRecord(String timestamp,
     return MAPPER.writeValueAsString(this);
   }
 
-  record AuditResource(String accessType, boolean alter, Resource type, @Nullable Object id) {
+  record AuditResource(Resource type, @Nullable Object id, boolean alter, List<String> accessType) {
 
-    private static AuditResource create(PermissibleAction action, Resource type, @Nullable Object id) {
-      return new AuditResource(action.name(), action.isAlter(), type, id);
+    private static AuditResource create(Collection<PermissibleAction> actions, Resource type, @Nullable Object id) {
+      boolean isAlter = actions.stream().anyMatch(PermissibleAction::isAlter);
+      return new AuditResource(type, id, isAlter, actions.stream().map(PermissibleAction::name).toList());
     }
 
     static List<AuditResource> getAccessedResources(AccessContext ctx) {
-      List<AuditResource> resources = new ArrayList<>();
-      ctx.getClusterConfigActions()
-          .forEach(a -> resources.add(create(a, Resource.CLUSTERCONFIG, null)));
-      ctx.getTopicActions()
-          .forEach(a -> resources.add(create(a, Resource.TOPIC, nameId(ctx.getTopic()))));
-      ctx.getConsumerGroupActions()
-          .forEach(a -> resources.add(create(a, Resource.CONSUMER, nameId(ctx.getConsumerGroup()))));
-      ctx.getConnectActions()
-          .forEach(a -> {
-            Map<String, String> resourceId = new LinkedHashMap<>();
-            resourceId.put("connect", ctx.getConnect());
-            if (ctx.getConnector() != null) {
-              resourceId.put("connector", ctx.getConnector());
-            }
-            resources.add(create(a, Resource.CONNECT, resourceId));
-          });
-      ctx.getSchemaActions()
-          .forEach(a -> resources.add(create(a, Resource.SCHEMA, nameId(ctx.getSchema()))));
-      ctx.getKsqlActions()
-          .forEach(a -> resources.add(create(a, Resource.KSQL, null)));
-      ctx.getAclActions()
-          .forEach(a -> resources.add(create(a, Resource.ACL, null)));
-      ctx.getAuditAction()
-          .forEach(a -> resources.add(create(a, Resource.AUDIT, null)));
-      return resources;
-    }
-
-    @Nullable
-    private static Map<String, Object> nameId(@Nullable String name) {
-      return name != null ? Map.of("name", name) : null;
+      return ctx.accesses().stream()
+          .map(r -> create(r.requestedActions(), r.resourceType(), r.resourceId()))
+          .toList();
     }
   }
 

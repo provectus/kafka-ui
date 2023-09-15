@@ -12,6 +12,12 @@ public enum AuditAction implements PermissibleAction {
 
   private static final Set<AuditAction> ALTER_ACTIONS = Set.of();
 
+  private final AclAction[] dependantActions;
+
+  AuditAction(AclAction... dependantActions) {
+    this.dependantActions = dependantActions;
+  }
+
   @Nullable
   public static AuditAction fromString(String name) {
     return EnumUtils.getEnum(AuditAction.class, name);
@@ -20,5 +26,10 @@ public enum AuditAction implements PermissibleAction {
   @Override
   public boolean isAlter() {
     return ALTER_ACTIONS.contains(this);
+  }
+
+  @Override
+  public PermissibleAction[] dependantActions() {
+    return dependantActions;
   }
 }

@@ -44,17 +44,17 @@ class AuditWriterTest {
 
     static Stream<AccessContext> onlyLogsWhenAlterOperationIsPresentForOneOfResources() {
       Stream<UnaryOperator<AccessContextBuilder>> topicEditActions =
-          TopicAction.ALTER_ACTIONS.stream().map(a -> c -> c.topic("test").topicActions(a));
+          TopicAction.ALTER_ACTIONS.stream().map(a -> c -> c.topicActions("test", a));
       Stream<UnaryOperator<AccessContextBuilder>> clusterConfigEditActions =
           ClusterConfigAction.ALTER_ACTIONS.stream().map(a -> c -> c.clusterConfigActions(a));
       Stream<UnaryOperator<AccessContextBuilder>> aclEditActions =
           AclAction.ALTER_ACTIONS.stream().map(a -> c -> c.aclActions(a));
       Stream<UnaryOperator<AccessContextBuilder>> cgEditActions =
-          ConsumerGroupAction.ALTER_ACTIONS.stream().map(a -> c -> c.consumerGroup("cg").consumerGroupActions(a));
+          ConsumerGroupAction.ALTER_ACTIONS.stream().map(a -> c -> c.consumerGroupActions("cg", a));
       Stream<UnaryOperator<AccessContextBuilder>> schemaEditActions =
-          SchemaAction.ALTER_ACTIONS.stream().map(a -> c -> c.schema("sc").schemaActions(a));
+          SchemaAction.ALTER_ACTIONS.stream().map(a -> c -> c.schemaActions("sc", a));
       Stream<UnaryOperator<AccessContextBuilder>> connEditActions =
-          ConnectAction.ALTER_ACTIONS.stream().map(a -> c -> c.connect("conn").connectActions(a));
+          ConnectAction.ALTER_ACTIONS.stream().map(a -> c -> c.connectActions("conn", a));
       return Stream.of(
               topicEditActions, clusterConfigEditActions, aclEditActions,
               cgEditActions, connEditActions, schemaEditActions
@@ -73,12 +73,12 @@ class AuditWriterTest {
 
     static Stream<AccessContext> doesNothingIfNoResourceHasAlterAction() {
       return Stream.<UnaryOperator<AccessContextBuilder>>of(
-          c -> c.topic("test").topicActions(TopicAction.VIEW),
+          c -> c.topicActions("test", TopicAction.VIEW),
           c -> c.clusterConfigActions(ClusterConfigAction.VIEW),
           c -> c.aclActions(AclAction.VIEW),
-          c -> c.consumerGroup("cg").consumerGroupActions(ConsumerGroupAction.VIEW),
-          c -> c.schema("sc").schemaActions(SchemaAction.VIEW),
-          c -> c.connect("conn").connectActions(ConnectAction.VIEW)
+          c -> c.consumerGroupActions("cg", ConsumerGroupAction.VIEW),
+          c -> c.schemaActions("sc", SchemaAction.VIEW),
+          c -> c.connectActions("conn", ConnectAction.VIEW)
       ).map(setter -> setter.apply(AccessContext.builder().cluster("test").operationName("test")).build());
     }
   }

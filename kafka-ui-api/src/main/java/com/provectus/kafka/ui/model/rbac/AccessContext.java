@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.model.rbac;
 
+import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.model.rbac.permission.AclAction;
 import com.provectus.kafka.ui.model.rbac.permission.ApplicationConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.AuditAction;
@@ -7,79 +8,81 @@ import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
 import com.provectus.kafka.ui.model.rbac.permission.KsqlAction;
+import com.provectus.kafka.ui.model.rbac.permission.PermissibleAction;
 import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
 import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
+import jakarta.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import lombok.Value;
-import org.springframework.util.Assert;
+import java.util.stream.Collectors;
+import org.springframework.security.access.AccessDeniedException;
 
-@Value
-public class AccessContext {
+public record AccessContext(String cluster,
+                            List<ResourceAccess> accesses,
+                            String operationName,
+                            @Nullable Object operationParams) {
 
-  Collection<ApplicationConfigAction> applicationConfigActions;
+  public interface ResourceAccess {
+    // will be used for audit, should be serializable via json object mapper
+    @Nullable
+    Object resourceId();
 
-  String cluster;
-  Collection<ClusterConfigAction> clusterConfigActions;
+    Resource resourceType();
 
-  String topic;
-  Collection<TopicAction> topicActions;
+    Collection<PermissibleAction> requestedActions();
 
-  String consumerGroup;
-  Collection<ConsumerGroupAction> consumerGroupActions;
+    boolean isAccessible(List<Permission> userPermissions);
+  }
 
-  String connect;
-  Collection<ConnectAction> connectActions;
+  record SingleResourceAccess(@Nullable String name,
+                              Resource resourceType,
+                              Collection<PermissibleAction> requestedActions) implements ResourceAccess {
 
-  String connector;
+    SingleResourceAccess(Resource type, List<PermissibleAction> requestedActions) {
+      this(null, type, requestedActions);
+    }
 
-  String schema;
-  Collection<SchemaAction> schemaActions;
+    @Override
+    public Object resourceId() {
+      return name;
+    }
 
-  Collection<KsqlAction> ksqlActions;
+    @Override
+    public boolean isAccessible(List<Permission> userPermissions) throws AccessDeniedException {
+      var allowedActions = userPermissions.stream()
+          .filter(permission -> permission.getResource() == resourceType)
+          .filter(permission -> {
+            if (name == null && permission.getCompiledValuePattern() == null) {
+              return true;
+            }
+            Preconditions.checkState(permission.getCompiledValuePattern() != null && name != null);
+            return permission.getCompiledValuePattern().matcher(name).matches();
+          })
+          .flatMap(p -> p.getParsedActions().stream())
+          .collect(Collectors.toSet());
 
-  Collection<AclAction> aclActions;
-
-  Collection<AuditAction> auditAction;
-
-  String operationName;
-  Object operationParams;
+      return allowedActions.containsAll(requestedActions);
+    }
+  }
 
   public static AccessContextBuilder builder() {
     return new AccessContextBuilder();
   }
 
+  public boolean isAccessible(List<Permission> userPermissions) {
+    return accesses().stream()
+        .allMatch(resourceAccess -> resourceAccess.isAccessible(userPermissions));
+  }
+
   public static final class AccessContextBuilder {
-    private static final String ACTIONS_NOT_PRESENT = "actions not present";
 
-    private Collection<ApplicationConfigAction> applicationConfigActions = Collections.emptySet();
     private String cluster;
-    private Collection<ClusterConfigAction> clusterConfigActions = Collections.emptySet();
-    private String topic;
-    private Collection<TopicAction> topicActions = Collections.emptySet();
-    private String consumerGroup;
-    private Collection<ConsumerGroupAction> consumerGroupActions = Collections.emptySet();
-    private String connect;
-    private Collection<ConnectAction> connectActions = Collections.emptySet();
-    private String connector;
-    private String schema;
-    private Collection<SchemaAction> schemaActions = Collections.emptySet();
-    private Collection<KsqlAction> ksqlActions = Collections.emptySet();
-    private Collection<AclAction> aclActions = Collections.emptySet();
-    private Collection<AuditAction> auditActions = Collections.emptySet();
-
     private String operationName;
     private Object operationParams;
+    private final List<ResourceAccess> accesses = new ArrayList<>();
 
     private AccessContextBuilder() {
-    }
-
-    public AccessContextBuilder applicationConfigActions(ApplicationConfigAction... actions) {
-      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
-      this.applicationConfigActions = List.of(actions);
-      return this;
     }
 
     public AccessContextBuilder cluster(String cluster) {
@@ -87,76 +90,62 @@ public class AccessContext {
       return this;
     }
 
+    public AccessContextBuilder applicationConfigActions(ApplicationConfigAction... actions) {
+      Preconditions.checkArgument(actions.length > 0, "actions not present");
+      accesses.add(new SingleResourceAccess(Resource.APPLICATIONCONFIG, List.of(actions)));
+      return this;
+    }
+
     public AccessContextBuilder clusterConfigActions(ClusterConfigAction... actions) {
-      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
-      this.clusterConfigActions = List.of(actions);
+      Preconditions.checkArgument(actions.length > 0, "actions not present");
+      accesses.add(new SingleResourceAccess(Resource.CLUSTERCONFIG, List.of(actions)));
       return this;
     }
 
-    public AccessContextBuilder topic(String topic) {
-      this.topic = topic;
+    public AccessContextBuilder topicActions(String topic, TopicAction... actions) {
+      Preconditions.checkArgument(actions.length > 0, "actions not present");
+      accesses.add(new SingleResourceAccess(topic, Resource.TOPIC, List.of(actions)));
       return this;
     }
 
-    public AccessContextBuilder topicActions(TopicAction... actions) {
-      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
-      this.topicActions = List.of(actions);
+    public AccessContextBuilder consumerGroupActions(String consumerGroup, ConsumerGroupAction... actions) {
+      Preconditions.checkArgument(actions.length > 0, "actions not present");
+      accesses.add(new SingleResourceAccess(consumerGroup, Resource.CONSUMER, List.of(actions)));
       return this;
     }
 
-    public AccessContextBuilder consumerGroup(String consumerGroup) {
-      this.consumerGroup = consumerGroup;
+    public AccessContextBuilder connectActions(String connect, ConnectAction... actions) {
+      Preconditions.checkArgument(actions.length > 0, "actions not present");
+      accesses.add(new SingleResourceAccess(connect, Resource.CONNECT, List.of(actions)));
       return this;
     }
 
-    public AccessContextBuilder consumerGroupActions(ConsumerGroupAction... actions) {
-      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
-      this.consumerGroupActions = List.of(actions);
+    public AccessContextBuilder schemaActions(String schema, SchemaAction... actions) {
+      Preconditions.checkArgument(actions.length > 0, "actions not present");
+      accesses.add(new SingleResourceAccess(schema, Resource.SCHEMA, List.of(actions)));
       return this;
     }
 
-    public AccessContextBuilder connect(String connect) {
-      this.connect = connect;
-      return this;
-    }
-
-    public AccessContextBuilder connectActions(ConnectAction... actions) {
-      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
-      this.connectActions = List.of(actions);
-      return this;
-    }
-
-    public AccessContextBuilder connector(String connector) {
-      this.connector = connector;
-      return this;
-    }
-
-    public AccessContextBuilder schema(String schema) {
-      this.schema = schema;
-      return this;
-    }
-
-    public AccessContextBuilder schemaActions(SchemaAction... actions) {
-      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
-      this.schemaActions = List.of(actions);
+    public AccessContextBuilder schemaGlobalCompatChange() {
+      accesses.add(new SingleResourceAccess(Resource.SCHEMA, List.of(SchemaAction.MODIFY_GLOBAL_COMPATIBILITY)));
       return this;
     }
 
     public AccessContextBuilder ksqlActions(KsqlAction... actions) {
-      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
-      this.ksqlActions = List.of(actions);
+      Preconditions.checkArgument(actions.length > 0, "actions not present");
+      accesses.add(new SingleResourceAccess(Resource.KSQL, List.of(actions)));
       return this;
     }
 
     public AccessContextBuilder aclActions(AclAction... actions) {
-      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
-      this.aclActions = List.of(actions);
+      Preconditions.checkArgument(actions.length > 0, "actions not present");
+      accesses.add(new SingleResourceAccess(Resource.ACL, List.of(actions)));
       return this;
     }
 
     public AccessContextBuilder auditActions(AuditAction... actions) {
-      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
-      this.auditActions = List.of(actions);
+      Preconditions.checkArgument(actions.length > 0, "actions not present");
+      accesses.add(new SingleResourceAccess(Resource.AUDIT, List.of(actions)));
       return this;
     }
 
@@ -170,22 +159,8 @@ public class AccessContext {
       return this;
     }
 
-    public AccessContextBuilder operationParams(Map<String, Object> paramsMap) {
-      this.operationParams = paramsMap;
-      return this;
-    }
-
     public AccessContext build() {
-      return new AccessContext(
-          applicationConfigActions,
-          cluster, clusterConfigActions,
-          topic, topicActions,
-          consumerGroup, consumerGroupActions,
-          connect, connectActions,
-          connector,
-          schema, schemaActions,
-          ksqlActions, aclActions, auditActions,
-          operationName, operationParams);
+      return new AccessContext(cluster, accesses, operationName, operationParams);
     }
   }
 }

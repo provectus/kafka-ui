@@ -31,7 +31,7 @@ public class AccessController implements AuthorizationApi {
   private final AccessControlService accessControlService;
 
   public Mono<ResponseEntity<AuthenticationInfoDTO>> getUserAuthInfo(ServerWebExchange exchange) {
-    Mono<List<UserPermissionDTO>> permissions = accessControlService.getUser()
+    Mono<List<UserPermissionDTO>> permissions = AccessControlService.getUser()
         .map(user -> accessControlService.getRoles()
             .stream()
             .filter(role -> user.groups().contains(role.getName()))
@@ -64,9 +64,9 @@ public class AccessController implements AuthorizationApi {
           dto.setClusters(clusters);
           dto.setResource(ResourceTypeDTO.fromValue(permission.getResource().toString().toUpperCase()));
           dto.setValue(permission.getValue());
-          dto.setActions(permission.getActions()
+          dto.setActions(permission.getParsedActions()
               .stream()
-              .map(String::toUpperCase)
+              .map(p -> p.name().toUpperCase())
               .map(this::mapAction)
               .filter(Objects::nonNull)
               .toList());

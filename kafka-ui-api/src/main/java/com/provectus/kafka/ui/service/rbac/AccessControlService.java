@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.service.rbac;
 
-import static com.provectus.kafka.ui.model.rbac.Resource.APPLICATIONCONFIG;
-
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
 import com.provectus.kafka.ui.config.auth.RbacUser;
 import com.provectus.kafka.ui.config.auth.RoleBasedAccessControlProperties;
@@ -10,7 +8,6 @@ import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.Permission;
-import com.provectus.kafka.ui.model.rbac.Resource;
 import com.provectus.kafka.ui.model.rbac.Role;
 import com.provectus.kafka.ui.model.rbac.Subject;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
@@ -28,7 +25,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +48,6 @@ import reactor.core.publisher.Mono;
 public class AccessControlService {
 
   private static final String ACCESS_DENIED = "Access denied";
-  private static final String ACTIONS_ARE_EMPTY = "actions are empty";
 
   @Nullable
   private final InMemoryReactiveClientRegistrationRepository clientRegistrationRepository;
@@ -96,44 +91,33 @@ public class AccessControlService {
   }
 
   public Mono<Void> validateAccess(AccessContext context) {
-    if (!rbacEnabled) {
-      return Mono.empty();
-    }
-
-    if (CollectionUtils.isNotEmpty(context.getApplicationConfigActions())) {
-      return getUser()
-          .doOnNext(user -> {
-            boolean accessGranted = isApplicationConfigAccessible(context, user);
-
-            if (!accessGranted) {
-              throw new AccessDeniedException(ACCESS_DENIED);
-            }
-          }).then();
-    }
-
-    return getUser()
-        .doOnNext(user -> {
-          boolean accessGranted =
-              isApplicationConfigAccessible(context, user)
-                  && isClusterAccessible(context, user)
-                  && isClusterConfigAccessible(context, user)
-                  && isTopicAccessible(context, user)
-                  && isConsumerGroupAccessible(context, user)
-                  && isConnectAccessible(context, user)
-                  && isConnectorAccessible(context, user) // TODO connector selectors
-                  && isSchemaAccessible(context, user)
-                  && isKsqlAccessible(context, user)
-                  && isAclAccessible(context, user)
-                  && isAuditAccessible(context, user);
-
-          if (!accessGranted) {
-            throw new AccessDeniedException(ACCESS_DENIED);
-          }
-        })
+    return isAccessible(context)
+        .flatMap(allowed -> allowed ? Mono.empty() : Mono.error(new AccessDeniedException(ACCESS_DENIED)))
         .then();
   }
 
-  public Mono<AuthenticatedUser> getUser() {
+  private Mono<Boolean> isAccessible(AccessContext context) {
+    if (!rbacEnabled) {
+      return Mono.just(true);
+    }
+    return getUser().map(user -> isAccessible(user, context));
+  }
+
+  private boolean isAccessible(AuthenticatedUser user, AccessContext context) {
+    if (context.cluster() != null && !isClusterAccessible(context.cluster(), user)) {
+      return false;
+    }
+    return context.isAccessible(getUserPermissions(user));
+  }
+
+  private List<Permission> getUserPermissions(AuthenticatedUser user) {
+    return properties.getRoles().stream()
+        .filter(filterRole(user))
+        .flatMap(role -> role.getPermissions().stream())
+        .toList();
+  }
+
+  public static Mono<AuthenticatedUser> getUser() {
     return ReactiveSecurityContextHolder.getContext()
         .map(SecurityContext::getAuthentication)
         .filter(authentication -> authentication.getPrincipal() instanceof RbacUser)
@@ -141,281 +125,67 @@ public class AccessControlService {
         .map(user -> new AuthenticatedUser(user.name(), user.groups()));
   }
 
-  public boolean isApplicationConfigAccessible(AccessContext context, AuthenticatedUser user) {
-    if (!rbacEnabled) {
-      return true;
-    }
-    if (CollectionUtils.isEmpty(context.getApplicationConfigActions())) {
-      return true;
-    }
-    Set<String> requiredActions = context.getApplicationConfigActions()
-        .stream()
-        .map(a -> a.toString().toUpperCase())
-        .collect(Collectors.toSet());
-    return isAccessible(APPLICATIONCONFIG, null, user, context, requiredActions);
-  }
-
-  private boolean isClusterAccessible(AccessContext context, AuthenticatedUser user) {
-    if (!rbacEnabled) {
-      return true;
-    }
-
-    Assert.isTrue(StringUtils.isNotEmpty(context.getCluster()), "cluster value is empty");
-
+  private boolean isClusterAccessible(String clusterName, AuthenticatedUser user) {
+    Assert.isTrue(StringUtils.isNotEmpty(clusterName), "cluster value is empty");
     return properties.getRoles()
         .stream()
         .filter(filterRole(user))
-        .anyMatch(filterCluster(context.getCluster()));
+        .anyMatch(role -> role.getClusters().stream().anyMatch(clusterName::equalsIgnoreCase));
   }
 
   public Mono<Boolean> isClusterAccessible(ClusterDTO cluster) {
     if (!rbacEnabled) {
       return Mono.just(true);
     }
-
-    AccessContext accessContext = AccessContext
-        .builder()
-        .cluster(cluster.getName())
-        .build();
-
-    return getUser().map(u -> isClusterAccessible(accessContext, u));
-  }
-
-  public boolean isClusterConfigAccessible(AccessContext context, AuthenticatedUser user) {
-    if (!rbacEnabled) {
-      return true;
-    }
-
-    if (CollectionUtils.isEmpty(context.getClusterConfigActions())) {
-      return true;
-    }
-    Assert.isTrue(StringUtils.isNotEmpty(context.getCluster()), "cluster value is empty");
-
-    Set<String> requiredActions = context.getClusterConfigActions()
-        .stream()
-        .map(a -> a.toString().toUpperCase())
-        .collect(Collectors.toSet());
-
-    return isAccessible(Resource.CLUSTERCONFIG, context.getCluster(), user, context, requiredActions);
-  }
-
-  public boolean isTopicAccessible(AccessContext context, AuthenticatedUser user) {
-    if (!rbacEnabled) {
-      return true;
-    }
-
-    if (context.getTopic() == null && context.getTopicActions().isEmpty()) {
-      return true;
-    }
-    Assert.isTrue(!context.getTopicActions().isEmpty(), ACTIONS_ARE_EMPTY);
-
-    Set<String> requiredActions = context.getTopicActions()
-        .stream()
-        .map(a -> a.toString().toUpperCase())
-        .collect(Collectors.toSet());
-
-    return isAccessible(Resource.TOPIC, context.getTopic(), user, context, requiredActions);
+    return getUser().map(u -> isClusterAccessible(cluster.getName(), u));
   }
 
   public Mono<List<InternalTopic>> filterViewableTopics(List<InternalTopic> topics, String clusterName) {
     if (!rbacEnabled) {
       return Mono.just(topics);
     }
-
     return getUser()
         .map(user -> topics.stream()
-            .filter(topic -> {
-                  var accessContext = AccessContext
-                      .builder()
-                      .cluster(clusterName)
-                      .topic(topic.getName())
-                      .topicActions(TopicAction.VIEW)
-                      .build();
-                  return isTopicAccessible(accessContext, user);
-                }
+            .filter(topic ->
+                isAccessible(
+                    user,
+                    AccessContext.builder()
+                        .cluster(clusterName)
+                        .topicActions(topic.getName(), TopicAction.VIEW)
+                        .build()
+                )
             ).toList());
   }
 
-  private boolean isConsumerGroupAccessible(AccessContext context, AuthenticatedUser user) {
-    if (!rbacEnabled) {
-      return true;
-    }
-
-    if (context.getConsumerGroup() == null && context.getConsumerGroupActions().isEmpty()) {
-      return true;
-    }
-    Assert.isTrue(!context.getConsumerGroupActions().isEmpty(), ACTIONS_ARE_EMPTY);
-
-    Set<String> requiredActions = context.getConsumerGroupActions()
-        .stream()
-        .map(a -> a.toString().toUpperCase())
-        .collect(Collectors.toSet());
-
-    return isAccessible(Resource.CONSUMER, context.getConsumerGroup(), user, context, requiredActions);
-  }
-
   public Mono<Boolean> isConsumerGroupAccessible(String groupId, String clusterName) {
-    if (!rbacEnabled) {
-      return Mono.just(true);
-    }
-
-    AccessContext accessContext = AccessContext
-        .builder()
-        .cluster(clusterName)
-        .consumerGroup(groupId)
-        .consumerGroupActions(ConsumerGroupAction.VIEW)
-        .build();
-
-    return getUser().map(u -> isConsumerGroupAccessible(accessContext, u));
-  }
-
-  public boolean isSchemaAccessible(AccessContext context, AuthenticatedUser user) {
-    if (!rbacEnabled) {
-      return true;
-    }
-
-    if (context.getSchema() == null && context.getSchemaActions().isEmpty()) {
-      return true;
-    }
-    Assert.isTrue(!context.getSchemaActions().isEmpty(), ACTIONS_ARE_EMPTY);
-
-    Set<String> requiredActions = context.getSchemaActions()
-        .stream()
-        .map(a -> a.toString().toUpperCase())
-        .collect(Collectors.toSet());
-
-    return isAccessible(Resource.SCHEMA, context.getSchema(), user, context, requiredActions);
+    return isAccessible(
+        AccessContext.builder()
+            .cluster(clusterName)
+            .consumerGroupActions(groupId, ConsumerGroupAction.VIEW)
+            .build()
+    );
   }
 
   public Mono<Boolean> isSchemaAccessible(String schema, String clusterName) {
-    if (!rbacEnabled) {
-      return Mono.just(true);
-    }
-
-    AccessContext accessContext = AccessContext
-        .builder()
-        .cluster(clusterName)
-        .schema(schema)
-        .schemaActions(SchemaAction.VIEW)
-        .build();
-
-    return getUser().map(u -> isSchemaAccessible(accessContext, u));
-  }
-
-  public boolean isConnectAccessible(AccessContext context, AuthenticatedUser user) {
-    if (!rbacEnabled) {
-      return true;
-    }
-
-    if (context.getConnect() == null && context.getConnectActions().isEmpty()) {
-      return true;
-    }
-    Assert.isTrue(!context.getConnectActions().isEmpty(), ACTIONS_ARE_EMPTY);
-
-    Set<String> requiredActions = context.getConnectActions()
-        .stream()
-        .map(a -> a.toString().toUpperCase())
-        .collect(Collectors.toSet());
-
-    return isAccessible(Resource.CONNECT, context.getConnect(), user, context, requiredActions);
+    return isAccessible(
+        AccessContext.builder()
+            .cluster(clusterName)
+            .schemaActions(schema, SchemaAction.VIEW)
+            .build()
+    );
   }
 
   public Mono<Boolean> isConnectAccessible(ConnectDTO dto, String clusterName) {
-    if (!rbacEnabled) {
-      return Mono.just(true);
-    }
-
     return isConnectAccessible(dto.getName(), clusterName);
   }
 
   public Mono<Boolean> isConnectAccessible(String connectName, String clusterName) {
-    if (!rbacEnabled) {
-      return Mono.just(true);
-    }
-
-    AccessContext accessContext = AccessContext
-        .builder()
-        .cluster(clusterName)
-        .connect(connectName)
-        .connectActions(ConnectAction.VIEW)
-        .build();
-
-    return getUser().map(u -> isConnectAccessible(accessContext, u));
-  }
-
-  public boolean isConnectorAccessible(AccessContext context, AuthenticatedUser user) {
-    if (!rbacEnabled) {
-      return true;
-    }
-
-    return isConnectAccessible(context, user);
-  }
-
-  public Mono<Boolean> isConnectorAccessible(String connectName, String connectorName, String clusterName) {
-    if (!rbacEnabled) {
-      return Mono.just(true);
-    }
-
-    AccessContext accessContext = AccessContext
-        .builder()
-        .cluster(clusterName)
-        .connect(connectName)
-        .connectActions(ConnectAction.VIEW)
-        .connector(connectorName)
-        .build();
-
-    return getUser().map(u -> isConnectorAccessible(accessContext, u));
-  }
-
-  private boolean isKsqlAccessible(AccessContext context, AuthenticatedUser user) {
-    if (!rbacEnabled) {
-      return true;
-    }
-
-    if (context.getKsqlActions().isEmpty()) {
-      return true;
-    }
-
-    Set<String> requiredActions = context.getKsqlActions()
-        .stream()
-        .map(a -> a.toString().toUpperCase())
-        .collect(Collectors.toSet());
-
-    return isAccessible(Resource.KSQL, null, user, context, requiredActions);
-  }
-
-  private boolean isAclAccessible(AccessContext context, AuthenticatedUser user) {
-    if (!rbacEnabled) {
-      return true;
-    }
-
-    if (context.getAclActions().isEmpty()) {
-      return true;
-    }
-
-    Set<String> requiredActions = context.getAclActions()
-        .stream()
-        .map(a -> a.toString().toUpperCase())
-        .collect(Collectors.toSet());
-
-    return isAccessible(Resource.ACL, null, user, context, requiredActions);
-  }
-
-  private boolean isAuditAccessible(AccessContext context, AuthenticatedUser user) {
-    if (!rbacEnabled) {
-      return true;
-    }
-
-    if (context.getAuditAction().isEmpty()) {
-      return true;
-    }
-
-    Set<String> requiredActions = context.getAuditAction()
-        .stream()
-        .map(a -> a.toString().toUpperCase())
-        .collect(Collectors.toSet());
-
-    return isAccessible(Resource.AUDIT, null, user, context, requiredActions);
+    return isAccessible(
+        AccessContext.builder()
+            .cluster(clusterName)
+            .connectActions(connectName, ConnectAction.VIEW)
+            .build()
+    );
   }
 
   public Set<ProviderAuthorityExtractor> getOauthExtractors() {
@@ -429,55 +199,8 @@ public class AccessControlService {
     return Collections.unmodifiableList(properties.getRoles());
   }
 
-  private boolean isAccessible(Resource resource, @Nullable String resourceValue,
-                               AuthenticatedUser user, AccessContext context, Set<String> requiredActions) {
-    Set<String> grantedActions = properties.getRoles()
-        .stream()
-        .filter(filterRole(user))
-        .filter(filterCluster(resource, context.getCluster()))
-        .flatMap(grantedRole -> grantedRole.getPermissions().stream())
-        .filter(filterResource(resource))
-        .filter(filterResourceValue(resourceValue))
-        .flatMap(grantedPermission -> grantedPermission.getActions().stream())
-        .map(String::toUpperCase)
-        .collect(Collectors.toSet());
-
-    return grantedActions.containsAll(requiredActions);
-  }
-
   private Predicate<Role> filterRole(AuthenticatedUser user) {
     return role -> user.groups().contains(role.getName());
-  }
-
-  private Predicate<Role> filterCluster(String cluster) {
-    return grantedRole -> grantedRole.getClusters()
-        .stream()
-        .anyMatch(cluster::equalsIgnoreCase);
-  }
-
-  private Predicate<Role> filterCluster(Resource resource, String cluster) {
-    if (resource == APPLICATIONCONFIG) {
-      return role -> true;
-    }
-    return filterCluster(cluster);
-  }
-
-  private Predicate<Permission> filterResource(Resource resource) {
-    return grantedPermission -> resource == grantedPermission.getResource();
-  }
-
-  private Predicate<Permission> filterResourceValue(@Nullable String resourceValue) {
-
-    if (resourceValue == null) {
-      return grantedPermission -> true;
-    }
-    return grantedPermission -> {
-      Pattern valuePattern = grantedPermission.getCompiledValuePattern();
-      if (valuePattern == null) {
-        return true;
-      }
-      return valuePattern.matcher(resourceValue).matches();
-    };
   }
 
   public boolean isRbacEnabled() {

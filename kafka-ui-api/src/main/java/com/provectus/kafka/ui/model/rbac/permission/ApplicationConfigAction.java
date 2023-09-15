@@ -7,11 +7,17 @@ import org.jetbrains.annotations.Nullable;
 public enum ApplicationConfigAction implements PermissibleAction {
 
   VIEW,
-  EDIT
+  EDIT(VIEW)
 
   ;
 
   public static final Set<ApplicationConfigAction> ALTER_ACTIONS = Set.of(EDIT);
+
+  private final PermissibleAction[] dependantActions;
+
+  ApplicationConfigAction(ApplicationConfigAction... dependantActions) {
+    this.dependantActions = dependantActions;
+  }
 
   @Nullable
   public static ApplicationConfigAction fromString(String name) {
@@ -21,5 +27,10 @@ public enum ApplicationConfigAction implements PermissibleAction {
   @Override
   public boolean isAlter() {
     return ALTER_ACTIONS.contains(this);
+  }
+
+  @Override
+  public PermissibleAction[] dependantActions() {
+    return dependantActions;
   }
 }

@@ -11,6 +11,7 @@ import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.service.AdminClientService;
 import com.provectus.kafka.ui.service.ClustersStorage;
 import com.provectus.kafka.ui.service.ReactiveAdminClient;
+import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.io.Closeable;
 import java.io.IOException;
 import java.time.Duration;
@@ -20,7 +21,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -28,9 +28,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Signal;
@@ -181,31 +179,18 @@ public class AuditService implements Closeable {
 
   public void audit(AccessContext acxt, Signal<?> sig) {
     if (sig.isOnComplete()) {
-      extractUser(sig)
+      extractUser()
           .doOnNext(u -> sendAuditRecord(acxt, u))
           .subscribe();
     } else if (sig.isOnError()) {
-      extractUser(sig)
+      extractUser()
           .doOnNext(u -> sendAuditRecord(acxt, u, sig.getThrowable()))
           .subscribe();
     }
   }
 
-  private Mono<AuthenticatedUser> extractUser(Signal<?> sig) {
-    //see ReactiveSecurityContextHolder for impl details
-    Object key = SecurityContext.class;
-    if (sig.getContextView().hasKey(key)) {
-      return sig.getContextView().<Mono<SecurityContext>>get(key)
-          .map(context -> context.getAuthentication().getPrincipal())
-          .cast(UserDetails.class)
-          .map(user -> {
-            var roles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-            return new AuthenticatedUser(user.getUsername(), roles);
-          })
-          .switchIfEmpty(NO_AUTH_USER);
-    } else {
-      return NO_AUTH_USER;
-    }
+  private Mono<AuthenticatedUser> extractUser() {
+    return AccessControlService.getUser().switchIfEmpty(NO_AUTH_USER);
   }
 
   private void sendAuditRecord(AccessContext ctx, AuthenticatedUser user) {
@@ -214,8 +199,8 @@ public class AuditService implements Closeable {
 
   private void sendAuditRecord(AccessContext ctx, AuthenticatedUser user, @Nullable Throwable th) {
     try {
-      if (ctx.getCluster() != null) {
-        var writer = auditWriters.get(ctx.getCluster());
+      if (ctx.cluster() != null) {
+        var writer = auditWriters.get(ctx.cluster());
         if (writer != null) {
           writer.write(ctx, user, th);
         }

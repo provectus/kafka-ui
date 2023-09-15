@@ -7,11 +7,17 @@ import org.jetbrains.annotations.Nullable;
 public enum ClusterConfigAction implements PermissibleAction {
 
   VIEW,
-  EDIT
+  EDIT(VIEW)
 
   ;
 
   public static final Set<ClusterConfigAction> ALTER_ACTIONS = Set.of(EDIT);
+
+  private final ClusterConfigAction[] dependantActions;
+
+  ClusterConfigAction(ClusterConfigAction... dependantActions) {
+    this.dependantActions = dependantActions;
+  }
 
   @Nullable
   public static ClusterConfigAction fromString(String name) {
@@ -21,5 +27,10 @@ public enum ClusterConfigAction implements PermissibleAction {
   @Override
   public boolean isAlter() {
     return ALTER_ACTIONS.contains(this);
+  }
+
+  @Override
+  public PermissibleAction[] dependantActions() {
+    return dependantActions;
   }
 }

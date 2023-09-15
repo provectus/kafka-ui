@@ -12,6 +12,12 @@ public enum KsqlAction implements PermissibleAction {
 
   public static final Set<KsqlAction> ALTER_ACTIONS = Set.of(EXECUTE);
 
+  private final KsqlAction[] dependantActions;
+
+  KsqlAction(KsqlAction... dependantActions) {
+    this.dependantActions = dependantActions;
+  }
+
   @Nullable
   public static KsqlAction fromString(String name) {
     return EnumUtils.getEnum(KsqlAction.class, name);
@@ -20,5 +26,10 @@ public enum KsqlAction implements PermissibleAction {
   @Override
   public boolean isAlter() {
     return ALTER_ACTIONS.contains(this);
+  }
+
+  @Override
+  public PermissibleAction[] dependantActions() {
+    return dependantActions;
   }
 }

@@ -59,7 +59,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
     return topicCreationMono.flatMap(topicCreation -> {
       var context = AccessContext.builder()
           .cluster(clusterName)
-          .topicActions(CREATE)
+          .topicActions(topicCreation.getName(), CREATE)
           .operationName("createTopic")
           .operationParams(topicCreation)
           .build();
@@ -78,8 +78,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
                                                       String topicName, ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .topic(topicName)
-        .topicActions(VIEW, CREATE, DELETE)
+        .topicActions(topicName, VIEW, CREATE, DELETE)
         .operationName("recreateTopic")
         .build();
 
@@ -96,8 +95,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .topic(topicName)
-        .topicActions(VIEW, CREATE)
+        .topicActions(topicName, VIEW, CREATE)
         .operationName("cloneTopic")
         .operationParams(Map.of("newTopicName", newTopicName))
         .build();
@@ -115,8 +113,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .topic(topicName)
-        .topicActions(DELETE)
+        .topicActions(topicName, DELETE)
         .operationName("deleteTopic")
         .build();
 
@@ -134,8 +131,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .topic(topicName)
-        .topicActions(VIEW)
+        .topicActions(topicName, VIEW)
         .operationName("getTopicConfigs")
         .build();
 
@@ -156,8 +152,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .topic(topicName)
-        .topicActions(VIEW)
+        .topicActions(topicName, VIEW)
         .operationName("getTopicDetails")
         .build();
 
@@ -222,8 +217,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .topic(topicName)
-        .topicActions(VIEW, EDIT)
+        .topicActions(topicName, VIEW, EDIT)
         .operationName("updateTopic")
         .build();
 
@@ -243,8 +237,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .topic(topicName)
-        .topicActions(VIEW, EDIT)
+        .topicActions(topicName, VIEW, EDIT)
         .build();
 
     return validateAccess(context).then(
@@ -262,8 +255,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .topic(topicName)
-        .topicActions(VIEW, EDIT)
+        .topicActions(topicName, VIEW, EDIT)
         .operationName("changeReplicationFactor")
         .build();
 
@@ -280,8 +272,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .topic(topicName)
-        .topicActions(MESSAGES_READ)
+        .topicActions(topicName, MESSAGES_READ)
         .operationName("analyzeTopic")
         .build();
 
@@ -297,8 +288,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
                                                         ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .topic(topicName)
-        .topicActions(MESSAGES_READ)
+        .topicActions(topicName, MESSAGES_READ)
         .operationName("cancelTopicAnalysis")
         .build();
 
@@ -316,8 +306,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .topic(topicName)
-        .topicActions(MESSAGES_READ)
+        .topicActions(topicName, MESSAGES_READ)
         .operationName("getTopicAnalysis")
         .build();
 
