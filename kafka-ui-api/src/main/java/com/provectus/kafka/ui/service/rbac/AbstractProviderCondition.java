@@ -23,7 +23,7 @@ public abstract class AbstractProviderCondition {
         .map(OAuthProperties.OAuth2Provider::getCustomParams)
         .filter(Objects::nonNull)
         .filter(Predicate.not(Map::isEmpty))
-        .map(params -> params.get("type"))
+        .map(params -> params.getOrDefault("type", null))
         .filter(Objects::nonNull)
         .filter(StringUtils::isNotEmpty)
         .collect(Collectors.toSet());
