@@ -144,6 +144,8 @@ export const clusterTopicCopyPath = (
 // Topics topic
 export const clusterTopicSettingsRelativePath = 'settings';
 export const clusterTopicMessagesRelativePath = 'messages';
+export const clusterTopicSchemaValueRelativePath = 'schema-value';
+export const clusterTopicSchemaKeyRelativePath = 'schema-key';
 export const clusterTopicConsumerGroupsRelativePath = 'consumer-groups';
 export const clusterTopicStatisticsRelativePath = 'statistics';
 export const clusterTopicEditRelativePath = 'edit';
@@ -167,6 +169,22 @@ export const clusterTopicMessagesPath = (
     clusterName,
     topicName
   )}/${clusterTopicMessagesRelativePath}`;
+export const clusterTopicSchemaValuePath = (
+  clusterName: ClusterName = RouteParams.clusterName,
+  topicName: TopicName = RouteParams.topicName
+) =>
+  `${clusterTopicPath(
+    clusterName,
+    topicName
+  )}/${clusterTopicSchemaValueRelativePath}`;
+export const clusterTopicSchemaKeyPath = (
+  clusterName: ClusterName = RouteParams.clusterName,
+  topicName: TopicName = RouteParams.topicName
+) =>
+  `${clusterTopicPath(
+    clusterName,
+    topicName
+  )}/${clusterTopicSchemaKeyRelativePath}`;
 export const clusterTopicEditPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   topicName: TopicName = RouteParams.topicName
