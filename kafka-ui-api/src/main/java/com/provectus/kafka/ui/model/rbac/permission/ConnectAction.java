@@ -9,11 +9,12 @@ public enum ConnectAction implements PermissibleAction {
   VIEW,
   EDIT,
   CREATE,
+  DELETE,
   RESTART
 
   ;
 
-  public static final Set<ConnectAction> ALTER_ACTIONS = Set.of(CREATE, EDIT, RESTART);
+  public static final Set<ConnectAction> ALTER_ACTIONS = Set.of(CREATE, EDIT, DELETE, RESTART);
 
   @Nullable
   public static ConnectAction fromString(String name) {
