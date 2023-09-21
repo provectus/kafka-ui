@@ -5,7 +5,7 @@ services:
 
   selenoid:
     network_mode: bridge
-    image: aerokube/selenoid:1.10.7
+    image: aerokube/selenoid:1.11.0
     volumes:
       - "../selenoid/config:/etc/selenoid"
       - "/var/run/docker.sock:/var/run/docker.sock"
@@ -28,6 +28,6 @@ services:
 
   selenoid-chrome:
     network_mode: bridge
-    image: selenoid/vnc_chrome:103.0
+    image: selenoid/vnc_chrome:116.0
     extra_hosts:
       - "host.docker.internal:host-gateway"

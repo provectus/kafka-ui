@@ -18,7 +18,7 @@ services:
       DYNAMIC_CONFIG_ENABLED: true # not necessary for sasl auth, added for tests
 
   kafka:
-    image: confluentinc/cp-kafka:7.2.1
+    image: confluentinc/cp-kafka:7.5.0
     hostname: kafka
     container_name: kafka
     ports:
