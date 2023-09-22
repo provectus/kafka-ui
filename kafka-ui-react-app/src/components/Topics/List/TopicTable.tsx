@@ -76,7 +76,7 @@ const TopicTable: React.FC = () => {
           }
           return partitions.reduce((memo, { offsetMax, offsetMin }) => {
             return memo + (offsetMax - offsetMin);
-          }, 0);
+          }, 0).toLocaleString();
         },
       },
       {
