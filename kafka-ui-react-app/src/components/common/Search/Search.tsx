@@ -52,6 +52,9 @@ const Search: React.FC<SearchProps> = ({
     if (ref.current != null) {
       ref.current.value = '';
     }
+    if (onChange) {
+      onChange('');
+    }
   };
 
   return (
