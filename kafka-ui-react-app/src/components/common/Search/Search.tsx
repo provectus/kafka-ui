@@ -53,7 +53,7 @@ const Search: React.FC<SearchProps> = ({
       ref.current.value = '';
     }
     if (onChange) {
-      onChange('')
+      onChange('');
     }
   };
 
