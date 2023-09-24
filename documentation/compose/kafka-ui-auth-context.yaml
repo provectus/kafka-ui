@@ -19,7 +19,7 @@ services:
       SPRING_SECURITY_USER_PASSWORD: pass
 
   kafka:
-    image: confluentinc/cp-kafka:7.5.0
+    image: confluentinc/cp-kafka:7.2.1
     hostname: kafka
     container_name: kafka
     ports:

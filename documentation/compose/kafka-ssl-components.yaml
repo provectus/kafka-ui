@@ -39,7 +39,7 @@ services:
       - ./ssl/kafka.keystore.jks:/kafka.keystore.jks
 
   kafka0:
-    image: confluentinc/cp-kafka:7.5.0
+    image: confluentinc/cp-kafka:7.2.1
     hostname: kafka0
     container_name: kafka0
     ports:
@@ -80,7 +80,7 @@ services:
     command: "bash -c 'if [ ! -f /tmp/update_run.sh ]; then echo \"ERROR: Did you forget the update_run.sh file that came with this docker-compose.yml file?\" && exit 1 ; else /tmp/update_run.sh && /etc/confluent/docker/run ; fi'"
 
   schemaregistry0:
-    image: confluentinc/cp-schema-registry:7.5.0
+    image: confluentinc/cp-schema-registry:7.2.1
     depends_on:
       - kafka0
     environment:
@@ -111,7 +111,7 @@ services:
       - ./ssl/kafka.keystore.jks:/kafka.keystore.jks
 
   kafka-connect0:
-    image: confluentinc/cp-kafka-connect:7.5.0
+    image: confluentinc/cp-kafka-connect:7.2.1
     ports:
       - 8083:8083
     depends_on:
@@ -148,7 +148,7 @@ services:
       - ./ssl/kafka.keystore.jks:/kafka.keystore.jks
 
   ksqldb0:
-    image: confluentinc/ksqldb-server:0.18.0
+    image: confluentinc/ksqldb-server:0.29.0
     depends_on:
       - kafka0
       - kafka-connect0
