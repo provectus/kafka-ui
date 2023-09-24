@@ -22,7 +22,7 @@ services:
       - ./ssl/kafka.keystore.jks:/kafka.keystore.jks
 
   kafka:
-    image: confluentinc/cp-kafka:7.2.1
+    image: confluentinc/cp-kafka:7.5.0
     hostname: kafka
     container_name: kafka
     ports:

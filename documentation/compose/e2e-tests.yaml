@@ -29,7 +29,7 @@ services:
       KAFKA_CLUSTERS_0_KSQLDBSERVER: http://ksqldb:8088
 
   kafka0:
-    image: confluentinc/cp-kafka:7.2.1
+    image: confluentinc/cp-kafka:7.5.0
     hostname: kafka0
     container_name: kafka0
     healthcheck:
@@ -63,7 +63,7 @@ services:
     command: "bash -c 'if [ ! -f /tmp/update_run.sh ]; then echo \"ERROR: Did you forget the update_run.sh file that came with this docker-compose.yml file?\" && exit 1 ; else /tmp/update_run.sh && /etc/confluent/docker/run ; fi'"
 
   schemaregistry0:
-    image: confluentinc/cp-schema-registry:7.2.1
+    image: confluentinc/cp-schema-registry:7.5.0
     ports:
       - 8085:8085
     depends_on:
@@ -122,7 +122,7 @@ services:
   #      AWS_SECRET_ACCESS_KEY: ""
 
   kafka-init-topics:
-    image: confluentinc/cp-kafka:7.2.1
+    image: confluentinc/cp-kafka:7.5.0
     volumes:
       - ./data/message.json:/data/message.json
     depends_on:

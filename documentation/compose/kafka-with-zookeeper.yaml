@@ -3,7 +3,7 @@ version: '2'
 services:
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.2.1
+    image: confluentinc/cp-zookeeper:7.5.0
     hostname: zookeeper
     container_name: zookeeper
     ports:
@@ -13,7 +13,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: confluentinc/cp-server:7.2.1
+    image: confluentinc/cp-server:7.5.0
     hostname: kafka
     container_name: kafka
     depends_on:
@@ -36,7 +36,7 @@ services:
       KAFKA_JMX_HOSTNAME: kafka
 
   kafka-init-topics:
-    image: confluentinc/cp-kafka:7.2.1
+    image: confluentinc/cp-kafka:7.5.0
     volumes:
        - ./data/message.json:/data/message.json
     depends_on:

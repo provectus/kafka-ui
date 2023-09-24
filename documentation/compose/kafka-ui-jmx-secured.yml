@@ -27,7 +27,7 @@ services:
       - ./jmx/clientkeystore:/jmx/clientkeystore
 
   kafka0:
-    image: confluentinc/cp-kafka:7.2.1
+    image: confluentinc/cp-kafka:7.5.0
     hostname: kafka0
     container_name: kafka0
     ports:
