@@ -3,7 +3,7 @@ version: '3.8'
 services:
   traefik:
     restart: always
-    image: traefik:v2.10
+    image: traefik:v2.4
     container_name: traefik
     command:
       - --api.insecure=true

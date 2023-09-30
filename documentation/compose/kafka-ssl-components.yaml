@@ -148,7 +148,7 @@ services:
       - ./ssl/kafka.keystore.jks:/kafka.keystore.jks
 
   ksqldb0:
-    image: confluentinc/ksqldb-server:0.29.0
+    image: confluentinc/ksqldb-server:0.18.0
     depends_on:
       - kafka0
       - kafka-connect0
