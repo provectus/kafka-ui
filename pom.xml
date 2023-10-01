@@ -14,53 +14,52 @@
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <frontend-generated-sources-directory>..//kafka-ui-react-app/src/generated-sources
-        </frontend-generated-sources-directory>
+        <frontend-generated-sources-directory>..//kafka-ui-react-app/src/generated-sources</frontend-generated-sources-directory>
         <sonar.organization>provectus</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <git.revision>latest</git.revision>
 
         <!-- Dependency versions -->
-        <antlr4-maven-plugin.version>4.12.0</antlr4-maven-plugin.version>
-        <apache.commons.version>2.11.1</apache.commons.version>
-        <assertj.version>3.19.0</assertj.version>
-        <avro.version>1.11.1</avro.version>
-        <byte-buddy.version>1.12.19</byte-buddy.version>
-        <confluent.version>7.4.0</confluent.version>
-        <datasketches-java.version>3.1.0</datasketches-java.version>
-        <groovy.version>3.0.13</groovy.version>
-        <jackson.version>2.14.0</jackson.version>
-        <kafka-clients.version>3.5.0</kafka-clients.version>
+        <antlr4-maven-plugin.version>4.12.0</antlr4-maven-plugin.version> <!-- TODO 4.13.1 -->
+        <apache.commons-pool2.version>2.11.1</apache.commons-pool2.version>
+        <assertj.version>3.24.2</assertj.version>
+        <avro.version>1.11.3</avro.version>
+        <byte-buddy.version>1.14.8</byte-buddy.version>
+        <confluent.version>7.4.2</confluent.version>
+        <datasketches-java.version>4.2.0</datasketches-java.version>
+        <groovy.version>3.0.19</groovy.version>
+        <jackson.version>2.15.2</jackson.version>
+        <kafka-clients.version>3.5.1</kafka-clients.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
-        <org.projectlombok.version>1.18.24</org.projectlombok.version>
-        <protobuf-java.version>3.23.3</protobuf-java.version>
-        <scala-lang.library.version>2.13.9</scala-lang.library.version>
+        <org.projectlombok.version>1.18.30</org.projectlombok.version>
+        <protobuf-java.version>3.24.3</protobuf-java.version>
+        <scala-lang.library.version>2.13.12</scala-lang.library.version> <!-- TODO moved to scala3-library -->
         <snakeyaml.version>2.0</snakeyaml.version>
-        <spring-boot.version>3.1.3</spring-boot.version>
+        <spring-boot.version>3.1.4</spring-boot.version>
         <kafka-ui-serde-api.version>1.0.0</kafka-ui-serde-api.version>
-        <odd-oddrn-generator.version>0.1.17</odd-oddrn-generator.version>
+        <odd-oddrn-generator.version>0.1.20</odd-oddrn-generator.version>
         <odd-oddrn-client.version>0.1.26</odd-oddrn-client.version>
-        <org.json.version>20230227</org.json.version>
+        <org.json.version>20230618</org.json.version>
 
         <!-- Test dependency versions -->
-        <junit.version>5.9.1</junit.version>
-        <mockito.version>5.3.1</mockito.version>
-        <okhttp3.mockwebserver.version>4.10.0</okhttp3.mockwebserver.version>
-        <testcontainers.version>1.17.5</testcontainers.version>
+        <junit.version>5.10.0</junit.version>
+        <mockito.version>5.5.0</mockito.version>
+        <okhttp3.mockwebserver.version>4.11.0</okhttp3.mockwebserver.version>
+        <testcontainers.version>1.19.0</testcontainers.version>
 
         <!-- Frontend dependency versions -->
         <node.version>v18.17.1</node.version>
         <pnpm.version>v8.6.12</pnpm.version>
 
         <!-- Plugin versions -->
-        <fabric8-maven-plugin.version>0.42.1</fabric8-maven-plugin.version>
-        <frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
-        <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
-        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-        <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+        <fabric8-maven-plugin.version>0.43.4</fabric8-maven-plugin.version>
+        <frontend-maven-plugin.version>1.14.0</frontend-maven-plugin.version>
+        <maven-clean-plugin.version>3.3.1</maven-clean-plugin.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
-        <openapi-generator-maven-plugin.version>6.6.0</openapi-generator-maven-plugin.version>
-        <springdoc-openapi-webflux-ui.version>1.2.32</springdoc-openapi-webflux-ui.version>
+        <openapi-generator-maven-plugin.version>6.6.0</openapi-generator-maven-plugin.version> <!-- TODO 7.0.1 -->
+        <springdoc-openapi-webflux-ui.version>1.7.0</springdoc-openapi-webflux-ui.version>
     </properties>
 
     <repositories>
@@ -100,6 +99,37 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio</artifactId>
+                <version>3.4.0</version> <!-- https://avd.aquasec.com/nvd/cve-2023-3635 -->
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>32.1.2-jre</version> <!-- https://avd.aquasec.com/nvd/cve-2023-2976 -->
+            </dependency>
+            <dependency>
+                <groupId>com.github.erosb</groupId>
+                <artifactId>everit-json-schema</artifactId>
+                <version>1.14.2</version> <!-- override transitive dep in kafka-json-schema-serializer 7.4.0 -->
+            </dependency>
+            <dependency>
+                <groupId>org.xerial.snappy</groupId>
+                <artifactId>snappy-java</artifactId>
+                <version>1.1.10.5</version> <!-- GHSA-55g7-9cwv-5qfv: override transitive dep in kafka 3.5.1 -->
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.14</version> <!-- GHSA-7r82-7xv7-xcpj: override transitive dep in qase-api 3.1.0 -->
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.24.0</version> <!-- GHSA-cgwf-w82q-5jrr: override transitive dep in testcontainers 1.19.0 -->
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
