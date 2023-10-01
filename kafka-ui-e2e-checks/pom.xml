@@ -14,11 +14,11 @@
     <properties>
         <maven.surefire-plugin.version>3.1.2</maven.surefire-plugin.version>
         <kafka-ui-contract>${project.version}</kafka-ui-contract>
-        <testcontainers.version>1.17.6</testcontainers.version>
-        <httpcore5.version>5.2.2</httpcore5.version>
+        <testcontainers.version>1.19.0</testcontainers.version>
+        <httpcore5.version>5.2.3</httpcore5.version>
         <httpclient5.version>5.2.1</httpclient5.version>
-        <selenium.version>4.12.1</selenium.version>
-        <selenide.version>6.18.0</selenide.version>
+        <selenium.version>4.13.0</selenium.version>
+        <selenide.version>6.19.0</selenide.version>
         <testng.version>7.8.0</testng.version>
         <allure.version>2.24.0</allure.version>
         <qase.io.version>3.1.0</qase.io.version>
