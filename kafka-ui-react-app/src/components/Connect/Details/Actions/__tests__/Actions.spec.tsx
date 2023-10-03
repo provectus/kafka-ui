@@ -138,7 +138,12 @@ describe('Actions', () => {
         await userEvent.click(
           screen.getByRole('menuitem', { name: 'Restart Connector' })
         );
-        expect(restartConnector).toHaveBeenCalledWith(ConnectorAction.RESTART);
+        expect(restartConnector).toHaveBeenCalledWith({
+          action: ConnectorAction.RESTART,
+          clusterName: 'myCluster',
+          connectName: 'myConnect',
+          connectorName: 'myConnector',
+        });
       });
 
       it('calls restartAllTasks', async () => {
@@ -151,9 +156,12 @@ describe('Actions', () => {
         await userEvent.click(
           screen.getByRole('menuitem', { name: 'Restart All Tasks' })
         );
-        expect(restartAllTasks).toHaveBeenCalledWith(
-          ConnectorAction.RESTART_ALL_TASKS
-        );
+        expect(restartAllTasks).toHaveBeenCalledWith({
+          action: ConnectorAction.RESTART_ALL_TASKS,
+          clusterName: 'myCluster',
+          connectName: 'myConnect',
+          connectorName: 'myConnector',
+        });
       });
 
       it('calls restartFailedTasks', async () => {
@@ -166,9 +174,12 @@ describe('Actions', () => {
         await userEvent.click(
           screen.getByRole('menuitem', { name: 'Restart Failed Tasks' })
         );
-        expect(restartFailedTasks).toHaveBeenCalledWith(
-          ConnectorAction.RESTART_FAILED_TASKS
-        );
+        expect(restartFailedTasks).toHaveBeenCalledWith({
+          action: ConnectorAction.RESTART_FAILED_TASKS,
+          clusterName: 'myCluster',
+          connectName: 'myConnect',
+          connectorName: 'myConnector',
+        });
       });
 
       it('calls pauseConnector when pause button clicked', async () => {
@@ -179,7 +190,12 @@ describe('Actions', () => {
         renderComponent();
         await afterClickRestartButton();
         await userEvent.click(screen.getByRole('menuitem', { name: 'Pause' }));
-        expect(pauseConnector).toHaveBeenCalledWith(ConnectorAction.PAUSE);
+        expect(pauseConnector).toHaveBeenCalledWith({
+          action: ConnectorAction.PAUSE,
+          clusterName: 'myCluster',
+          connectName: 'myConnect',
+          connectorName: 'myConnector',
+        });
       });
 
       it('calls resumeConnector when resume button clicked', async () => {
@@ -193,7 +209,12 @@ describe('Actions', () => {
         renderComponent();
         await afterClickRestartButton();
         await userEvent.click(screen.getByRole('menuitem', { name: 'Resume' }));
-        expect(resumeConnector).toHaveBeenCalledWith(ConnectorAction.RESUME);
+        expect(resumeConnector).toHaveBeenCalledWith({
+          action: ConnectorAction.RESUME,
+          clusterName: 'myCluster',
+          connectName: 'myConnect',
+          connectorName: 'myConnector',
+        });
       });
     });
   });
