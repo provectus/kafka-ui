@@ -65,6 +65,7 @@ const TopicTable: React.FC = () => {
         accessorKey: 'replicationFactor',
         enableSorting: false,
       },
+    
       {
         header: 'Number of messages',
         accessorKey: 'partitions',
@@ -74,9 +75,10 @@ const TopicTable: React.FC = () => {
           if (partitions === undefined || partitions.length === 0) {
             return 0;
           }
-          return partitions.reduce((memo, { offsetMax, offsetMin }) => {
+          const totalMessages = partitions.reduce((memo, { offsetMax, offsetMin }) => {
             return memo + (offsetMax - offsetMin);
           }, 0);
+          return totalMessages.toLocaleString(); // Format with comma separators
         },
       },
       {
