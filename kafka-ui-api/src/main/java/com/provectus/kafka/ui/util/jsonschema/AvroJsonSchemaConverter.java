@@ -48,23 +48,20 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
     if (!schema.isUnion()) {
       JsonType type = convertType(schema);
       switch (type.getType()) {
-        case BOOLEAN:
-        case NULL:
-        case STRING:
-        case ENUM:
-        case NUMBER:
-        case INTEGER:
+        case BOOLEAN, NULL, STRING, ENUM, NUMBER, INTEGER -> {
           return new SimpleFieldSchema(type);
-        case OBJECT:
+        }
+        case OBJECT -> {
           if (schema.getType().equals(Schema.Type.MAP)) {
             return new MapFieldSchema(convertSchema(schema.getValueType(), definitions, isRoot));
           } else {
             return createObjectSchema(schema, definitions, isRoot);
           }
-        case ARRAY:
+        }
+        case ARRAY -> {
           return createArraySchema(schema, definitions);
-        default:
-          throw new RuntimeException("Unknown type");
+        }
+        default -> throw new RuntimeException("Unknown type");
       }
     } else {
       return createUnionSchema(schema, definitions);

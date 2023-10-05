@@ -100,7 +100,7 @@ class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
   }
 
   public static void clearThreadLocalContext() {
-    SSL_CONTEXT_THREAD_LOCAL.set(null);
+      SSL_CONTEXT_THREAD_LOCAL.remove();
   }
 
   public static void editJmxConnectorEnv(Map<String, Object> env) {
