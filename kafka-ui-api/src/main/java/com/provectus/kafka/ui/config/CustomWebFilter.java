@@ -16,7 +16,7 @@ public class CustomWebFilter implements WebFilter {
 
     final String path = exchange.getRequest().getPath().pathWithinApplication().value();
 
-    if (path.startsWith("/ui") || path.equals("") || path.equals("/")) {
+    if (path.startsWith("/ui") || path.isEmpty() || path.equals("/")) {
       return chain.filter(
           exchange.mutate().request(
               exchange.getRequest().mutate()
