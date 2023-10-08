@@ -89,6 +89,7 @@ const PreviewModal: React.FC<InfoModalProps> = ({
       <div>
         <InputLabel htmlFor="previewFormField">Field</InputLabel>
         <Input
+          autoFocus
           type="text"
           id="previewFormField"
           min="1"
