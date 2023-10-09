@@ -19,7 +19,7 @@ dependencies:
     version: 2.0.1
   '@reduxjs/toolkit':
     specifier: ^1.8.3
-    version: 1.8.3(react-redux@8.0.2)(react@18.2.0)
+    version: 1.9.7(react-redux@8.0.2)(react@18.2.0)
   '@szhsin/react-menu':
     specifier: ^3.5.3
     version: 3.5.3(react-dom@18.1.0)(react@18.2.0)
@@ -1416,8 +1416,8 @@ packages:
   /@popperjs/core@2.9.2:
     resolution: {integrity: sha512-VZMYa7+fXHdwIq1TDhSXoVmSPEGM/aa+6Aiq3nVVJ9bXr24zScr+NlKFKC3iPljA7ho/GAZr+d2jOf5GIRC30Q==}
 
-  /@reduxjs/toolkit@1.8.3(react-redux@8.0.2)(react@18.2.0):
-    resolution: {integrity: sha512-lU/LDIfORmjBbyDLaqFN2JB9YmAT1BElET9y0ZszwhSBa5Ef3t6o5CrHupw5J1iOXwd+o92QfQZ8OJpwXvsssg==}
+  /@reduxjs/toolkit@1.9.7(react-redux@8.0.2)(react@18.2.0):
+    resolution: {integrity: sha512-t7v8ZPxhhKgOKtU+uyJT13lu4vL7az5aFi4IdoDs/eS548edn2M8Ik9h8fxgvMjGoAUVFSt6ZC1P5cWmQ014QQ==}
     peerDependencies:
       react: ^16.9.0 || ^17.0.0 || ^18
       react-redux: ^7.2.1 || ^8.0.2
@@ -1427,12 +1427,12 @@ packages:
       react-redux:
         optional: true
     dependencies:
-      immer: 9.0.12
+      immer: 9.0.21
       react: 18.2.0
       react-redux: 8.0.2(@types/react-dom@18.0.5)(@types/react@18.2.21)(react-dom@18.1.0)(react@18.2.0)(redux@4.2.0)
-      redux: 4.2.0
-      redux-thunk: 2.4.1(redux@4.2.0)
-      reselect: 4.1.5
+      redux: 4.2.1
+      redux-thunk: 2.4.2(redux@4.2.1)
+      reselect: 4.1.8
     dev: false
 
   /@remix-run/router@1.8.0:
@@ -4025,8 +4025,8 @@ packages:
     engines: {node: '>= 4'}
     dev: true
 
-  /immer@9.0.12:
-    resolution: {integrity: sha512-lk7UNmSbAukB5B6dh9fnh5D0bJTOFKxVg2cyJWTYrWRfhLrLMBquONcUs3aFq507hNoIZEDDh8lb8UtOizSMhA==}
+  /immer@9.0.21:
+    resolution: {integrity: sha512-bc4NBHqOqSfRW7POMkHd51LvClaeMXpm8dx0e8oE2GORbq5aRK7Bxl4FyzVLdGtLmvLKL7BTDBG5ACQm4HWjTA==}
     dev: false
 
   /immutable@4.0.0:
@@ -5876,18 +5876,24 @@ packages:
       strip-indent: 3.0.0
     dev: true
 
-  /redux-thunk@2.4.1(redux@4.2.0):
-    resolution: {integrity: sha512-OOYGNY5Jy2TWvTL1KgAlVy6dcx3siPJ1wTq741EPyUKfn6W6nChdICjZwCd0p8AZBs5kWpZlbkXW2nE/zjUa+Q==}
+  /redux-thunk@2.4.2(redux@4.2.1):
+    resolution: {integrity: sha512-+P3TjtnP0k/FEjcBL5FZpoovtvrTNT/UXd4/sluaSyrURlSlhLSzEdfsTBW7WsKB6yPvgd7q/iZPICFjW4o57Q==}
     peerDependencies:
       redux: ^4
     dependencies:
-      redux: 4.2.0
+      redux: 4.2.1
     dev: false
 
   /redux@4.2.0:
     resolution: {integrity: sha512-oSBmcKKIuIR4ME29/AeNUnl5L+hvBq7OaJWzaptTQJAntaPvxIJqfnjbaEiCzzaIz+XmVILfqAM3Ob0aXLPfjA==}
     dependencies:
       '@babel/runtime': 7.17.9
+    dev: false
+
+  /redux@4.2.1:
+    resolution: {integrity: sha512-LAUYz4lc+Do8/g7aeRa8JkyDErK6ekstQaqWQrNRW//MY1TvCEpMtpTWvlQ+FPbWCx+Xixu/6SHt5N0HR+SB4w==}
+    dependencies:
+      '@babel/runtime': 7.22.11
     dev: false
 
   /reflect-metadata@0.1.13:
@@ -5931,8 +5937,8 @@ packages:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
     dev: true
 
-  /reselect@4.1.5:
-    resolution: {integrity: sha512-uVdlz8J7OO+ASpBYoz1Zypgx0KasCY20H+N8JD13oUMtPvSHQuscrHop4KbXrbsBcdB9Ds7lVK7eRkBIfO43vQ==}
+  /reselect@4.1.8:
+    resolution: {integrity: sha512-ab9EmR80F/zQTMNeneUr4cv+jSwPJgIlvEmVwLerwrWVbpLlBuls9XHzIeTFy4cegU2NHBp3va0LKOzU5qFEYQ==}
     dev: false
 
   /resolve-cwd@3.0.0:
