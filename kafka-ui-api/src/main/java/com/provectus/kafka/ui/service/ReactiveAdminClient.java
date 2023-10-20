@@ -77,6 +77,7 @@ import org.apache.kafka.common.errors.GroupNotEmptyException;
 import org.apache.kafka.common.errors.InvalidRequestException;
 import org.apache.kafka.common.errors.SecurityDisabledException;
 import org.apache.kafka.common.errors.TopicAuthorizationException;
+import org.apache.kafka.common.errors.UnknownServerException;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.errors.UnsupportedVersionException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
@@ -269,6 +270,9 @@ public class ReactiveAdminClient implements Closeable {
             resources,
             new DescribeConfigsOptions().includeSynonyms(true).includeDocumentation(includeDoc)).values(),
         UnknownTopicOrPartitionException.class,
+        // Azure Event Hubs does not support describeConfigs API for topics, do we supress corresponding error.
+        // See https://github.com/Azure/azure-event-hubs-for-kafka/issues/61 for details.
+        UnknownServerException.class,
         TopicAuthorizationException.class
     ).map(config -> config.entrySet().stream()
         .collect(toMap(
