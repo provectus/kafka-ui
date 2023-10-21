@@ -247,8 +247,8 @@ public class ReactiveAdminClient implements Closeable {
     return listTopics(true).flatMap(topics -> getTopicsConfig(topics, false));
   }
 
-  //NOTE: skips not-found topics (for which UnknownTopicOrPartitionException was thrown by AdminClient)
-  //and topics for which DESCRIBE_CONFIGS permission is not set (TopicAuthorizationException was thrown)
+  //NOTE: skips not-found topics (for which UnknownTopicOrPartitionException or UnknownServerException was thrown by
+  // AdminClient) and topics for which DESCRIBE_CONFIGS permission is not set (TopicAuthorizationException was thrown)
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames, boolean includeDoc) {
     var includeDocFixed = includeDoc && getClusterFeatures().contains(SupportedFeature.CONFIG_DOCUMENTATION_RETRIEVAL);
     // we need to partition calls, because it can lead to AdminClient timeouts in case of large topics count
@@ -270,7 +270,7 @@ public class ReactiveAdminClient implements Closeable {
             resources,
             new DescribeConfigsOptions().includeSynonyms(true).includeDocumentation(includeDoc)).values(),
         UnknownTopicOrPartitionException.class,
-        // Azure Event Hubs does not support describeConfigs API for topics, do we supress corresponding error.
+        // Azure Event Hubs does not support describeConfigs API for topics, so we supress corresponding error.
         // See https://github.com/Azure/azure-event-hubs-for-kafka/issues/61 for details.
         UnknownServerException.class,
         TopicAuthorizationException.class
