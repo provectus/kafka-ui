@@ -270,7 +270,7 @@ public class ReactiveAdminClient implements Closeable {
             resources,
             new DescribeConfigsOptions().includeSynonyms(true).includeDocumentation(includeDoc)).values(),
         UnknownTopicOrPartitionException.class,
-        // Azure Event Hubs does not support describeConfigs API for topics, so we supress corresponding error.
+        // Azure Event Hubs does not support describeConfigs API for topics, so we suppress corresponding error.
         // See https://github.com/Azure/azure-event-hubs-for-kafka/issues/61 for details.
         UnknownServerException.class,
         TopicAuthorizationException.class
