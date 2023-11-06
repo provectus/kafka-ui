@@ -130,7 +130,7 @@ dependencies:
     version: 1.0.2
   zustand:
     specifier: ^4.1.1
-    version: 4.1.1(react@18.2.0)
+    version: 4.4.6(@types/react@18.2.21)(react@18.2.0)
 
 devDependencies:
   '@jest/types':
@@ -6989,18 +6989,22 @@ packages:
       type-fest: 2.19.0
     dev: false
 
-  /zustand@4.1.1(react@18.2.0):
-    resolution: {integrity: sha512-h4F3WMqsZgvvaE0n3lThx4MM81Ls9xebjvrABNzf5+jb3/03YjNTSgZXeyrvXDArMeV9untvWXRw1tY+ntPYbA==}
+  /zustand@4.4.6(@types/react@18.2.21)(react@18.2.0):
+    resolution: {integrity: sha512-Rb16eW55gqL4W2XZpJh0fnrATxYEG3Apl2gfHTyDSE965x/zxslTikpNch0JgNjJA9zK6gEFW8Fl6d1rTZaqgg==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
+      '@types/react': '>=16.8'
       immer: '>=9.0'
       react: '>=16.8'
     peerDependenciesMeta:
+      '@types/react':
+        optional: true
       immer:
         optional: true
       react:
         optional: true
     dependencies:
+      '@types/react': 18.2.21
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
