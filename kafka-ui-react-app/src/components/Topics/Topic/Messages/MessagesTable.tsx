@@ -51,6 +51,28 @@ const MessagesTable: React.FC = () => {
     setSearchParams(searchParams);
   };
 
+  const handleDownload = () => {
+    const download = (filename: string, content: Blob) => {
+      // create anchor tag to download file
+      const url = URL.createObjectURL(content);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+
+      // download file
+      link.click();
+
+      // clean up
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    };
+
+    const jsonString = JSON.stringify(messages);
+    const content = new Blob([jsonString], { type: 'application/json' })
+    download("download.json", content);
+  }
+
   return (
     <div style={{ position: 'relative' }}>
       {previewFor !== null && (
@@ -136,6 +158,7 @@ const MessagesTable: React.FC = () => {
           >
             Next →
           </Button>
+          <Button buttonType="secondary" buttonSize="L" onClick={handleDownload}>Download</Button>
         </S.Pages>
       </S.Pagination>
     </div>
