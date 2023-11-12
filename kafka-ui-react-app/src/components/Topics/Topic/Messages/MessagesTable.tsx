@@ -69,9 +69,9 @@ const MessagesTable: React.FC = () => {
     };
 
     const jsonString = JSON.stringify(messages);
-    const content = new Blob([jsonString], { type: 'application/json' })
-    download("download.json", content);
-  }
+    const content = new Blob([jsonString], { type: 'application/json' });
+    download('download.json', content);
+  };
 
   return (
     <div style={{ position: 'relative' }}>
@@ -158,7 +158,13 @@ const MessagesTable: React.FC = () => {
           >
             Next →
           </Button>
-          <Button buttonType="secondary" buttonSize="L" onClick={handleDownload}>Download</Button>
+          <Button
+            buttonType="secondary"
+            buttonSize="L"
+            onClick={handleDownload}
+          >
+            Download
+          </Button>
         </S.Pages>
       </S.Pagination>
     </div>
