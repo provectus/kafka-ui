@@ -25,6 +25,7 @@ public class KafkaCluster {
   private final String bootstrapServers;
   private final Properties properties;
   private final boolean readOnly;
+  private final boolean isMessageDownloadAllowed;
   private final MetricsConfig metricsConfig;
   private final DataMasking masking;
   private final PollingSettings pollingSettings;
