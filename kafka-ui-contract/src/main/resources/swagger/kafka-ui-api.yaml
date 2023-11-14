@@ -2189,6 +2189,8 @@ components:
           type: number
         readOnly:
           type: boolean
+        isMessageDownloadAllowed:
+          type: boolean
         version:
           type: string
         features:

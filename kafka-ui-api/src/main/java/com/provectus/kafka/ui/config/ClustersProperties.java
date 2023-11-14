@@ -45,6 +45,7 @@ public class ClustersProperties {
     MetricsConfigData metrics;
     Map<String, Object> properties;
     boolean readOnly = false;
+    boolean messageDownloadAllowed = false;
     List<SerdeConfig> serde;
     String defaultKeySerde;
     String defaultValueSerde;

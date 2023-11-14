@@ -13,6 +13,7 @@ import { Button } from 'components/common/Button/Button';
 import { useSearchParams } from 'react-router-dom';
 import { MESSAGES_PER_PAGE } from 'lib/constants';
 import * as S from 'components/common/NewTable/Table.styled';
+import ClusterContext from 'components/contexts/ClusterContext';
 
 import PreviewModal from './PreviewModal';
 import Message, { PreviewFilter } from './Message';
@@ -28,6 +29,7 @@ const MessagesTable: React.FC = () => {
   const { isLive } = useContext(TopicMessagesContext);
 
   const messages = useAppSelector(getTopicMessges);
+  const { isMessageDownloadAllowed } = useContext(ClusterContext);
   const isFetching = useAppSelector(getIsTopicMessagesFetching);
 
   const isTailing = isLive && isFetching;
@@ -162,6 +164,7 @@ const MessagesTable: React.FC = () => {
             buttonType="secondary"
             buttonSize="L"
             onClick={handleDownload}
+            disabled={!isMessageDownloadAllowed}
           >
             Download
           </Button>
