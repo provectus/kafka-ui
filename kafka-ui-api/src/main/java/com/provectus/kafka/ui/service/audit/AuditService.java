@@ -6,6 +6,7 @@ import static com.provectus.kafka.ui.service.MessagesService.createProducer;
 import com.google.common.annotations.VisibleForTesting;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
+import com.provectus.kafka.ui.config.auth.RbacUser;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.service.AdminClientService;
@@ -196,15 +197,23 @@ public class AuditService implements Closeable {
     Object key = SecurityContext.class;
     if (sig.getContextView().hasKey(key)) {
       return sig.getContextView().<Mono<SecurityContext>>get(key)
-          .map(context -> context.getAuthentication().getPrincipal())
-          .cast(UserDetails.class)
-          .map(user -> {
-            var roles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-            return new AuthenticatedUser(user.getUsername(), roles);
-          })
+          .map(AuditService::createAuthenticatedUser)
           .switchIfEmpty(NO_AUTH_USER);
     } else {
       return NO_AUTH_USER;
+    }
+  }
+
+  private static AuthenticatedUser createAuthenticatedUser(SecurityContext context) {
+    var principal = context.getAuthentication().getPrincipal();
+    if (principal instanceof RbacUser user) {
+      return new AuthenticatedUser(user.name(), user.groups());
+    } else if (principal instanceof UserDetails user) {
+      return new AuthenticatedUser(
+          user.getUsername(),
+          user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()));
+    } else {
+      return null;
     }
   }
 

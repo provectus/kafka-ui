@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +21,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcReactiveOAuth2UserService;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
@@ -69,12 +71,14 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
         .flatMap(user -> {
           var provider = getProviderByProviderId(request.getClientRegistration().getRegistrationId());
           final var extractor = getExtractor(provider, acs);
-          if (extractor == null) {
-            return Mono.just(user);
+          if (extractor != null) {
+            return extractor.extract(acs, user, Map.of("request", request, "provider", provider))
+                .map(groups -> new RbacOidcUser(user, groups));
+          } else {
+            return Mono.just(new RbacOidcUser(
+                user,
+                user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet())));
           }
-
-          return extractor.extract(acs, user, Map.of("request", request, "provider", provider))
-              .map(groups -> new RbacOidcUser(user, groups));
         });
   }
 
@@ -85,12 +89,14 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
         .flatMap(user -> {
           var provider = getProviderByProviderId(request.getClientRegistration().getRegistrationId());
           final var extractor = getExtractor(provider, acs);
-          if (extractor == null) {
-            return Mono.just(user);
+          if (extractor != null) {
+            return extractor.extract(acs, user, Map.of("request", request, "provider", provider))
+                .map(groups -> new RbacOAuth2User(user, groups));
+          } else {
+            return Mono.just(new RbacOAuth2User(
+                user,
+                user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet())));
           }
-
-          return extractor.extract(acs, user, Map.of("request", request, "provider", provider))
-              .map(groups -> new RbacOAuth2User(user, groups));
         });
   }
 
