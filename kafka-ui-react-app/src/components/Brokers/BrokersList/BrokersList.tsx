@@ -73,13 +73,14 @@ const BrokersList: React.FC = () => {
         header: 'Broker ID',
         accessorKey: 'brokerId',
         // eslint-disable-next-line react/no-unstable-nested-components
-        cell: ({ row: { id }, getValue }) => (
-          <S.RowCell>
+        cell: ({ getValue }) => {
+          const value = getValue<string | number>();
+          return (<S.RowCell>
             <LinkCell
-              value={`${getValue<string | number>()}`}
-              to={encodeURIComponent(`${getValue<string | number>()}`)}
+              value={value}
+              to={encodeURIComponent(value)}
             />
-            {id === String(activeControllers) && (
+            {value === activeControllers && (
               <Tooltip
                 value={<CheckMarkRoundIcon />}
                 content="Active Controller"
@@ -87,7 +88,7 @@ const BrokersList: React.FC = () => {
               />
             )}
           </S.RowCell>
-        ),
+        )},
       },
       {
         header: 'Disk usage',
