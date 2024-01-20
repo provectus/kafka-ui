@@ -136,7 +136,7 @@ rbac:
           actions: all
 
         - resource: connect
-          value: "*"
+          value: ".*"
           actions: all
 
         - resource: ksql
