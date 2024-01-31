@@ -23,7 +23,10 @@ public enum CustomParameterType {
   SEGMENT_INDEX_BYTES("segment.index.bytes"),
   SEGMENT_JITTER_MS("segment.jitter.ms"),
   SEGMENT_MS("segment.ms"),
-  UNCLEAN_LEADER_ELECTION_ENABLE("unclean.leader.election.enable");
+  UNCLEAN_LEADER_ELECTION_ENABLE("unclean.leader.election.enable"),
+  REMOTE_STORAGE_ENABLE("remote.storage.enable"),
+  LOCAL_RETENTION_MS("local.retention.ms"),
+  LOCAL_RETENTION_BYTES("local.retention.bytes");
 
   private final String optionValue;
 

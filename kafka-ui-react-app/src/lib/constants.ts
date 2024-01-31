@@ -42,6 +42,9 @@ export const TOPIC_CUSTOM_PARAMS: Record<string, string> = {
   'segment.ms': '604800000',
   'message.timestamp.difference.max.ms': '9223372036854775807',
   'segment.index.bytes': '10485760',
+  'remote.storage.enable': 'true',
+  'local.retention.ms': '',
+  'local.retention.bytes': '',
 };
 
 export const MILLISECONDS_IN_WEEK = 604_800_000;
