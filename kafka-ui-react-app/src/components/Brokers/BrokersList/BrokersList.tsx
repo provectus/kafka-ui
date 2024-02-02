@@ -63,6 +63,8 @@ const BrokersList: React.FC = () => {
         partitionsSkew: broker?.partitionsSkew,
         leadersSkew: broker?.leadersSkew,
         inSyncPartitions: broker?.inSyncPartitions,
+        bytesInPerSec: broker?.bytesInPerSec,
+        bytesOutPerSec: broker?.bytesOutPerSec,
       };
     });
   }, [diskUsage, brokers]);
@@ -160,6 +162,8 @@ const BrokersList: React.FC = () => {
         header: 'Host',
         accessorKey: 'host',
       },
+      { header: 'IN /sec', accessorKey: 'bytesInPerSec',  cell: SizeCell},
+      { header: 'OUT /sec', accessorKey: 'bytesOutPerSec', cell: SizeCell},
     ],
     []
   );

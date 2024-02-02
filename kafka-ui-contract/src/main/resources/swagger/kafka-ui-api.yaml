@@ -2318,6 +2318,12 @@ components:
         - TOTAL_PARTITIONS
         - REPLICATION_FACTOR
         - SIZE
+        - BYTESIN_PERSEC
+        - BYTESOUT_PERSEC
+        - MSG_RATE
+        - MSG_5_RATE
+        - FETCH_RATE
+        - FETCH_5_RATE
 
     ConnectorColumnsToSort:
       type: string
@@ -2356,6 +2362,30 @@ components:
         bytesInPerSec:
           type: number
         bytesOutPerSec:
+          type: number
+        messageInMeanRate:
+          type: number
+        messageInOneMinuteRate:
+          type: number
+        messageInFiveMinuteRate:
+          type: number
+        messageInFifteenMinuteRate:
+          type: number
+        fetchRequestsMeanRate:
+          type: number
+        fetchRequestsOneMinuteRate:
+          type: number
+        fetchRequestsFiveMinuteRate:
+          type: number
+        fetchRequestsFifteenMinuteRate:
+          type: number
+        produceRequestsMeanRate:
+          type: number
+        produceRequestsOneMinuteRate:
+          type: number
+        produceRequestsFiveMinuteRate:
+          type: number
+        produceRequestsFifteenMinuteRate:
           type: number
         underReplicatedPartitions:
           type: integer
