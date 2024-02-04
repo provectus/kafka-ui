@@ -21,6 +21,19 @@ public class Metrics {
   Map<String, BigDecimal> topicBytesInPerSec;
   Map<String, BigDecimal> topicBytesOutPerSec;
   Map<Integer, List<RawMetric>> perBrokerMetrics;
+  Map<String, BigDecimal> messageInMeanRate;
+  Map<String, BigDecimal> messageInOneMinuteRate;
+  Map<String, BigDecimal> messageInFiveMinuteRate;
+  Map<String, BigDecimal> messageInFifteenMinuteRate;
+  Map<String, BigDecimal> fetchRequestsMeanRate;
+  Map<String, BigDecimal> fetchRequestsOneMinuteRate;
+  Map<String, BigDecimal> fetchRequestsFiveMinuteRate;
+  Map<String, BigDecimal> fetchRequestsFifteenMinuteRate;
+  Map<String, BigDecimal> produceRequestsMeanRate;
+  Map<String, BigDecimal> produceRequestsOneMinuteRate;
+  Map<String, BigDecimal> produceRequestsFiveMinuteRate;
+  Map<String, BigDecimal> produceRequestsFifteenMinuteRate;
+  Integer controller;
 
   public static Metrics empty() {
     return Metrics.builder()
@@ -29,6 +42,18 @@ public class Metrics {
         .topicBytesInPerSec(Map.of())
         .topicBytesOutPerSec(Map.of())
         .perBrokerMetrics(Map.of())
+        .messageInMeanRate(Map.of())
+       .messageInOneMinuteRate(Map.of())
+       .messageInFiveMinuteRate(Map.of())
+       .messageInFifteenMinuteRate(Map.of())
+       .fetchRequestsMeanRate(Map.of())
+       .fetchRequestsOneMinuteRate(Map.of())
+       .fetchRequestsFiveMinuteRate(Map.of())
+       .fetchRequestsFifteenMinuteRate(Map.of())
+       .produceRequestsMeanRate(Map.of())
+       .produceRequestsOneMinuteRate(Map.of())
+       .produceRequestsFiveMinuteRate(Map.of())
+       .produceRequestsFifteenMinuteRate(Map.of())
         .build();
   }
 

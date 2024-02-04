@@ -38,9 +38,12 @@ public class InternalClusterState {
         .orElse(null);
     topicCount = statistics.getTopicDescriptions().size();
     brokerCount = statistics.getClusterDescription().getNodes().size();
-    activeControllers = Optional.ofNullable(statistics.getClusterDescription().getController())
-        .map(Node::id)
-        .orElse(null);
+    activeControllers = statistics.getMetrics().getController();
+    if (activeControllers == null || activeControllers < 0) {
+    	activeControllers = Optional.ofNullable(statistics.getClusterDescription().getController())
+    	        .map(Node::id)
+    	        .orElse(null);
+	}
     version = statistics.getVersion();
 
     if (statistics.getLogDirInfo() != null) {

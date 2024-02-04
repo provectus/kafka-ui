@@ -37,6 +37,7 @@ class JmxMetricsRetriever implements MetricsRetriever, Closeable {
   private static final String JMX_URL = "service:jmx:rmi:///jndi/rmi://";
   private static final String JMX_SERVICE_TYPE = "jmxrmi";
   private static final String CANONICAL_NAME_PATTERN = "kafka.server*:*";
+  private static final String CONTROLLER_NAME_PATTERN = "kafka.controller*:*";
 
   @Override
   public void close() {
@@ -116,6 +117,10 @@ class JmxMetricsRetriever implements MetricsRetriever, Closeable {
     MBeanServerConnection msc = jmxConnector.getMBeanServerConnection();
     var jmxMetrics = msc.queryNames(new ObjectName(CANONICAL_NAME_PATTERN), null);
     for (ObjectName jmxMetric : jmxMetrics) {
+      sink.addAll(extractObjectMetrics(jmxMetric, msc));
+    }
+    var controllerMetrics = msc.queryNames(new ObjectName(CONTROLLER_NAME_PATTERN), null);
+    for (ObjectName jmxMetric : controllerMetrics) {
       sink.addAll(extractObjectMetrics(jmxMetric, msc));
     }
   }

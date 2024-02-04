@@ -371,6 +371,18 @@ public class TopicsController extends AbstractController implements TopicsApi {
         return Comparator.comparing(InternalTopic::getReplicationFactor);
       case SIZE:
         return Comparator.comparing(InternalTopic::getSegmentSize);
+      case BYTESIN_PERSEC:
+        return Comparator.comparing(InternalTopic::getBytesInPerSec);
+      case BYTESOUT_PERSEC:
+        return Comparator.comparing(InternalTopic::getBytesOutPerSec);
+      case MSG_RATE:
+      	return Comparator.comparing(InternalTopic::getMessageInMeanRate);
+      case MSG_5_RATE:
+      	return Comparator.comparing(InternalTopic::getMessageInFiveMinuteRate);
+      case FETCH_RATE:
+      	return Comparator.comparing(InternalTopic::getFetchRequestsMeanRate);
+      case FETCH_5_RATE:
+      	return Comparator.comparing(InternalTopic::getFetchRequestsFiveMinuteRate);
       case NAME:
       default:
         return defaultComparator;
