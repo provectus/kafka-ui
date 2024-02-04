@@ -36,9 +36,11 @@ class WellKnownMetrics {
   final Map<String, BigDecimal> produceRequestsOneMinuteRate = new HashMap<>();
   final Map<String, BigDecimal> produceRequestsFiveMinuteRate = new HashMap<>();
   final Map<String, BigDecimal> produceRequestsFifteenMinuteRate = new HashMap<>();
-
+  int controller = -1;
+  
   void populate(Node node, RawMetric rawMetric) {
     updateBrokerIOrates(node, rawMetric);
+    updateController(node, rawMetric);
     updateTopicsIOrates(rawMetric);
   }
 
@@ -59,6 +61,7 @@ class WellKnownMetrics {
 	metricsBuilder.produceRequestsOneMinuteRate(produceRequestsOneMinuteRate);
 	metricsBuilder.produceRequestsFiveMinuteRate(produceRequestsFiveMinuteRate);
 	metricsBuilder.produceRequestsFifteenMinuteRate(produceRequestsFifteenMinuteRate);
+	metricsBuilder.controller(controller);
   }
 
   private void updateBrokerIOrates(Node node, RawMetric rawMetric) {
@@ -140,5 +143,16 @@ class WellKnownMetrics {
 	  }
 	}
   }
-
+  
+  private void updateController(Node node, RawMetric rawMetric) {
+    if (controller < 0 && containsIgnoreCase(rawMetric.name(), "KafkaController")) {
+	  String nameProperty = rawMetric.labels().get("name");
+	  if ("ActiveControllerCount".equals(nameProperty)) {
+	    BigDecimal value = rawMetric.value();
+	    if (value.intValue() == 1) {
+		  controller = node.id();
+		}
+	  }
+	}
+  }
 }

@@ -33,6 +33,7 @@ public class Metrics {
   Map<String, BigDecimal> produceRequestsOneMinuteRate;
   Map<String, BigDecimal> produceRequestsFiveMinuteRate;
   Map<String, BigDecimal> produceRequestsFifteenMinuteRate;
+  Integer controller;
 
   public static Metrics empty() {
     return Metrics.builder()
