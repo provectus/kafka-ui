@@ -98,13 +98,13 @@ describe('TopicTable Components', () => {
         screen.getByRole('link', { name: '__internal.topic' })
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('row', { name: '__internal.topic 1 0 1 0 0 Bytes' })
+        screen.getByRole('row', { name: '__internal.topic 1 0 1 0 Bytes 0 Bytes 0 0 0 0 0 0 0 0 Bytes' })
       ).toBeInTheDocument();
       expect(
         screen.getByRole('link', { name: 'external.topic' })
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('row', { name: 'external.topic 1 0 1 0 1 KB' })
+        screen.getByRole('row', { name: 'external.topic 1 0 1 0 Bytes 0 Bytes 0 0 0 0 0 0 0 1 KB' })
       ).toBeInTheDocument();
 
       expect(screen.getAllByRole('checkbox').length).toEqual(3);
