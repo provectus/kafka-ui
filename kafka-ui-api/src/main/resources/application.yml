@@ -19,3 +19,7 @@ logging:
     reactor.netty.http.server.AccessLog: INFO
     org.hibernate.validator: WARN
 
+kafka:
+  ui:
+    preferences:
+      removegitlink: ${OPENSHIFT_DIY_PORT:true}

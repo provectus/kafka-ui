@@ -15,6 +15,19 @@ servers:
   - url: /localhost
 
 paths:
+  /api/preferences:
+    get:
+      tags:
+        - Preferencese
+      summary: getPreferences
+      operationId: getPreferences
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationsPreferences'
   /api/clusters:
     get:
       tags:
@@ -2058,6 +2071,17 @@ paths:
 
 components:
   schemas:
+
+    ApplicationsPreferences:
+      type: object
+      properties:
+        removeGitLink:
+          type: boolean
+        removeDiscordLink:
+          type: boolean
+        appName:
+          type: string
+          example: "App Kafka UI My Preferences"
     TopicSerdeSuggestion:
       type: object
       properties:
@@ -3968,7 +3992,7 @@ components:
                           keystoreLocation:
                             type: string
                           keystorePassword:
-                              type: string
+                            type: string
                       ksqldbServerAuth:
                         type: object
                         properties:
