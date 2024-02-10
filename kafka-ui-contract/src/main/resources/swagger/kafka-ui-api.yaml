@@ -18,7 +18,7 @@ paths:
   /api/preferences:
     get:
       tags:
-        - Preferencese
+        - Preferences
       summary: getPreferences
       operationId: getPreferences
       responses:
@@ -2082,6 +2082,12 @@ components:
         appName:
           type: string
           example: "App Kafka UI My Preferences"
+        favicon:
+          type: string
+          example: "Base64 faicon"
+        logo:
+          type: string
+          example: "Base 64 icon"
     TopicSerdeSuggestion:
       type: object
       properties:
