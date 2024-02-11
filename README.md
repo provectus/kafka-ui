@@ -139,3 +139,13 @@ All of the environment variables/config properties could be found [here](https:/
 # Contributing
 
 Please refer to [contributing guide](https://docs.kafka-ui.provectus.io/development/contributing), we'll guide you from there.
+
+# Brand the kafka ui
+New environment vars:
+- KAFKA_UI_PREFERENCES_REMOVEGITLINK: remove git link
+- KAFKA_UI_PREFERENCES_REMOVEDISCORDLINK: remove discord link
+- KAFKA_UI_PREFERENCES_APPNAME: change app name from Kafka UI to the desiderata
+- KAFKA_UI_PREFERENCES_FAVICON: change favicon to the desiderata (please add data:image/png;base64,)
+- KAFKA_UI_PREFERENCES_LOGO: change favicon to the desiderata  (please add data:image/png;base64,)
+- KAFKA_UI_PREFERENCES_VERSION: to remove version banner
+

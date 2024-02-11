@@ -1,57 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Favicons -->
-    <link rel="icon" href="<%= PUBLIC_PATH %>/favicon/favicon.ico" sizes="any" />
-    <link rel="icon" href="<%= PUBLIC_PATH %>/favicon/icon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="<%= PUBLIC_PATH %>/favicon/apple-touch-icon.png" />
-    <link rel="manifest" href="<%= PUBLIC_PATH %>/manifest.json" />
+  <!-- Favicons -->
+  <link rel="icon" href="<%= PUBLIC_PATH %>/favicon/favicon.ico" sizes="any" />
+  <link rel="icon" href="<%= PUBLIC_PATH %>/favicon/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="<%= PUBLIC_PATH %>/favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="<%= PUBLIC_PATH %>/manifest.json" />
 
-    <title>UI for Apache Kafka</title>
-    <script type="text/javascript">
-      window.basePath = '<%= PUBLIC_PATH %>';
+  <title>UI for Apache Kafka</title>
+  <script type="text/javascript">
+    window.basePath = '<%= PUBLIC_PATH %>';
+    window.__assetsPathBuilder = function (importer) {
+      return window.basePath+ "/" + importer;
+    };
+    fetch(window.basePath+'/api/preferences')
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(jsonResponse) {
+        // do something with jsonResponse
+        let $favicon = document.querySelector('link[rel*="icon"]')
+        if ($favicon !== null) {
+          $favicon.href = jsonResponse.favicon
+        } else {
+          $favicon = document.createElement('link')
+          $favicon.rel = 'icon'
+          $favicon.href = jsonResponse.favicon
+          document.head.appendChild($favicon)
+        }
+        document.title = jsonResponse.appName;
+      });
+  </script>
+  <style>
+    @font-face {
+      font-family: 'Inter';
+      src: url('<%= PUBLIC_PATH %>/fonts/Inter-Medium.ttf') format('truetype');
+      font-weight: 500;
+      font-display: swap;
+    }
 
-      window.__assetsPathBuilder = function (importer) {
-        return window.basePath+ "/" + importer;
-      };
-    </script>
-    <style>
-      @font-face {
-        font-family: 'Inter';
-        src: url('<%= PUBLIC_PATH %>/fonts/Inter-Medium.ttf') format('truetype');
-        font-weight: 500;
-        font-display: swap;
-      }
+    @font-face {
+      font-family: 'Inter';
+      src: url('<%= PUBLIC_PATH %>/fonts/Inter-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
 
-      @font-face {
-        font-family: 'Inter';
-        src: url('<%= PUBLIC_PATH %>/fonts/Inter-Regular.ttf') format('truetype');
-        font-weight: 400;
-        font-display: swap;
-      }
+    @font-face {
+      font-family: 'Roboto Mono';
+      src: url('<%= PUBLIC_PATH %>/fonts/RobotoMono-Medium.ttf') format('truetype');
+      font-weight: 500;
+      font-display: swap;
+    }
 
-      @font-face {
-        font-family: 'Roboto Mono';
-        src: url('<%= PUBLIC_PATH %>/fonts/RobotoMono-Medium.ttf') format('truetype');
-        font-weight: 500;
-        font-display: swap;
-      }
+    @font-face {
+      font-family: 'Roboto Mono';
+      src: url('<%= PUBLIC_PATH %>/fonts/RobotoMono-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
+  </style>
+</head>
 
-      @font-face {
-        font-family: 'Roboto Mono';
-        src: url('<%= PUBLIC_PATH %>/fonts/RobotoMono-Regular.ttf') format('truetype');
-        font-weight: 400;
-        font-display: swap;
-      }
-    </style>
-  </head>
-
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <script type="module" src="/src/index.tsx"></script>
-  </body>
+<body>
+<noscript>You need to enable JavaScript to run this app.</noscript>
+<div id="root"></div>
+<script type="module" src="/src/index.tsx"></script>
+</body>
 </html>
