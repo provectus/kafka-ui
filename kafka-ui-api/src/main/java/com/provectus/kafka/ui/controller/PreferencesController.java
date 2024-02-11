@@ -26,6 +26,9 @@ public class PreferencesController implements PreferencesApi {
   @Value("${kafka.ui.preferences.logo}")
   private String kafkaUiIcon;
 
+  @Value("${kafka.ui.preferences.version}")
+  private boolean kafkaUiVersion;
+
 
   @Override
   public Mono<ResponseEntity<ApplicationsPreferencesDTO>> getPreferences(ServerWebExchange exchange) {
@@ -35,6 +38,7 @@ public class PreferencesController implements PreferencesApi {
     res.setRemoveGitLink(kafkaUiRemovDiscordLink);
     res.setLogo(kafkaUiIcon);
     res.setFavicon(kafkaUiFavicon);
+    res.setVersion(kafkaUiVersion);
     return Mono.just(
         ResponseEntity.ok(res
         )

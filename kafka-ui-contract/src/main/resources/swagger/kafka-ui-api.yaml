@@ -2088,6 +2088,9 @@ components:
         logo:
           type: string
           example: "Base 64 icon"
+        version:
+          type: boolean
+          example: "Show version info"
     TopicSerdeSuggestion:
       type: object
       properties:
