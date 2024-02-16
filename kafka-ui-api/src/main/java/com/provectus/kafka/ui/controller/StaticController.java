@@ -23,6 +23,9 @@ public class StaticController {
   @Value("classpath:static/manifest.json")
   private Resource manifestFile;
 
+  @Value("#{environment.STATIC_PATH}")
+  private String staticPath;
+
   private final AtomicReference<String> renderedIndexFile = new AtomicReference<>();
   private final AtomicReference<String> renderedManifestFile = new AtomicReference<>();
 
@@ -39,7 +42,11 @@ public class StaticController {
   public String getRenderedFile(ServerWebExchange exchange, AtomicReference<String> renderedFile, Resource file) {
     String rendered = renderedFile.get();
     if (rendered == null) {
-      rendered = buildFile(file, exchange.getRequest().getPath().contextPath().value());
+      String contextPath = staticPath;
+      if (contextPath == null) {
+          contextPath = exchange.getRequest().getPath().contextPath().value();
+      }
+      rendered = buildFile(file, contextPath);
       if (renderedFile.compareAndSet(null, rendered)) {
         return rendered;
       } else {
