@@ -44,7 +44,7 @@ public class StaticController {
     if (rendered == null) {
       String contextPath = staticPath;
       if (contextPath == null) {
-          contextPath = exchange.getRequest().getPath().contextPath().value();
+        contextPath = exchange.getRequest().getPath().contextPath().value();
       }
       rendered = buildFile(file, contextPath);
       if (renderedFile.compareAndSet(null, rendered)) {
