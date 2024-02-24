@@ -26,8 +26,8 @@ public class MessageFilters {
   }
 
   public static Predicate<TopicMessageDTO> containsStringFilter(String string) {
-    return msg -> StringUtils.contains(msg.getKey(), string)
-        || StringUtils.contains(msg.getContent(), string);
+    return msg -> StringUtils.containsIgnoreCase(msg.getKey(), string)
+        || StringUtils.containsIgnoreCase(msg.getContent(), string);
   }
 
   public static Predicate<TopicMessageDTO> groovyScriptFilter(String script) {
