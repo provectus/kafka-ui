@@ -10,22 +10,22 @@ logging:
 #server:
 #  port: 8080 #- Port in which kafka-ui will run.
 
-#spring:
-#  jmx:
-#    enabled: true
-#  ldap:
-#    urls: ldap://localhost:10389
-#    base: "cn={0},ou=people,dc=planetexpress,dc=com"
-#    admin-user: "cn=admin,dc=planetexpress,dc=com"
-#    admin-password: "GoodNewsEveryone"
-#    user-filter-search-base: "dc=planetexpress,dc=com"
-#    user-filter-search-filter: "(&(uid={0})(objectClass=inetOrgPerson))"
-#    group-filter-search-base: "ou=people,dc=planetexpress,dc=com"
+spring:
+  jmx:
+    enabled: true
+  ldap:
+    urls: ldap://localhost:10389
+    base: "cn={0},ou=people,dc=planetexpress,dc=com"
+    admin-user: "cn=admin,dc=planetexpress,dc=com"
+    admin-password: "GoodNewsEveryone"
+    user-filter-search-base: "dc=planetexpress,dc=com"
+    user-filter-search-filter: "(&(uid={0})(objectClass=inetOrgPerson))"
+    group-filter-search-base: "ou=people,dc=planetexpress,dc=com"
 
 kafka:
   clusters:
     - name: local
-      bootstrapServers: localhost:9096
+      bootstrapServers: localhost:9092
       schemaRegistry: http://localhost:8085
       ksqldbServer: http://localhost:8088
       kafkaConnect:
@@ -80,70 +80,70 @@ auth:
         custom-params:
           type: github
 
-#rbac:
-#  roles:
-#    - name: "memelords"
-#      clusters:
-#        - local
-#      subjects:
-#        - provider: oauth_google
-#          type: domain
-#          value: "provectus.com"
-#        - provider: oauth_google
-#          type: user
-#          value: "name@provectus.com"
-#
-#        - provider: oauth_github
-#          type: organization
-#          value: "provectus"
-#        - provider: oauth_github
-#          type: user
-#          value: "memelord"
-#
-#        - provider: oauth_cognito
-#          type: user
-#          value: "username"
-#        - provider: oauth_cognito
-#          type: group
-#          value: "memelords"
-#
-#        - provider: ldap
-#          type: group
-#          value: "admin_staff"
-#
-#        # NOT IMPLEMENTED YET
-#      #        - provider: ldap_ad
-#      #          type: group
-#      #          value: "admin_staff"
-#
-#      permissions:
-#        - resource: applicationconfig
-#          actions: all
-#
-#        - resource: clusterconfig
-#          actions: all
-#
-#        - resource: topic
-#          value: ".*"
-#          actions: all
-#
-#        - resource: consumer
-#          value: ".*"
-#          actions: all
-#
-#        - resource: schema
-#          value: ".*"
-#          actions: all
-#
-#        - resource: connect
-#          value: "*"
-#          actions: all
-#
-#        - resource: ksql
-#          actions: all
-#
-#        - resource: acl
-#          actions: all
-#
-#        - resource: audit
-#          actions: all
+rbac:
+  roles:
+    - name: "memelords"
+      clusters:
+        - local
+      subjects:
+        - provider: oauth_google
+          type: domain
+          value: "provectus.com"
+        - provider: oauth_google
+          type: user
+          value: "name@provectus.com"
+
+        - provider: oauth_github
+          type: organization
+          value: "provectus"
+        - provider: oauth_github
+          type: user
+          value: "memelord"
+
+        - provider: oauth_cognito
+          type: user
+          value: "username"
+        - provider: oauth_cognito
+          type: group
+          value: "memelords"
+
+        - provider: ldap
+          type: group
+          value: "admin_staff"
+
+        # NOT IMPLEMENTED YET
+      #        - provider: ldap_ad
+      #          type: group
+      #          value: "admin_staff"
+
+      permissions:
+        - resource: applicationconfig
+          actions: all
+
+        - resource: clusterconfig
+          actions: all
+
+        - resource: topic
+          value: ".*"
+          actions: all
+
+        - resource: consumer
+          value: ".*"
+          actions: all
+
+        - resource: schema
+          value: ".*"
+          actions: all
+
+        - resource: connect
+          value: "*"
+          actions: all
+
+        - resource: ksql
+          actions: all
+
+        - resource: acl
+          actions: all
+
+        - resource: audit
+          actions: all

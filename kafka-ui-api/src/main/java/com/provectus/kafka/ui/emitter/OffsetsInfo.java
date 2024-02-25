@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.mutable.MutableLong;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
 
@@ -55,6 +56,12 @@ public class OffsetsInfo {
       }
     }
     return true;
+  }
+
+  public long summaryOffsetsRange() {
+    MutableLong cnt = new MutableLong();
+    nonEmptyPartitions.forEach(tp -> cnt.add(endOffsets.get(tp) - beginOffsets.get(tp)));
+    return cnt.getValue();
   }
 
   public Set<TopicPartition> allTargetPartitions() {

@@ -162,4 +162,40 @@ class MessagesServiceTest extends AbstractIntegrationTest {
     createdTopics.add(newTopic.name());
   }
 
+  @Test
+  void execSmartFilterTestReturnsExecutionResult() {
+    var params = new SmartFilterTestExecutionDTO()
+        .filterCode("key != null && value != null && headers != null && timestampMs != null && offset != null")
+        .key("1234")
+        .value("{ \"some\" : \"value\" } ")
+        .headers(Map.of("h1", "hv1"))
+        .offset(12345L)
+        .timestampMs(System.currentTimeMillis())
+        .partition(1);
+    assertThat(execSmartFilterTest(params).getResult()).isTrue();
+
+    params.setFilterCode("return false");
+    assertThat(execSmartFilterTest(params).getResult()).isFalse();
+  }
+
+  @Test
+  void execSmartFilterTestReturnsErrorOnFilterApplyError() {
+    var result = execSmartFilterTest(
+        new SmartFilterTestExecutionDTO()
+            .filterCode("return 1/0")
+    );
+    assertThat(result.getResult()).isNull();
+    assertThat(result.getError()).containsIgnoringCase("execution error");
+  }
+
+  @Test
+  void execSmartFilterTestReturnsErrorOnFilterCompilationError() {
+    var result = execSmartFilterTest(
+        new SmartFilterTestExecutionDTO()
+            .filterCode("this is invalid groovy syntax = 1")
+    );
+    assertThat(result.getResult()).isNull();
+    assertThat(result.getError()).containsIgnoringCase("Compilation error");
+  }
+
 }

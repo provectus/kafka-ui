@@ -10,11 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.mutable.MutableLong;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-class SeekOperations {
+public class SeekOperations {
 
   private final Consumer<?, ?> consumer;
   private final OffsetsInfo offsetsInfo;
@@ -33,16 +34,32 @@ class SeekOperations {
     offsetsForSeek.forEach(consumer::seek);
   }
 
-  Map<TopicPartition, Long> getBeginOffsets() {
+  public Map<TopicPartition, Long> getBeginOffsets() {
     return offsetsInfo.getBeginOffsets();
   }
 
-  boolean assignedPartitionsFullyPolled() {
+  public Map<TopicPartition, Long> getEndOffsets() {
+    return offsetsInfo.getEndOffsets();
+  }
+
+  public boolean assignedPartitionsFullyPolled() {
     return offsetsInfo.assignedPartitionsFullyPolled();
   }
 
+  // sum of (end - start) offsets for all partitions
+  public long summaryOffsetsRange() {
+    return offsetsInfo.summaryOffsetsRange();
+  }
+
+  // sum of differences between initial consumer seek and current consumer position (across all partitions)
+  public long offsetsProcessedFromSeek() {
+    MutableLong count = new MutableLong();
+    offsetsForSeek.forEach((tp, initialOffset) -> count.add(consumer.position(tp) - initialOffset));
+    return count.getValue();
+  }
+
   // Get offsets to seek to. NOTE: offsets do not contain empty partitions offsets
-  Map<TopicPartition, Long> getOffsetsForSeek() {
+  public Map<TopicPartition, Long> getOffsetsForSeek() {
     return offsetsForSeek;
   }
 
