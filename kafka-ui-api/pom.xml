@@ -91,7 +91,7 @@
         <dependency>
             <groupId>software.amazon.msk</groupId>
             <artifactId>aws-msk-iam-auth</artifactId>
-            <version>1.1.7</version>
+            <version>2.0.3</version>
         </dependency>
 
         <dependency>
