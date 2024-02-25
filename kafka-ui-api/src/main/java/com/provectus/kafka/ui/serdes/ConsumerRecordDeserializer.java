@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.serdes;
 
 import com.provectus.kafka.ui.model.TopicMessageDTO;
-import com.provectus.kafka.ui.model.TopicMessageDTO.TimestampTypeEnum;
 import com.provectus.kafka.ui.serde.api.Serde;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -9,7 +8,6 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.UnaryOperator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -34,8 +32,6 @@ public class ConsumerRecordDeserializer {
   private final Serde.Deserializer fallbackKeyDeserializer;
   private final Serde.Deserializer fallbackValueDeserializer;
 
-  private final UnaryOperator<TopicMessageDTO> masker;
-
   public TopicMessageDTO deserialize(ConsumerRecord<Bytes, Bytes> rec) {
     var message = new TopicMessageDTO();
     fillKey(message, rec);
@@ -51,14 +47,14 @@ public class ConsumerRecordDeserializer {
     message.setValueSize(getValueSize(rec));
     message.setHeadersSize(getHeadersSize(rec));
 
-    return masker.apply(message);
+    return message;
   }
 
-  private static TimestampTypeEnum mapToTimestampType(TimestampType timestampType) {
+  private static TopicMessageDTO.TimestampTypeEnum mapToTimestampType(TimestampType timestampType) {
     return switch (timestampType) {
-      case CREATE_TIME -> TimestampTypeEnum.CREATE_TIME;
-      case LOG_APPEND_TIME -> TimestampTypeEnum.LOG_APPEND_TIME;
-      case NO_TIMESTAMP_TYPE -> TimestampTypeEnum.NO_TIMESTAMP_TYPE;
+      case CREATE_TIME -> TopicMessageDTO.TimestampTypeEnum.CREATE_TIME;
+      case LOG_APPEND_TIME -> TopicMessageDTO.TimestampTypeEnum.LOG_APPEND_TIME;
+      case NO_TIMESTAMP_TYPE -> TopicMessageDTO.TimestampTypeEnum.NO_TIMESTAMP_TYPE;
     };
   }
 
@@ -122,11 +118,11 @@ public class ConsumerRecordDeserializer {
   }
 
   private static Long getKeySize(ConsumerRecord<Bytes, Bytes> consumerRecord) {
-    return consumerRecord.key() != null ? (long) consumerRecord.serializedKeySize() : null;
+    return consumerRecord.key() != null ? (long) consumerRecord.key().get().length : null;
   }
 
   private static Long getValueSize(ConsumerRecord<Bytes, Bytes> consumerRecord) {
-    return consumerRecord.value() != null ? (long) consumerRecord.serializedValueSize() : null;
+    return consumerRecord.value() != null ? (long) consumerRecord.value().get().length : null;
   }
 
   private static int headerSize(Header header) {

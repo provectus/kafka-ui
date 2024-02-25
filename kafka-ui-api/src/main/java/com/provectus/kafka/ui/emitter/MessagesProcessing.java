@@ -39,7 +39,9 @@ class MessagesProcessing {
     return limit != null && sentMessages >= limit;
   }
 
-  void send(FluxSink<TopicMessageEventDTO> sink, Iterable<ConsumerRecord<Bytes, Bytes>> polled) {
+  void send(FluxSink<TopicMessageEventDTO> sink,
+            Iterable<ConsumerRecord<Bytes, Bytes>> polled,
+            @Nullable Cursor.Tracking cursor) {
     sortForSending(polled, ascendingSortBeforeSend)
         .forEach(rec -> {
           if (!limitReached() && !sink.isCancelled()) {
@@ -52,6 +54,9 @@ class MessagesProcessing {
                         .message(topicMessage)
                 );
                 sentMessages++;
+              }
+              if (cursor != null) {
+                cursor.trackOffset(rec.topic(), rec.partition(), rec.offset());
               }
             } catch (Exception e) {
               consumingStats.incFilterApplyError();
@@ -67,9 +72,9 @@ class MessagesProcessing {
     }
   }
 
-  void sendFinishEvent(FluxSink<TopicMessageEventDTO> sink) {
+  void sendFinishEvents(FluxSink<TopicMessageEventDTO> sink, @Nullable Cursor.Tracking cursor) {
     if (!sink.isCancelled()) {
-      consumingStats.sendFinishEvent(sink);
+      consumingStats.sendFinishEvent(sink, cursor);
     }
   }
 

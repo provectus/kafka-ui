@@ -8,19 +8,24 @@ import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.SeekDirectionDTO;
-import com.provectus.kafka.ui.model.SeekTypeDTO;
+import com.provectus.kafka.ui.model.PollingModeDTO;
 import com.provectus.kafka.ui.model.SmartFilterTestExecutionDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
 import com.provectus.kafka.ui.serdes.builtin.StringSerde;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
@@ -35,12 +40,19 @@ class MessagesServiceTest extends AbstractIntegrationTest {
 
   KafkaCluster cluster;
 
+  Set<String> createdTopics = new HashSet<>();
+
   @BeforeEach
   void init() {
     cluster = applicationContext
         .getBean(ClustersStorage.class)
         .getClusterByName(LOCAL)
         .get();
+  }
+
+  @AfterEach
+  void deleteCreatedTopics() {
+    createdTopics.forEach(MessagesServiceTest::deleteTopic);
   }
 
   @Test
@@ -60,7 +72,9 @@ class MessagesServiceTest extends AbstractIntegrationTest {
   @Test
   void loadMessagesReturnsExceptionWhenTopicNotFound() {
     StepVerifier.create(messagesService
-            .loadMessages(cluster, NON_EXISTING_TOPIC, null, null, null, 1, null, "String", "String"))
+            .loadMessages(cluster, NON_EXISTING_TOPIC,
+                new ConsumerPosition(PollingModeDTO.TAILING, NON_EXISTING_TOPIC, List.of(), null, null),
+                null, null, 1, "String", "String"))
         .expectError(TopicNotFoundException.class)
         .verify();
   }
@@ -68,68 +82,84 @@ class MessagesServiceTest extends AbstractIntegrationTest {
   @Test
   void maskingAppliedOnConfiguredClusters() throws Exception {
     String testTopic = MASKED_TOPICS_PREFIX + UUID.randomUUID();
+    createTopicWithCleanup(new NewTopic(testTopic, 1, (short) 1));
+
     try (var producer = KafkaTestProducer.forKafka(kafka)) {
-      createTopic(new NewTopic(testTopic, 1, (short) 1));
       producer.send(testTopic, "message1");
       producer.send(testTopic, "message2").get();
-
-      Flux<TopicMessageDTO> msgsFlux = messagesService.loadMessages(
-          cluster,
-          testTopic,
-          new ConsumerPosition(SeekTypeDTO.BEGINNING, testTopic, null),
-          null,
-          null,
-          100,
-          SeekDirectionDTO.FORWARD,
-          StringSerde.name(),
-          StringSerde.name()
-      ).filter(evt -> evt.getType() == TopicMessageEventDTO.TypeEnum.MESSAGE)
-          .map(TopicMessageEventDTO::getMessage);
-
-      // both messages should be masked
-      StepVerifier.create(msgsFlux)
-          .expectNextMatches(msg -> msg.getContent().equals("***"))
-          .expectNextMatches(msg -> msg.getContent().equals("***"))
-          .verifyComplete();
-    } finally {
-      deleteTopic(testTopic);
     }
+
+    Flux<TopicMessageDTO> msgsFlux = messagesService.loadMessages(
+            cluster,
+            testTopic,
+            new ConsumerPosition(PollingModeDTO.EARLIEST, testTopic, List.of(), null, null),
+            null,
+            null,
+            100,
+            StringSerde.name(),
+            StringSerde.name()
+        ).filter(evt -> evt.getType() == TopicMessageEventDTO.TypeEnum.MESSAGE)
+        .map(TopicMessageEventDTO::getMessage);
+
+    // both messages should be masked
+    StepVerifier.create(msgsFlux)
+        .expectNextMatches(msg -> msg.getContent().equals("***"))
+        .expectNextMatches(msg -> msg.getContent().equals("***"))
+        .verifyComplete();
   }
 
-  @Test
-  void execSmartFilterTestReturnsExecutionResult() {
-    var params = new SmartFilterTestExecutionDTO()
-        .filterCode("key != null && value != null && headers != null && timestampMs != null && offset != null")
-        .key("1234")
-        .value("{ \"some\" : \"value\" } ")
-        .headers(Map.of("h1", "hv1"))
-        .offset(12345L)
-        .timestampMs(System.currentTimeMillis())
-        .partition(1);
-    assertThat(execSmartFilterTest(params).getResult()).isTrue();
+  @ParameterizedTest
+  @CsvSource({"EARLIEST", "LATEST"})
+  void cursorIsRegisteredAfterPollingIsDoneAndCanBeUsedForNextPagePolling(PollingModeDTO mode) {
+    String testTopic = MessagesServiceTest.class.getSimpleName() + UUID.randomUUID();
+    createTopicWithCleanup(new NewTopic(testTopic, 5, (short) 1));
 
-    params.setFilterCode("return false");
-    assertThat(execSmartFilterTest(params).getResult()).isFalse();
+    int msgsToGenerate = 100;
+    int pageSize = (msgsToGenerate / 2) + 1;
+
+    try (var producer = KafkaTestProducer.forKafka(kafka)) {
+      for (int i = 0; i < msgsToGenerate; i++) {
+        producer.send(testTopic, "message_" + i);
+      }
+    }
+
+    var cursorIdCatcher = new AtomicReference<String>();
+    Flux<String> msgsFlux = messagesService.loadMessages(
+            cluster, testTopic,
+            new ConsumerPosition(mode, testTopic, List.of(), null, null),
+            null, null, pageSize, StringSerde.name(), StringSerde.name())
+        .doOnNext(evt -> {
+          if (evt.getType() == TopicMessageEventDTO.TypeEnum.DONE) {
+            assertThat(evt.getCursor()).isNotNull();
+            cursorIdCatcher.set(evt.getCursor().getId());
+          }
+        })
+        .filter(evt -> evt.getType() == TopicMessageEventDTO.TypeEnum.MESSAGE)
+        .map(evt -> evt.getMessage().getContent());
+
+    StepVerifier.create(msgsFlux)
+        .expectNextCount(pageSize)
+        .verifyComplete();
+
+    assertThat(cursorIdCatcher.get()).isNotNull();
+
+    Flux<String> remainingMsgs = messagesService.loadMessages(cluster, testTopic, cursorIdCatcher.get())
+        .doOnNext(evt -> {
+          if (evt.getType() == TopicMessageEventDTO.TypeEnum.DONE) {
+            assertThat(evt.getCursor()).isNull();
+          }
+        })
+        .filter(evt -> evt.getType() == TopicMessageEventDTO.TypeEnum.MESSAGE)
+        .map(evt -> evt.getMessage().getContent());
+
+    StepVerifier.create(remainingMsgs)
+        .expectNextCount(msgsToGenerate - pageSize)
+        .verifyComplete();
   }
 
-  @Test
-  void execSmartFilterTestReturnsErrorOnFilterApplyError() {
-    var result = execSmartFilterTest(
-        new SmartFilterTestExecutionDTO()
-            .filterCode("return 1/0")
-    );
-    assertThat(result.getResult()).isNull();
-    assertThat(result.getError()).containsIgnoringCase("execution error");
-  }
-
-  @Test
-  void execSmartFilterTestReturnsErrorOnFilterCompilationError() {
-    var result = execSmartFilterTest(
-        new SmartFilterTestExecutionDTO()
-            .filterCode("this is invalid groovy syntax = 1")
-    );
-    assertThat(result.getResult()).isNull();
-    assertThat(result.getError()).containsIgnoringCase("Compilation error");
+  private void createTopicWithCleanup(NewTopic newTopic) {
+    createTopic(newTopic);
+    createdTopics.add(newTopic.name());
   }
 
 }

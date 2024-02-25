@@ -35,7 +35,7 @@ public class TailingEmitter extends AbstractEmitter {
       while (!sink.isCancelled()) {
         sendPhase(sink, "Polling");
         var polled = poll(sink, consumer);
-        send(sink, polled);
+        send(sink, polled, null);
       }
       sink.complete();
       log.debug("Tailing finished");
@@ -55,5 +55,4 @@ public class TailingEmitter extends AbstractEmitter {
     consumer.assign(seekOffsets.keySet());
     seekOffsets.forEach(consumer::seek);
   }
-
 }

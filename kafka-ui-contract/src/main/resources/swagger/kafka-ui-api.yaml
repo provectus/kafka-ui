@@ -625,25 +625,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/TopicSerdeSuggestion'
 
-  /api/smartfilters/testexecutions:
-    put:
-      tags:
-        - Messages
-      summary: executeSmartFilterTest
-      operationId: executeSmartFilterTest
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SmartFilterTestExecution'
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SmartFilterTestExecutionResult'
-
 
   /api/clusters/{clusterName}/topics/{topicName}/messages:
     get:
@@ -762,6 +743,119 @@ paths:
           description: OK
         404:
           description: Not found
+
+  /api/clusters/{clusterName}/topics/{topicName}/smartfilters:
+    post:
+      tags:
+        - Messages
+      summary: registerFilter
+      operationId: registerFilter
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageFilterRegistration'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageFilterId'
+
+
+  /api/clusters/{clusterName}/topics/{topicName}/messages/v2:
+    get:
+      tags:
+        - Messages
+      summary: getTopicMessagesV2
+      operationId: getTopicMessagesV2
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: mode
+          in: query
+          description: Messages polling mode
+          required: true
+          schema:
+            $ref: "#/components/schemas/PollingMode"
+        - name: partitions
+          in: query
+          schema:
+            type: array
+            description: List of target partitions (all partitions if not provided)
+            items:
+              type: integer
+        - name: limit
+          in: query
+          description: Max number of messages can be returned
+          schema:
+            type: integer
+        - name: stringFilter
+          in: query
+          description: query string to contains string filtration
+          schema:
+            type: string
+        - name: smartFilterId
+          in: query
+          description: filter id, that was registered beforehand
+          schema:
+            type: string
+        - name: offset
+          in: query
+          description: message offset to read from / to
+          schema:
+            type: integer
+            format: int64
+        - name: timestamp
+          in: query
+          description: timestamp (in ms) to read from / to
+          schema:
+            type: integer
+            format: int64
+        - name: keySerde
+          in: query
+          description: "Serde that should be used for deserialization. Will be chosen automatically if not set."
+          schema:
+            type: string
+        - name: valueSerde
+          in: query
+          description: "Serde that should be used for deserialization. Will be chosen automatically if not set."
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          description: "id of the cursor for pagination"
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            text/event-stream:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicMessageEvent'
 
   /api/clusters/{clusterName}/topics/{topicName}/activeproducers:
     get:
@@ -1776,188 +1870,6 @@ paths:
         404:
           description: Not found
 
-  /api/clusters/{clusterName}/acls:
-    get:
-      tags:
-        - Acls
-      summary: listKafkaAcls
-      operationId: listAcls
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: resourceType
-          in: query
-          required: false
-          schema:
-            $ref: '#/components/schemas/KafkaAclResourceType'
-        - name: resourceName
-          in: query
-          required: false
-          schema:
-            type: string
-        - name: namePatternType
-          in: query
-          required: false
-          schema:
-            $ref: '#/components/schemas/KafkaAclNamePatternType'
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/KafkaAcl'
-
-  /api/clusters/{clusterName}/acl/csv:
-    get:
-      tags:
-        - Acls
-      summary: getAclAsCsv
-      operationId: getAclAsCsv
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            text/plain:
-              schema:
-                type: string
-    post:
-      tags:
-        - Acls
-      summary: syncAclsCsv
-      operationId: syncAclsCsv
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          text/plain:
-            schema:
-              type: string
-      responses:
-        200:
-          description: OK
-
-  /api/clusters/{clusterName}/acl:
-    post:
-      tags:
-        - Acls
-      summary: createAcl
-      operationId: createAcl
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/KafkaAcl'
-      responses:
-        200:
-          description: OK
-
-    delete:
-      tags:
-        - Acls
-      summary: deleteAcl
-      operationId: deleteAcl
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/KafkaAcl'
-      responses:
-        200:
-          description: OK
-        404:
-          description: Acl not found
-
-  /api/clusters/{clusterName}/acl/consumer:
-    post:
-      tags:
-        - Acls
-      summary: createConsumerAcl
-      operationId: createConsumerAcl
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateConsumerAcl'
-      responses:
-        200:
-          description: OK
-
-  /api/clusters/{clusterName}/acl/producer:
-    post:
-      tags:
-        - Acls
-      summary: createProducerAcl
-      operationId: createProducerAcl
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateProducerAcl'
-      responses:
-        200:
-          description: OK
-
-  /api/clusters/{clusterName}/acl/streamApp:
-    post:
-      tags:
-        - Acls
-      summary: createStreamAppAcl
-      operationId: createStreamAppAcl
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateStreamAppAcl'
-      responses:
-        200:
-          description: OK
-
   /api/authorization:
     get:
       tags:
@@ -2047,7 +1959,7 @@ paths:
               properties:
                 file:
                   type: string
-                  format: binary
+                  format: filepart
       responses:
         200:
           description: OK
@@ -2145,26 +2057,6 @@ components:
             type: string
             enum:
               - DYNAMIC_CONFIG
-        build:
-          type: object
-          properties:
-            commitId:
-              type: string
-            version:
-              type: string
-            buildTime:
-              type: string
-            isLatestRelease:
-              type: boolean
-        latestRelease:
-          type: object
-          properties:
-            versionTag:
-              type: string
-            publishedAt:
-              type: string
-            htmlUrl:
-              type: string
 
     Cluster:
       type: object
@@ -2200,8 +2092,6 @@ components:
               - KAFKA_CONNECT
               - KSQL_DB
               - TOPIC_DELETION
-              - KAFKA_ACL_VIEW # get ACLs listing
-              - KAFKA_ACL_EDIT # create & delete ACLs
       required:
         - id
         - name
@@ -2605,16 +2495,6 @@ components:
           type: number
         bytesOutPerSec:
           type: number
-        partitionsLeader:
-          type: integer
-        partitions:
-          type: integer
-        inSyncPartitions:
-          type: integer
-        partitionsSkew:
-          type: number
-        leadersSkew:
-          type: number
       required:
         - id
 
@@ -2672,10 +2552,6 @@ components:
           format: int64
 
     ConsumerGroup:
-      discriminator:
-        propertyName: inherit
-        mapping:
-          details: "#/components/schemas/ConsumerGroupDetails"
       type: object
       properties:
         groupId:
@@ -2692,7 +2568,7 @@ components:
           $ref: "#/components/schemas/ConsumerGroupState"
         coordinator:
           $ref: "#/components/schemas/Broker"
-        consumerLag:
+        messagesBehind:
           type: integer
           format: int64
           description: null if consumer group has no offsets committed
@@ -2705,8 +2581,6 @@ components:
         - NAME
         - MEMBERS
         - STATE
-        - MESSAGES_BEHIND
-        - TOPIC_NUM
 
     ConsumerGroupsPageResponse:
       type: object
@@ -2717,37 +2591,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConsumerGroup'
-
-    SmartFilterTestExecution:
-      type: object
-      required: [filterCode]
-      properties:
-        filterCode:
-          type: string
-        key:
-          type: string
-        value:
-          type: string
-        headers:
-          type: object
-          additionalProperties:
-            type: string
-        partition:
-          type: integer
-        offset:
-          type: integer
-          format: int64
-        timestampMs:
-          type: integer
-          format: int64
-
-    SmartFilterTestExecutionResult:
-      type: object
-      properties:
-        result:
-          type: boolean
-        error:
-          type: string
 
     CreateTopicMessage:
       type: object
@@ -2783,13 +2626,14 @@ components:
             - MESSAGE
             - CONSUMING
             - DONE
-            - EMIT_THROTTLING
         message:
           $ref: "#/components/schemas/TopicMessage"
         phase:
           $ref: "#/components/schemas/TopicMessagePhase"
         consuming:
           $ref: "#/components/schemas/TopicMessageConsuming"
+        cursor:
+          $ref: "#/components/schemas/TopicMessageNextPageCursor"
 
     TopicMessagePhase:
       type: object
@@ -2819,6 +2663,11 @@ components:
         filterApplyErrors:
           type: integer
 
+    TopicMessageNextPageCursor:
+      type: object
+      properties:
+        id:
+          type: string
 
     TopicMessage:
       type: object
@@ -2891,6 +2740,29 @@ components:
         - TIMESTAMP
         - LATEST
 
+    MessageFilterRegistration:
+      type: object
+      properties:
+        filterCode:
+          type: string
+
+    MessageFilterId:
+      type: object
+      properties:
+        id:
+          type: string
+
+    PollingMode:
+      type: string
+      enum:
+        - FROM_OFFSET
+        - TO_OFFSET
+        - FROM_TIMESTAMP
+        - TO_TIMESTAMP
+        - LATEST
+        - EARLIEST
+        - TAILING
+
     MessageFilterType:
       type: string
       enum:
@@ -2941,7 +2813,7 @@ components:
         endOffset:
           type: integer
           format: int64
-        consumerLag:
+        messagesBehind:
           type: integer
           format: int64
           description: null if consumer group has no offsets committed
@@ -3031,10 +2903,6 @@ components:
           type: string
         schemaType:
           $ref: '#/components/schemas/SchemaType'
-        references:
-          type: array
-          items:
-            $ref: '#/components/schemas/SchemaReference'
       required:
         - id
         - subject
@@ -3052,29 +2920,12 @@ components:
         schema:
           type: string
         schemaType:
-          $ref: '#/components/schemas/SchemaType' # upon updating a schema, the type of existing schema can't be changed
-        references:
-          type: array
-          items:
-            $ref: '#/components/schemas/SchemaReference'
+          $ref: '#/components/schemas/SchemaType'
+          # upon updating a schema, the type of existing schema can't be changed
       required:
         - subject
         - schema
         - schemaType
-
-    SchemaReference:
-      type: object
-      properties:
-        name:
-          type: string
-        subject:
-          type: string
-        version:
-          type: integer
-      required:
-        - name
-        - subject
-        - version
 
     CompatibilityLevel:
       type: object
@@ -3638,7 +3489,6 @@ components:
         - MESSAGES_READ
         - MESSAGES_PRODUCE
         - MESSAGES_DELETE
-        - RESTART
 
     ResourceType:
       type: string
@@ -3650,126 +3500,6 @@ components:
         - SCHEMA
         - CONNECT
         - KSQL
-        - ACL
-        - AUDIT
-
-    KafkaAcl:
-      type: object
-      required: [resourceType, resourceName, namePatternType, principal, host, operation, permission]
-      properties:
-        resourceType:
-          $ref: '#/components/schemas/KafkaAclResourceType'
-        resourceName:
-          type: string # "*" if acl can be applied to any resource of given type
-        namePatternType:
-          $ref: '#/components/schemas/KafkaAclNamePatternType'
-        principal:
-          type: string
-        host:
-          type: string
-        operation:
-          type: string
-          enum:
-            - UNKNOWN # Unknown operation, need to update mapping code on BE
-            - ALL # Cluster, Topic, Group
-            - READ  # Topic, Group
-            - WRITE # Topic, TransactionalId
-            - CREATE # Cluster, Topic
-            - DELETE  # Topic, Group
-            - ALTER  # Cluster, Topic,
-            - DESCRIBE # Cluster, Topic, Group, TransactionalId, DelegationToken
-            - CLUSTER_ACTION # Cluster
-            - DESCRIBE_CONFIGS # Cluster, Topic
-            - ALTER_CONFIGS   # Cluster, Topic
-            - IDEMPOTENT_WRITE # Cluster
-            - CREATE_TOKENS
-            - DESCRIBE_TOKENS
-        permission:
-          type: string
-          enum:
-            - ALLOW
-            - DENY
-
-    CreateConsumerAcl:
-      type: object
-      required: [principal, host]
-      properties:
-        principal:
-          type: string
-        host:
-          type: string
-        topics:
-          type: array
-          items:
-            type: string
-        topicsPrefix:
-          type: string
-        consumerGroups:
-          type: array
-          items:
-            type: string
-        consumerGroupsPrefix:
-          type: string
-
-    CreateProducerAcl:
-      type: object
-      required: [principal, host]
-      properties:
-        principal:
-          type: string
-        host:
-          type: string
-        topics:
-          type: array
-          items:
-            type: string
-        topicsPrefix:
-          type: string
-        transactionalId:
-          type: string
-        transactionsIdPrefix:
-          type: string
-        idempotent:
-          type: boolean
-          default: false
-
-    CreateStreamAppAcl:
-      type: object
-      required: [principal, host, applicationId, inputTopics, outputTopics]
-      properties:
-        principal:
-          type: string
-        host:
-          type: string
-        inputTopics:
-          type: array
-          items:
-            type: string
-        outputTopics:
-          type: array
-          items:
-            type: string
-        applicationId:
-          nullable: false
-          type: string
-
-    KafkaAclResourceType:
-      type: string
-      enum:
-        - UNKNOWN # Unknown operation, need to update mapping code on BE
-        - TOPIC
-        - GROUP
-        - CLUSTER
-        - TRANSACTIONAL_ID
-        - DELEGATION_TOKEN
-        - USER
-
-    KafkaAclNamePatternType:
-      type: string
-      enum:
-        - MATCH
-        - LITERAL
-        - PREFIXED
 
     RestartRequest:
       type: object
@@ -3906,28 +3636,9 @@ components:
                               type: array
                               items:
                                 $ref: '#/components/schemas/Action'
-            webclient:
-              type: object
-              properties:
-                maxInMemoryBufferSize:
-                  type: string
-                  description: "examples: 20, 12KB, 5MB"
             kafka:
               type: object
               properties:
-                polling:
-                  type: object
-                  properties:
-                    pollTimeoutMs:
-                      type: integer
-                    maxPageSize:
-                      type: integer
-                    defaultPageSize:
-                      type: integer
-                adminClientTimeout:
-                  type: integer
-                internalTopicPrefix:
-                  type: string
                 clusters:
                   type: array
                   items:
@@ -4056,9 +3767,7 @@ components:
                               type: array
                               items:
                                 type: string
-                            fieldsNamePattern:
-                              type: string
-                            maskingCharsReplacement:
+                            pattern:
                               type: array
                               items:
                                 type: string
@@ -4071,21 +3780,3 @@ components:
                       pollingThrottleRate:
                         type: integer
                         format: int64
-                      audit:
-                        type: object
-                        properties:
-                          level:
-                            type: string
-                            enum: [ "ALL", "ALTER_ONLY" ]
-                          topic:
-                            type: string
-                          auditTopicsPartitions:
-                            type: integer
-                          topicAuditEnabled:
-                            type: boolean
-                          consoleAuditEnabled:
-                            type: boolean
-                          auditTopicProperties:
-                            type: object
-                            additionalProperties:
-                              type: string

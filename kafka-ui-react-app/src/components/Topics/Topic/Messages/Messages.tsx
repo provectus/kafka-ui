@@ -1,25 +1,20 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
-import { SeekDirection, SerdeUsage } from 'generated-sources';
+import { SeekDirection } from 'generated-sources';
 import { useSearchParams } from 'react-router-dom';
-import { useSerdes } from 'lib/hooks/api/topicMessages';
-import useAppParams from 'lib/hooks/useAppParams';
-import { RouteParamsClusterTopic } from 'lib/paths';
-import { getDefaultSerdeName } from 'components/Topics/Topic/Messages/getDefaultSerdeName';
-import { MESSAGES_PER_PAGE } from 'lib/constants';
 
 import MessagesTable from './MessagesTable';
 import FiltersContainer from './Filters/FiltersContainer';
 
 export const SeekDirectionOptionsObj = {
-  [SeekDirection.FORWARD]: {
-    value: SeekDirection.FORWARD,
-    label: 'Oldest First',
-    isLive: false,
-  },
   [SeekDirection.BACKWARD]: {
     value: SeekDirection.BACKWARD,
     label: 'Newest First',
+    isLive: false,
+  },
+  [SeekDirection.FORWARD]: {
+    value: SeekDirection.FORWARD,
+    label: 'Oldest First',
     isLive: false,
   },
   [SeekDirection.TAILING]: {
@@ -32,27 +27,7 @@ export const SeekDirectionOptionsObj = {
 export const SeekDirectionOptions = Object.values(SeekDirectionOptionsObj);
 
 const Messages: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
-
-  const { data: serdes = {} } = useSerdes({
-    clusterName,
-    topicName,
-    use: SerdeUsage.DESERIALIZE,
-  });
-
-  React.useEffect(() => {
-    if (!searchParams.get('keySerde')) {
-      searchParams.set('keySerde', getDefaultSerdeName(serdes.key || []));
-    }
-    if (!searchParams.get('valueSerde')) {
-      searchParams.set('valueSerde', getDefaultSerdeName(serdes.value || []));
-    }
-    if (!searchParams.get('limit')) {
-      searchParams.set('limit', MESSAGES_PER_PAGE);
-    }
-    setSearchParams(searchParams);
-  }, [serdes]);
+  const [searchParams] = useSearchParams();
 
   const defaultSeekValue = SeekDirectionOptions[0];
 
@@ -64,6 +39,8 @@ const Messages: React.FC = () => {
   const [isLive, setIsLive] = useState<boolean>(
     SeekDirectionOptionsObj[seekDirection].isLive
   );
+
+  const [page, setPage] = React.useState<number>(1);
 
   const changeSeekDirection = useCallback((val: string) => {
     switch (val) {
@@ -87,9 +64,11 @@ const Messages: React.FC = () => {
     () => ({
       seekDirection,
       changeSeekDirection,
+      page,
+      setPage,
       isLive,
     }),
-    [seekDirection, changeSeekDirection]
+    [seekDirection, changeSeekDirection, page, setPage]
   );
 
   return (

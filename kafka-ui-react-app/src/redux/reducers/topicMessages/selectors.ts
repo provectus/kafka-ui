@@ -19,6 +19,21 @@ export const getTopicMessgesMeta = createSelector(
   ({ meta }) => meta
 );
 
+export const getTopicMessgesCursor = createSelector(
+  topicMessagesState,
+  ({ cursor }) => cursor
+);
+
+export const getTopicMessgesCurrentPage = createSelector(
+  topicMessagesState,
+  ({ currentPage }) => currentPage
+);
+
+export const getTopicMessgesLastLoadedPage = createSelector(
+  topicMessagesState,
+  ({ lastLoadedPage }) => lastLoadedPage
+);
+
 export const getIsTopicMessagesFetching = createSelector(
   topicMessagesState,
   ({ isFetching }) => isFetching

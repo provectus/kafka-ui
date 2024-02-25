@@ -51,7 +51,7 @@ class MessageFiltersTest {
           filter.test(msg().key(null).content(null))
       );
 
-      assertFalse(
+      assertTrue(
           filter.test(msg().key("aBc").content("AbC"))
       );
     }

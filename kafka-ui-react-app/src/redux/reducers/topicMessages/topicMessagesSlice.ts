@@ -2,7 +2,10 @@ import { createSlice } from '@reduxjs/toolkit';
 import { TopicMessagesState } from 'redux/interfaces';
 import { TopicMessage } from 'generated-sources';
 
+const PER_PAGE = 100;
+
 export const initialState: TopicMessagesState = {
+  allMessages: [],
   messages: [],
   meta: {
     bytesConsumed: 0,
@@ -12,6 +15,8 @@ export const initialState: TopicMessagesState = {
   },
   messageEventType: '',
   isFetching: false,
+  currentPage: 0,
+  lastLoadedPage: 0,
 };
 
 const topicMessagesSlice = createSlice({
@@ -19,16 +24,28 @@ const topicMessagesSlice = createSlice({
   initialState,
   reducers: {
     addTopicMessage: (state, action) => {
+      const allmessages: TopicMessage[] = action.payload.prepend
+        ? [action.payload.message, ...state.allMessages]
+        : [...state.allMessages, action.payload.message];
+
       const messages: TopicMessage[] = action.payload.prepend
         ? [action.payload.message, ...state.messages]
         : [...state.messages, action.payload.message];
 
       return {
         ...state,
+        allMessages: allmessages,
         messages,
       };
     },
-    resetTopicMessages: () => initialState,
+    resetTopicMessages: (state) => {
+      return {
+        ...initialState,
+        currentPage: state.currentPage,
+        allMessages: state.allMessages,
+      };
+    },
+    resetAllTopicMessages: () => initialState,
     updateTopicMessagesPhase: (state, action) => {
       state.phase = action.payload;
     },
@@ -42,6 +59,28 @@ const topicMessagesSlice = createSlice({
     setMessageEventType: (state, action) => {
       state.messageEventType = action.payload;
     },
+    updateTopicMessagesCursor: (state, action) => {
+      state.cursor = action.payload;
+    },
+    setTopicMessagesCurrentPage: (state, action) => {
+      if (state.currentPage !== action.payload) {
+        const messages: TopicMessage[] = state.allMessages.slice(
+          (action.payload - 1) * PER_PAGE,
+          (action.payload - 1) * PER_PAGE + PER_PAGE
+        );
+        return {
+          ...state,
+          currentPage: action.payload,
+          messages,
+        };
+      }
+      return {
+        ...state,
+      };
+    },
+    setTopicMessagesLastLoadedPage: (state, action) => {
+      state.lastLoadedPage = action.payload;
+    },
   },
 });
 
@@ -52,6 +91,10 @@ export const {
   updateTopicMessagesMeta,
   setTopicMessagesFetchingStatus,
   setMessageEventType,
+  updateTopicMessagesCursor,
+  setTopicMessagesCurrentPage,
+  setTopicMessagesLastLoadedPage,
+  resetAllTopicMessages,
 } = topicMessagesSlice.actions;
 
 export default topicMessagesSlice.reducer;

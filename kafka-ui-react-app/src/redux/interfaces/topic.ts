@@ -4,6 +4,7 @@ import {
   TopicCreation,
   TopicMessage,
   TopicMessageConsuming,
+  TopicMessageNextPageCursor,
 } from 'generated-sources';
 
 export type TopicName = Topic['name'];
@@ -52,9 +53,13 @@ export interface TopicFormData {
 }
 
 export interface TopicMessagesState {
+  allMessages: TopicMessage[];
   messages: TopicMessage[];
   phase?: string;
   meta: TopicMessageConsuming;
   messageEventType?: string;
   isFetching: boolean;
+  cursor?: TopicMessageNextPageCursor;
+  currentPage: number;
+  lastLoadedPage: number;
 }
