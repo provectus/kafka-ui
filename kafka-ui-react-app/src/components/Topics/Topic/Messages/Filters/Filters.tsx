@@ -262,6 +262,9 @@ const Filters: React.FC<FiltersProps> = ({
       valueSerde: valueSerde || searchParams.get('valueSerde') || '',
     };
 
+    if(props.mode === PollingMode.TAILING) 
+      setIsTailing(true);
+
     if (cursor?.id) props.cursor = cursor?.id;
 
     if (selectedPartitions.length !== partitions.length) {

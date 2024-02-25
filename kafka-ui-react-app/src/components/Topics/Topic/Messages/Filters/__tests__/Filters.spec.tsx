@@ -12,13 +12,15 @@ import TopicMessagesContext, {
 } from 'components/contexts/TopicMessagesContext';
 import { SeekDirection } from 'generated-sources';
 import { clusterTopicPath } from 'lib/paths';
-import { useTopicDetails } from 'lib/hooks/api/topics';
+import { useRegisterFilter, useTopicDetails } from 'lib/hooks/api/topics';
 import { externalTopicPayload } from 'lib/fixtures/topics';
 import { useSerdes } from 'lib/hooks/api/topicMessages';
 import { serdesPayload } from 'lib/fixtures/topicMessages';
+import { filterRegistrationPayload } from 'lib/fixtures/filter';
 
 jest.mock('lib/hooks/api/topics', () => ({
   useTopicDetails: jest.fn(),
+  useRegisterFilter: jest.fn(),
 }));
 
 jest.mock('lib/hooks/api/topicMessages', () => ({
@@ -29,9 +31,13 @@ const defaultContextValue: ContextProps = {
   isLive: false,
   seekDirection: SeekDirection.FORWARD,
   changeSeekDirection: jest.fn(),
+  page: 1,
+  setPage: jest.fn(),
 };
 
 jest.mock('components/common/Icons/CloseIcon', () => () => 'mock-CloseIcon');
+
+const registerFilter = jest.fn();
 
 const clusterName = 'cluster-name';
 const topicName = 'topic-name';
@@ -55,6 +61,11 @@ const renderComponent = (
           setIsFetching={jest.fn()}
           setMessageType={jest.fn}
           messageEventType="Done"
+          updateCursor={jest.fn}
+          setCurrentPage={jest.fn}
+          setLastLoadedPage={jest.fn}
+          resetAllMessages={jest.fn}
+          currentPage={1}
           {...props}
         />
       </TopicMessagesContext.Provider>
@@ -68,6 +79,9 @@ beforeEach(async () => {
   }));
   (useSerdes as jest.Mock).mockImplementation(() => ({
     data: serdesPayload,
+  }));
+  (useRegisterFilter as jest.Mock).mockImplementation(() => ({
+    mutateAsync: registerFilter,
   }));
 });
 

@@ -19,6 +19,7 @@ jest.mock('lib/hooks/api/topicMessages', () => ({
 
 jest.mock('lib/hooks/api/topics', () => ({
   useTopicDetails: jest.fn(),
+  useRegisterFilter: jest.fn(),
 }));
 
 describe('Messages', () => {
