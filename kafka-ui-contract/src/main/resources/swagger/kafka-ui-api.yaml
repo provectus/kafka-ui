@@ -857,6 +857,33 @@ paths:
                 items:
                   $ref: '#/components/schemas/TopicMessageEvent'
 
+  /api/clusters/{clusterName}/topics/{topicName}/activeproducers:
+    get:
+      tags:
+        - Topics
+      summary: get producer states for topic
+      operationId: getActiveProducerStates
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicProducerState'
+
   /api/clusters/{clusterName}/topics/{topicName}/consumer-groups:
     get:
       tags:
@@ -2498,6 +2525,31 @@ components:
         - JSON
         - PROTOBUF
         - UNKNOWN
+
+    TopicProducerState:
+      type: object
+      properties:
+        partition:
+          type: integer
+          format: int32
+        producerId:
+          type: integer
+          format: int64
+        producerEpoch:
+          type: integer
+          format: int32
+        lastSequence:
+          type: integer
+          format: int32
+        lastTimestampMs:
+          type: integer
+          format: int64
+        coordinatorEpoch:
+          type: integer
+          format: int32
+        currentTransactionStartOffset:
+          type: integer
+          format: int64
 
     ConsumerGroup:
       type: object

@@ -15,6 +15,8 @@ import {
   CreateTopicMessage,
   GetTopicDetailsRequest,
   GetTopicsRequest,
+  MessageFilterRegistration,
+  RegisterFilterRequest,
   Topic,
   TopicConfig,
   TopicCreation,
@@ -39,6 +41,8 @@ export const topicKeys = {
     [...topicKeys.details(props), 'consumerGroups'] as const,
   statistics: (props: GetTopicDetailsRequest) =>
     [...topicKeys.details(props), 'statistics'] as const,
+  filter: (props: GetTopicDetailsRequest) =>
+    [...topicKeys.details(props), 'messageFilterRegistration'] as const,
 };
 
 export function useTopics(props: GetTopicsRequest) {
@@ -104,9 +108,9 @@ const formatTopicCreation = (form: TopicFormData): TopicCreation => {
 
   return replicationFactor.toString() !== ''
     ? {
-        ...topicsvalue,
-        replicationFactor,
-      }
+      ...topicsvalue,
+      replicationFactor,
+    }
     : topicsvalue;
 };
 
@@ -328,4 +332,22 @@ export function useCancelTopicAnalysis(props: GetTopicDetailsRequest) {
       client.invalidateQueries(topicKeys.statistics(props));
     },
   });
+}
+
+export function useRegisterFilter(props: GetTopicDetailsRequest) {
+  const client = useQueryClient();
+  return useMutation(
+    (filter: MessageFilterRegistration) =>
+      messagesApi.registerFilter({ ...props, messageFilterRegistration: filter }),
+    {
+      onSuccess: () => {
+        showSuccessAlert({
+          message: `Filter successfully registered.`,
+        });
+        client.invalidateQueries(topicKeys.filter(props));
+      },
+      onError: (e) => {
+        showServerError(e as Response);
+      },
+    });
 }
