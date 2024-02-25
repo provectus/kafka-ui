@@ -16,7 +16,7 @@ export const initialState: TopicMessagesState = {
   messageEventType: '',
   isFetching: false,
   currentPage: 0,
-  lastLoadedPage: 0
+  lastLoadedPage: 0,
 };
 
 const topicMessagesSlice = createSlice({
@@ -35,7 +35,7 @@ const topicMessagesSlice = createSlice({
       return {
         ...state,
         allMessages: allmessages,
-        messages: messages,
+        messages,
       };
     },
     resetTopicMessages: (state) => {
@@ -43,7 +43,7 @@ const topicMessagesSlice = createSlice({
         ...initialState,
         currentPage: state.currentPage,
         allMessages: state.allMessages,
-      }
+      };
     },
     resetAllTopicMessages: () => initialState,
     updateTopicMessagesPhase: (state, action) => {
@@ -63,14 +63,20 @@ const topicMessagesSlice = createSlice({
       state.cursor = action.payload;
     },
     setTopicMessagesCurrentPage: (state, action) => {
-      if (state.currentPage != action.payload) {
-        const messages: TopicMessage[] = state.allMessages.slice((action.payload - 1) * PER_PAGE, (action.payload - 1) * PER_PAGE + PER_PAGE);
+      if (state.currentPage !== action.payload) {
+        const messages: TopicMessage[] = state.allMessages.slice(
+          (action.payload - 1) * PER_PAGE,
+          (action.payload - 1) * PER_PAGE + PER_PAGE
+        );
         return {
           ...state,
           currentPage: action.payload,
-          messages
-        }
+          messages,
+        };
       }
+      return {
+        ...state,
+      };
     },
     setTopicMessagesLastLoadedPage: (state, action) => {
       state.lastLoadedPage = action.payload;
@@ -88,7 +94,7 @@ export const {
   updateTopicMessagesCursor,
   setTopicMessagesCurrentPage,
   setTopicMessagesLastLoadedPage,
-  resetAllTopicMessages
+  resetAllTopicMessages,
 } = topicMessagesSlice.actions;
 
 export default topicMessagesSlice.reducer;

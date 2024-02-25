@@ -16,7 +16,6 @@ import {
   GetTopicDetailsRequest,
   GetTopicsRequest,
   MessageFilterRegistration,
-  RegisterFilterRequest,
   Topic,
   TopicConfig,
   TopicCreation,
@@ -108,9 +107,9 @@ const formatTopicCreation = (form: TopicFormData): TopicCreation => {
 
   return replicationFactor.toString() !== ''
     ? {
-      ...topicsvalue,
-      replicationFactor,
-    }
+        ...topicsvalue,
+        replicationFactor,
+      }
     : topicsvalue;
 };
 
@@ -338,7 +337,10 @@ export function useRegisterFilter(props: GetTopicDetailsRequest) {
   const client = useQueryClient();
   return useMutation(
     (filter: MessageFilterRegistration) =>
-      messagesApi.registerFilter({ ...props, messageFilterRegistration: filter }),
+      messagesApi.registerFilter({
+        ...props,
+        messageFilterRegistration: filter,
+      }),
     {
       onSuccess: () => {
         showSuccessAlert({
@@ -349,5 +351,6 @@ export function useRegisterFilter(props: GetTopicDetailsRequest) {
       onError: (e) => {
         showServerError(e as Response);
       },
-    });
+    }
+  );
 }

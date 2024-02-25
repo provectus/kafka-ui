@@ -41,17 +41,18 @@ import { useRegisterFilter, useTopicDetails } from 'lib/hooks/api/topics';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { getSerdeOptions } from 'components/Topics/Topic/SendMessage/utils';
 import { useSerdes } from 'lib/hooks/api/topicMessages';
+import { getTopicMessgesLastLoadedPage } from 'redux/reducers/topicMessages/selectors';
+import { useAppSelector } from 'lib/hooks/redux';
+import { showAlert } from 'lib/errorHandling';
 
-import * as S from './Filters.styled';
+import { getDefaultSerdeName } from './getDefaultSerdeName';
 import {
   filterOptions,
   getOffsetFromSeekToParam,
   getSelectedPartitionsFromSeekToParam,
   getTimestampFromSeekToParam,
 } from './utils';
-import { getTopicMessgesLastLoadedPage } from 'redux/reducers/topicMessages/selectors';
-import { useAppSelector } from 'lib/hooks/redux';
-import { getDefaultSerdeName } from '../getDefaultSerdeName';
+import * as S from './Filters.styled';
 
 type Query = Record<string, string | string[] | number>;
 
@@ -216,60 +217,60 @@ const Filters: React.FC<FiltersProps> = ({
     );
   };
 
-  const getPollingMode = (seekDirection: SeekDirection, seekType: SeekType): PollingMode => {
-    if (seekDirection == SeekDirection.FORWARD) {
+  const getPollingMode = (): PollingMode => {
+    if (seekDirection === SeekDirection.FORWARD) {
       if (offset && currentSeekType === SeekType.OFFSET)
         return PollingMode.FROM_OFFSET;
       if (timestamp && currentSeekType === SeekType.TIMESTAMP)
         return PollingMode.FROM_TIMESTAMP;
       return PollingMode.EARLIEST;
     }
-    if (seekDirection == SeekDirection.BACKWARD) {
+    if (seekDirection === SeekDirection.BACKWARD) {
       if (offset && currentSeekType === SeekType.OFFSET)
         return PollingMode.TO_OFFSET;
       if (timestamp && currentSeekType === SeekType.TIMESTAMP)
         return PollingMode.TO_TIMESTAMP;
       return PollingMode.LATEST;
     }
-    if (seekDirection == SeekDirection.TAILING)
-      return PollingMode.TAILING;
+    if (seekDirection === SeekDirection.TAILING) return PollingMode.TAILING;
     return PollingMode.LATEST;
-  }
+  };
 
   const getSmartFilterId = async (code: string) => {
     try {
       const filterId = await registerFilter.mutateAsync({
-        filterCode: code
+        filterCode: code,
       });
       return filterId;
     } catch (e) {
-      // do nothing
+      showAlert('error', {
+        message: 'Error occured while registering smart filter',
+      });
+      return '';
     }
-  }
+  };
 
   const handleFiltersSubmit = async (cursor?: TopicMessageNextPageCursor) => {
-
-    if (!keySerde || !valueSerde)
-      return;
+    if (!keySerde || !valueSerde) return;
     const props: Query = {
-      mode: getPollingMode(seekDirection, currentSeekType),
+      mode: getPollingMode(),
       limit: PER_PAGE,
-      stringFilter: stringFilter,
-      offset: offset,
+      stringFilter,
+      offset,
       timestamp: timestamp?.getTime() || 0,
       keySerde: keySerde || searchParams.get('keySerde') || '',
       valueSerde: valueSerde || searchParams.get('valueSerde') || '',
     };
 
-    if (cursor?.id)
-      props.cursor = cursor?.id;
+    if (cursor?.id) props.cursor = cursor?.id;
 
     if (selectedPartitions.length !== partitions.length) {
       props.partitions = selectedPartitions.map((p) => p.value);
     }
 
     if (queryType === MessageFilterType.GROOVY_SCRIPT) {
-      props.smartFilterId = (await getSmartFilterId(activeFilter.code))?.id || '';
+      props.smartFilterId =
+        (await getSmartFilterId(activeFilter.code))?.id || '';
     }
 
     const newProps = omitBy(props, (v) => v === undefined || v === '');
@@ -285,7 +286,7 @@ const Filters: React.FC<FiltersProps> = ({
     setPage(1);
     resetAllMessages();
     handleFiltersSubmit();
-  }
+  };
 
   const handleSSECancel = () => {
     if (!source.current) return;
@@ -360,11 +361,10 @@ const Filters: React.FC<FiltersProps> = ({
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {
     if (location.search?.length !== 0) {
-      if (page === currentPage)
-        return () => { };
+      if (page === currentPage) return () => {};
       if (page <= lastLoadedPage) {
         setCurrentPage(page);
-        return () => { };
+        return () => {};
       }
 
       const url = `${BASE_PARAMS.basePath}/api/clusters/${encodeURIComponent(
@@ -413,7 +413,7 @@ const Filters: React.FC<FiltersProps> = ({
         }
       };
 
-      sse.onerror = (e) => {
+      sse.onerror = () => {
         setIsFetching(false);
         sse.close();
       };
@@ -434,7 +434,7 @@ const Filters: React.FC<FiltersProps> = ({
     updateMeta,
     updatePhase,
     updateCursor,
-    setLastLoadedPage
+    setLastLoadedPage,
   ]);
 
   React.useEffect(() => {
@@ -463,19 +463,13 @@ const Filters: React.FC<FiltersProps> = ({
     currentSeekType,
     seekDirection,
     keySerde,
-    valueSerde
+    valueSerde,
   ]);
 
   React.useEffect(() => {
     setPage(1);
     resetAllMessages();
-  }, [
-    selectedPartitions,
-    offset,
-    timestamp,
-    stringFilter,
-    activeFilter,
-  ]);
+  }, [selectedPartitions, offset, timestamp, stringFilter, activeFilter]);
 
   React.useEffect(() => {
     setIsTailing(isLive);
@@ -567,9 +561,7 @@ const Filters: React.FC<FiltersProps> = ({
             buttonType="secondary"
             buttonSize="M"
             disabled={isSubmitDisabled}
-            onClick={() =>
-              isFetching ? handleSSECancel() : handleSubmit()
-            }
+            onClick={() => (isFetching ? handleSSECancel() : handleSubmit())}
             style={{ fontWeight: 500 }}
           >
             {isFetching ? 'Cancel' : 'Submit'}
@@ -585,7 +577,11 @@ const Filters: React.FC<FiltersProps> = ({
         />
       </div>
       <S.ActiveSmartFilterWrapper>
-        <Search placeholder="Search" disabled={isTailing} onChange={setStringFilter} />
+        <Search
+          placeholder="Search"
+          disabled={isTailing}
+          onChange={setStringFilter}
+        />
 
         <Button buttonType="secondary" buttonSize="M" onClick={toggle}>
           <PlusIcon />

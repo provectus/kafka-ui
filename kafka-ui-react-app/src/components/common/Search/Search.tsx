@@ -47,8 +47,7 @@ const Search: React.FC<SearchProps> = ({
   const clearSearchValue = () => {
     if (onChange) {
       onChange('');
-    }
-    else if (searchParams.get('q')) {
+    } else if (searchParams.get('q')) {
       searchParams.set('q', '');
       setSearchParams(searchParams);
     }

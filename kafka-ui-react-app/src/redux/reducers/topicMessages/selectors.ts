@@ -34,7 +34,6 @@ export const getTopicMessgesLastLoadedPage = createSelector(
   ({ lastLoadedPage }) => lastLoadedPage
 );
 
-
 export const getIsTopicMessagesFetching = createSelector(
   topicMessagesState,
   ({ isFetching }) => isFetching

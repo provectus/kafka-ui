@@ -38,8 +38,7 @@ const MessagesTable: React.FC = () => {
 
   const isNextPageButtonDisabled =
     isPaginationDisabled || messages.length < Number(MESSAGES_PER_PAGE);
-  const isPrevPageButtonDisabled =
-    isPaginationDisabled || page === 1;
+  const isPrevPageButtonDisabled = isPaginationDisabled || page === 1;
 
   const handleNextPage = () => {
     // searchParams.set('page', String(Number(page || 1) + 1));
@@ -75,16 +74,18 @@ const MessagesTable: React.FC = () => {
             <TableHeaderCell title="Timestamp" />
             <TableHeaderCell
               title="Key"
-              previewText={`Preview ${keyFilters.length ? `(${keyFilters.length} selected)` : ''
-                }`}
+              previewText={`Preview ${
+                keyFilters.length ? `(${keyFilters.length} selected)` : ''
+              }`}
               onPreview={() => setPreviewFor('key')}
             />
             <TableHeaderCell
               title="Value"
-              previewText={`Preview ${contentFilters.length
-                ? `(${contentFilters.length} selected)`
-                : ''
-                }`}
+              previewText={`Preview ${
+                contentFilters.length
+                  ? `(${contentFilters.length} selected)`
+                  : ''
+              }`}
               onPreview={() => setPreviewFor('content')}
             />
             <TableHeaderCell> </TableHeaderCell>
