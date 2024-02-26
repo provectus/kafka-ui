@@ -34,6 +34,9 @@ class KafkaConfigSanitizerTest {
     assertThat(sanitizer.sanitize("aws.secret.access.key", "secret")).isEqualTo("******");
     assertThat(sanitizer.sanitize("aws.secretAccessKey", "secret")).isEqualTo("******");
     assertThat(sanitizer.sanitize("aws.sessionToken", "secret")).isEqualTo("******");
+
+    //Mongo var sanitizing
+    assertThat(sanitizer.sanitize("connection.uri", "secret")).isEqualTo("******");
   }
 
   @Test
