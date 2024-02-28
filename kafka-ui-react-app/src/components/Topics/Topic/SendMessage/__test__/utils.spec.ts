@@ -81,5 +81,27 @@ describe('SendMessage utils', () => {
         'Error in parsing the "content" field value',
       ]);
     });
+
+    // https://github.com/provectus/kafka-ui/issues/2354
+    it('should successfully validate when schema references json-schema version draft-07', () => {
+      const schema = `{"type":"object","title":"A","description":"A","$id":"https://example.com/A.json","$schema":"http://json-schema.org/draft-07/schema#","required":["a"],"properties":{"a":{"type":"number"}}}`;
+      expect(validateBySchema('{"a": 6}', schema, 'key')).toHaveLength(0);
+    });
+    it('should successfully validate when schema references json-schema version draft-06', () => {
+      const schema = `{"type":"object","title":"A","description":"A","$id":"https://example.com/A.json","$schema":"http://json-schema.org/draft-06/schema#","required":["a"],"properties":{"a":{"type":"number"}}}`;
+      expect(validateBySchema('{"a": 6}', schema, 'key')).toHaveLength(0);
+    });
+    it('should successfully validate when schema references json-schema version draft-04', () => {
+      const schema = `{"type":"object","title":"A","description":"A","id":"https://example.com/A.json","$schema":"http://json-schema.org/draft-04/schema#","required":["a"],"properties":{"a":{"type":"number"}}}`;
+      expect(validateBySchema('{"a": 6}', schema, 'key')).toHaveLength(0);
+    });
+    it('should successfully validate when schema references json-schema version draft-2019-09', () => {
+      const schema = `{"type":"object","title":"A","description":"A","$id":"https://example.com/A.json","$schema":"https://json-schema.org/draft/2019-09/schema","required":["a"],"properties":{"a":{"type":"number"}}}`;
+      expect(validateBySchema('{"a": 6}', schema, 'key')).toHaveLength(0);
+    });
+    it('should successfully validate when schema references json-schema version draft-2020-12', () => {
+      const schema = `{"type":"object","title":"A","description":"A","$id":"https://example.com/A.json","$schema":"https://json-schema.org/draft/2020-12/schema","required":["a"],"properties":{"a":{"type":"number"}}}`;
+      expect(validateBySchema('{"a": 6}', schema, 'key')).toHaveLength(0);
+    });
   });
 });
