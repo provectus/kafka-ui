@@ -41,6 +41,9 @@ dependencies:
   ajv:
     specifier: ^8.6.3
     version: 8.8.2
+  ajv-draft-04:
+    specifier: ^1.0.0
+    version: 1.0.0(ajv@8.8.2)
   ajv-formats:
     specifier: ^2.1.1
     version: 2.1.1(ajv@8.8.2)
@@ -2125,6 +2128,17 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /ajv-draft-04@1.0.0(ajv@8.8.2):
+    resolution: {integrity: sha512-mv00Te6nmYbRp5DCwclxtt7yV/joXJPGS7nM+97GdxvuttCOfgI3K4U25zboyeX0O+myI8ERluxQe5wljMmVIw==}
+    peerDependencies:
+      ajv: ^8.5.0
+    peerDependenciesMeta:
+      ajv:
+        optional: true
+    dependencies:
+      ajv: 8.8.2
+    dev: false
 
   /ajv-formats@2.1.1(ajv@8.8.2):
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}

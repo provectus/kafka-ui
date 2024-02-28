@@ -16,6 +16,7 @@
     "@types/testing-library__jest-dom": "^5.14.5",
     "ace-builds": "^1.7.1",
     "ajv": "^8.6.3",
+    "ajv-draft-04": "^1.0.0",
     "ajv-formats": "^2.1.1",
     "classnames": "^2.2.6",
     "fetch-mock": "^9.11.0",

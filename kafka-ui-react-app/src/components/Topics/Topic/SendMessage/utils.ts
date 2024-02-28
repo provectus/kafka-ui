@@ -5,7 +5,11 @@ import {
 } from 'generated-sources';
 import jsf from 'json-schema-faker';
 import { compact } from 'lodash';
-import Ajv, { DefinedError } from 'ajv/dist/2020';
+import Ajv, { DefinedError } from 'ajv';
+import Ajv2019 from 'ajv/dist/2019';
+import Ajv2020 from 'ajv/dist/2020';
+import * as draft6MetaSchema from 'ajv/dist/refs/json-schema-draft-06.json';
+import AjvDraft4 from 'ajv-draft-04';
 import addFormats from 'ajv-formats';
 import upperFirst from 'lodash/upperFirst';
 
@@ -54,6 +58,21 @@ export const getSerdeOptions = (items: SerdeDescription[]) => {
   return compact(options);
 };
 
+const getAjvVersionForSchemaRef = (schemaRef: string) => {
+  switch (schemaRef) {
+    case 'https://json-schema.org/draft/2019-09/schema':
+      return new Ajv2019();
+    case 'https://json-schema.org/draft/2020-12/schema':
+      return new Ajv2020();
+    case 'http://json-schema.org/draft-06/schema#':
+      return new Ajv().addMetaSchema(draft6MetaSchema);
+    case 'http://json-schema.org/draft-04/schema#':
+      return new AjvDraft4();
+    default:
+      return new Ajv();
+  }
+};
+
 export const validateBySchema = (
   value: string,
   schema: string | undefined,
@@ -82,7 +101,8 @@ export const validateBySchema = (
     return [`Error in parsing the "${type}" field value`];
   }
   try {
-    const ajv = new Ajv();
+    const schemaRef = parsedSchema.$schema;
+    const ajv = getAjvVersionForSchemaRef(schemaRef);
     addFormats(ajv);
     const validate = ajv.compile(parsedSchema);
     validate(parsedValue);
