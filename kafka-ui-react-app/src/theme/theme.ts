@@ -212,6 +212,7 @@ const baseTheme = {
       hover: Colors.blue[45],
       active: Colors.brand[15],
     },
+    refreshIcon: Colors.brand[50],
   },
   textArea: {
     borderColor: {
@@ -1205,6 +1206,7 @@ export const darkTheme: ThemeType = {
       ...baseTheme.icons.discord,
       normal: Colors.neutral[30],
     },
+    refreshIcon: Colors.brand[50],
   },
   textArea: {
     ...baseTheme.textArea,

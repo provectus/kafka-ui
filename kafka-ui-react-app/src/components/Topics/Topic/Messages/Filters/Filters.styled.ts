@@ -21,6 +21,7 @@ export const FiltersWrapper = styled.div`
   flex-direction: column;
   padding-left: 16px;
   padding-right: 16px;
+  padding-top: 8px;
 
   & > div:first-child {
     display: flex;
@@ -38,10 +39,10 @@ export const FilterInputs = styled.div`
   flex-wrap: wrap;
 `;
 
-export const SeekTypeSelectorWrapper = styled.div`
+export const PollingModeSelectorWrapper = styled.div`
   display: flex;
   & .select-wrapper {
-    width: 40% !important;
+    width: 60% !important;
     & > select {
       border-radius: 4px 0 0 4px !important;
     }
@@ -90,6 +91,7 @@ export const FiltersMetrics = styled.div`
   gap: 22px;
   padding-top: 16px;
   padding-bottom: 16px;
+  width: 600px;
 `;
 export const Message = styled.div`
   font-size: 14px;
@@ -240,6 +242,7 @@ export const ActiveSmartFilterWrapper = styled.div`
   gap: 10px;
   align-items: center;
   justify-content: flex-start;
+  width:90%;
 `;
 
 export const DeleteSavedFilter = styled.div.attrs({ role: 'deleteIcon' })`
@@ -357,15 +360,15 @@ export const MessageLoading = styled.div.attrs({
   role: 'contentLoader',
 })<MessageLoadingProps>`
   color: ${({ theme }) => theme.heading.h3.color};
-  font-size: ${({ theme }) => theme.heading.h3.fontSize};
+  font-size: 12px;
   display: ${({ isLive }) => (isLive ? 'flex' : 'none')};
   justify-content: space-around;
-  width: 250px;
+  width: 150px;
 `;
 
 export const StopLoading = styled.div`
   color: ${({ theme }) => theme.pageLoader.borderColor};
-  font-size: ${({ theme }) => theme.heading.h3.fontSize};
+  font-size: 12px;
   cursor: pointer;
 `;
 
@@ -413,7 +416,7 @@ export const BackToCustomText = styled.div`
   cursor: pointer;
 `;
 
-export const SeekTypeSelect = styled(Select)`
+export const PollingModeSelect = styled(Select)`
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   user-select: none;
@@ -423,4 +426,16 @@ export const Serdes = styled.div`
   display: flex;
   gap: 24px;
   padding: 8px 0;
+`;
+
+export const RefreshIconContainer = styled.button`
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  border: none;
+  align-self: center;
+  height: 24px;
+  svg {
+    padding: 2px;
+  }
 `;

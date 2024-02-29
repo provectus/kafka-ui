@@ -39,8 +39,8 @@ export const DataCell = styled.td`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-width: 350px;
-  min-width: 350px;
+  max-width: 100%;
+  // min-width: 350px;
 `;
 export const ClickableRow = styled.tr`
   cursor: pointer;
@@ -70,6 +70,7 @@ export const MetadataLabel = styled.p`
 export const MetadataValue = styled.div`
   color: ${({ theme }) => theme.topicMetaData.color.value};
   font-size: 14px;
+  overflow: hidden;
 `;
 
 export const MetadataMeta = styled.p`

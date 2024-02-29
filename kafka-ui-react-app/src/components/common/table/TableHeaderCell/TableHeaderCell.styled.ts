@@ -70,10 +70,10 @@ const DESCMixin = css(
 export const Title = styled.span<TitleProps>(
   ({ isOrderable, isOrdered, sortOrder, theme: { table } }) => css`
     font-family: Inter, sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     font-style: normal;
     font-weight: 400;
-    line-height: 16px;
+    line-height: 20px;
     letter-spacing: 0;
     text-align: left;
     display: inline-block;
@@ -96,7 +96,7 @@ export const Preview = styled.span`
   font-family: Inter, sans-serif;
   font-style: normal;
   font-weight: 400;
-  line-height: 16px;
+  line-height: 20px;
   letter-spacing: 0;
   text-align: left;
   background: ${({ theme }) => theme.table.th.backgroundColor.normal};
