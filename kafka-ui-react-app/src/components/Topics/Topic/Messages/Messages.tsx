@@ -1,74 +1,76 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
-import { SeekDirection } from 'generated-sources';
+import { PollingMode, SerdeUsage } from 'generated-sources';
 import { useSearchParams } from 'react-router-dom';
+import { PollingModeOptions, PollingModeOptionsObj } from 'lib/constants';
+import { useSerdes } from 'lib/hooks/api/topicMessages';
+import useAppParams from 'lib/hooks/useAppParams';
+import { RouteParamsClusterTopic } from 'lib/paths';
 
-import MessagesTable from './MessagesTable';
 import FiltersContainer from './Filters/FiltersContainer';
-
-export const SeekDirectionOptionsObj = {
-  [SeekDirection.BACKWARD]: {
-    value: SeekDirection.BACKWARD,
-    label: 'Newest First',
-    isLive: false,
-  },
-  [SeekDirection.FORWARD]: {
-    value: SeekDirection.FORWARD,
-    label: 'Oldest First',
-    isLive: false,
-  },
-  [SeekDirection.TAILING]: {
-    value: SeekDirection.TAILING,
-    label: 'Live Mode',
-    isLive: true,
-  },
-};
-
-export const SeekDirectionOptions = Object.values(SeekDirectionOptionsObj);
+import MessagesTable from './MessagesTable';
+import { getDefaultSerdeName } from './Filters/getDefaultSerdeName';
 
 const Messages: React.FC = () => {
   const [searchParams] = useSearchParams();
 
-  const defaultSeekValue = SeekDirectionOptions[0];
+  const defaultPollingModeValue = PollingModeOptions[0];
 
-  const [seekDirection, setSeekDirection] = React.useState<SeekDirection>(
-    (searchParams.get('seekDirection') as SeekDirection) ||
-      defaultSeekValue.value
+  const [pollingMode, setPollingMode] = React.useState<PollingMode>(
+    (searchParams.get('pollingMode') as PollingMode) ||
+      defaultPollingModeValue.value
   );
 
   const [isLive, setIsLive] = useState<boolean>(
-    SeekDirectionOptionsObj[seekDirection].isLive
+    PollingModeOptionsObj[pollingMode].isLive
   );
 
   const [page, setPage] = React.useState<number>(1);
 
-  const changeSeekDirection = useCallback((val: string) => {
-    switch (val) {
-      case SeekDirection.FORWARD:
-        setSeekDirection(SeekDirection.FORWARD);
-        setIsLive(SeekDirectionOptionsObj[SeekDirection.FORWARD].isLive);
-        break;
-      case SeekDirection.BACKWARD:
-        setSeekDirection(SeekDirection.BACKWARD);
-        setIsLive(SeekDirectionOptionsObj[SeekDirection.BACKWARD].isLive);
-        break;
-      case SeekDirection.TAILING:
-        setSeekDirection(SeekDirection.TAILING);
-        setIsLive(SeekDirectionOptionsObj[SeekDirection.TAILING].isLive);
-        break;
-      default:
-    }
+  const changePollingMode = useCallback((val: PollingMode) => {
+    setPollingMode(val);
+    setIsLive(PollingModeOptionsObj[val].isLive);
   }, []);
+
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
+
+  const { data: serdes = {} } = useSerdes({
+    clusterName,
+    topicName,
+    use: SerdeUsage.DESERIALIZE,
+  });
+
+  const [keySerde, setKeySerde] = React.useState<string>(
+    searchParams.get('keySerde') || getDefaultSerdeName(serdes.key || [])
+  );
+  const [valueSerde, setValueSerde] = React.useState<string>(
+    searchParams.get('valueSerde') || getDefaultSerdeName(serdes.value || [])
+  );
 
   const contextValue = useMemo(
     () => ({
-      seekDirection,
-      changeSeekDirection,
+      pollingMode,
+      changePollingMode,
       page,
       setPage,
       isLive,
+      keySerde,
+      setKeySerde,
+      valueSerde,
+      setValueSerde,
+      serdes,
     }),
-    [seekDirection, changeSeekDirection, page, setPage]
+    [
+      pollingMode,
+      changePollingMode,
+      page,
+      setPage,
+      serdes,
+      keySerde,
+      setKeySerde,
+      valueSerde,
+      setValueSerde,
+    ]
   );
 
   return (

@@ -123,7 +123,10 @@ const Message: React.FC<Props> = ({
         <S.DataCell title={content}>
           <S.Metadata>
             <S.MetadataValue>
-              <Ellipsis text={renderFilteredJson(content, contentFilters)}>
+              <Ellipsis
+                text={renderFilteredJson(content, contentFilters)}
+                style={{ maxWidth: '100%' }}
+              >
                 {valueSerde === 'Fallback' && (
                   <Tooltip
                     value={<WarningRedIcon />}

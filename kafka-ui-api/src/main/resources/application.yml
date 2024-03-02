@@ -24,7 +24,7 @@ kafka:
   clusters:
     - name: local
       bootstrapServers: localhost:9096
-#      schemaRegistry: http://localhost:8085
+      schemaRegistry: http://localhost:8081
 #      ksqldbServer: http://localhost:8088
 #      kafkaConnect:
 #        - name: first

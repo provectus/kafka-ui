@@ -1,5 +1,9 @@
 import { SelectOption } from 'components/common/Select/Select';
-import { ConfigurationParameters, ConsumerGroupState } from 'generated-sources';
+import {
+  ConfigurationParameters,
+  ConsumerGroupState,
+  PollingMode,
+} from 'generated-sources';
 
 declare global {
   interface Window {
@@ -107,3 +111,43 @@ export const CONSUMER_GROUP_STATE_TOOLTIPS: Record<ConsumerGroupState, string> =
     DEAD: 'The group is going to be removed. It might be due to the inactivity, or the group is being migrated to different group coordinator.',
     UNKNOWN: '',
   } as const;
+
+export const PollingModeOptionsObj = {
+  [PollingMode.LATEST]: {
+    value: PollingMode.LATEST,
+    label: 'Newest',
+    isLive: false,
+  },
+  [PollingMode.EARLIEST]: {
+    value: PollingMode.EARLIEST,
+    label: 'Oldest',
+    isLive: false,
+  },
+  [PollingMode.TAILING]: {
+    value: PollingMode.TAILING,
+    label: 'Live Mode',
+    isLive: true,
+  },
+  [PollingMode.FROM_OFFSET]: {
+    value: PollingMode.FROM_OFFSET,
+    label: 'From Offset',
+    isLive: false,
+  },
+  [PollingMode.TO_OFFSET]: {
+    value: PollingMode.TO_OFFSET,
+    label: 'To Offset',
+    isLive: false,
+  },
+  [PollingMode.FROM_TIMESTAMP]: {
+    value: PollingMode.FROM_TIMESTAMP,
+    label: 'From Time',
+    isLive: false,
+  },
+  [PollingMode.TO_TIMESTAMP]: {
+    value: PollingMode.TO_TIMESTAMP,
+    label: 'To Time',
+    isLive: false,
+  },
+};
+
+export const PollingModeOptions = Object.values(PollingModeOptionsObj);

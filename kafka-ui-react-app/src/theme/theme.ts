@@ -212,6 +212,7 @@ const baseTheme = {
       hover: Colors.blue[45],
       active: Colors.brand[15],
     },
+    refreshIcon: Colors.brand[50],
   },
   textArea: {
     borderColor: {
@@ -750,6 +751,26 @@ export const theme = {
       },
     },
   },
+  datePicker: {
+    color: {
+      normal: {
+        background: Colors.neutral[0],
+        text: Colors.neutral[90],
+      },
+      active: {
+        background: Colors.brand[50],
+        text: Colors.neutral[0],
+      },
+      gray: Colors.neutral[30],
+    },
+    borderColor: {
+      normal: Colors.neutral[30],
+      active: Colors.neutral[70],
+    },
+    navigationIcon: {
+      color: Colors.brand[50],
+    },
+  },
 };
 
 export type ThemeType = typeof theme;
@@ -1205,6 +1226,7 @@ export const darkTheme: ThemeType = {
       ...baseTheme.icons.discord,
       normal: Colors.neutral[30],
     },
+    refreshIcon: Colors.brand[50],
   },
   textArea: {
     ...baseTheme.textArea,
@@ -1260,6 +1282,26 @@ export const darkTheme: ThemeType = {
         },
         red: {},
       },
+    },
+  },
+  datePicker: {
+    color: {
+      normal: {
+        background: Colors.neutral[85],
+        text: Colors.neutral[0],
+      },
+      active: {
+        background: Colors.brand[30],
+        text: Colors.neutral[0],
+      },
+      gray: Colors.neutral[30],
+    },
+    borderColor: {
+      normal: Colors.neutral[30],
+      active: Colors.neutral[70],
+    },
+    navigationIcon: {
+      color: Colors.brand[50],
     },
   },
 };

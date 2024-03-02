@@ -10,7 +10,7 @@ describe('Filters Styled components', () => {
       render(<S.MessageLoading isLive />);
       expect(screen.getByRole('contentLoader')).toHaveStyle({
         color: theme.heading.h3.color,
-        'font-size': theme.heading.h3.fontSize,
+        'font-size': theme.heading.variants[5].fontSize,
         display: 'flex',
       });
     });
@@ -19,7 +19,7 @@ describe('Filters Styled components', () => {
       render(<S.MessageLoading isLive={false} />);
       expect(screen.getByRole('contentLoader', { hidden: true })).toHaveStyle({
         color: theme.heading.h3.color,
-        'font-size': theme.heading.h3.fontSize,
+        'font-size': theme.heading.variants[5].fontSize,
         display: 'none',
       });
     });

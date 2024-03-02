@@ -2,11 +2,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import {
   MessageFilterType,
-  Partition,
   PollingMode,
-  SeekDirection,
-  SeekType,
-  SerdeUsage,
   TopicMessage,
   TopicMessageConsuming,
   TopicMessageEvent,
@@ -19,14 +15,17 @@ import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { BASE_PARAMS } from 'lib/constants';
-import Select from 'components/common/Select/Select';
+import {
+  BASE_PARAMS,
+  PollingModeOptions,
+  PollingModeOptionsObj,
+} from 'lib/constants';
+import { SelectOption } from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
 import Search from 'components/common/Search/Search';
 import FilterModal, {
   FilterEdit,
 } from 'components/Topics/Topic/Messages/Filters/FilterModal';
-import { SeekDirectionOptions } from 'components/Topics/Topic/Messages/Messages';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
 import useBoolean from 'lib/hooks/useBoolean';
 import { RouteParamsClusterTopic } from 'lib/paths';
@@ -38,21 +37,21 @@ import ClockIcon from 'components/common/Icons/ClockIcon';
 import ArrowDownIcon from 'components/common/Icons/ArrowDownIcon';
 import FileIcon from 'components/common/Icons/FileIcon';
 import { useRegisterFilter, useTopicDetails } from 'lib/hooks/api/topics';
-import { InputLabel } from 'components/common/Input/InputLabel.styled';
-import { getSerdeOptions } from 'components/Topics/Topic/SendMessage/utils';
-import { useSerdes } from 'lib/hooks/api/topicMessages';
 import { getTopicMessgesLastLoadedPage } from 'redux/reducers/topicMessages/selectors';
 import { useAppSelector } from 'lib/hooks/redux';
 import { showAlert } from 'lib/errorHandling';
+import RefreshIcon from 'components/common/Icons/RefreshIcon';
+import Input from 'components/common/Input/Input';
+import DatePicker from 'components/common/DatePicker/DatePicker';
+import { SelectSubFormProps } from 'components/common/Select/SelectSubForm';
 
-import { getDefaultSerdeName } from './getDefaultSerdeName';
+import * as S from './Filters.styled';
 import {
   filterOptions,
   getOffsetFromSeekToParam,
   getSelectedPartitionsFromSeekToParam,
   getTimestampFromSeekToParam,
 } from './utils';
-import * as S from './Filters.styled';
 
 type Query = Record<string, string | string[] | number>;
 
@@ -88,11 +87,6 @@ export interface ActiveMessageFilter {
 
 const PER_PAGE = 100;
 
-export const SeekTypeOptions = [
-  { value: SeekType.OFFSET, label: 'Offset' },
-  { value: SeekType.TIMESTAMP, label: 'Timestamp' },
-];
-
 const Filters: React.FC<FiltersProps> = ({
   phaseMessage,
   meta: { elapsedMs, bytesConsumed, messagesConsumed, filterApplyErrors },
@@ -123,8 +117,15 @@ const Filters: React.FC<FiltersProps> = ({
 
   const partitions = topic?.partitions || [];
 
-  const { seekDirection, isLive, changeSeekDirection, page, setPage } =
-    useContext(TopicMessagesContext);
+  const {
+    pollingMode,
+    isLive,
+    changePollingMode,
+    page,
+    setPage,
+    keySerde,
+    valueSerde,
+  } = useContext(TopicMessagesContext);
 
   const { value: isOpen, toggle } = useBoolean();
 
@@ -135,33 +136,12 @@ const Filters: React.FC<FiltersProps> = ({
   const [selectedPartitions, setSelectedPartitions] = React.useState<Option[]>(
     getSelectedPartitionsFromSeekToParam(searchParams, partitions)
   );
-
-  const [currentSeekType, setCurrentSeekType] = React.useState<SeekType>(
-    SeekTypeOptions.find(
-      (ele) => ele.value === (searchParams.get('seekType') as SeekType)
-    ) !== undefined
-      ? (searchParams.get('seekType') as SeekType)
-      : SeekType.OFFSET
-  );
   const [offset, setOffset] = React.useState<string>(
     getOffsetFromSeekToParam(searchParams)
   );
 
   const [timestamp, setTimestamp] = React.useState<Date | null>(
     getTimestampFromSeekToParam(searchParams)
-  );
-
-  const { data: serdes = {} } = useSerdes({
-    clusterName,
-    topicName,
-    use: SerdeUsage.DESERIALIZE,
-  });
-
-  const [keySerde, setKeySerde] = React.useState<string>(
-    searchParams.get('keySerde') || getDefaultSerdeName(serdes.key || [])
-  );
-  const [valueSerde, setValueSerde] = React.useState<string>(
-    searchParams.get('valueSerde') || getDefaultSerdeName(serdes.value || [])
   );
 
   const [savedFilters, setSavedFilters] = React.useState<MessageFilters[]>(
@@ -184,57 +164,23 @@ const Filters: React.FC<FiltersProps> = ({
   const [stringFilter, setStringFilter] = React.useState<string>('');
   const [isTailing, setIsTailing] = React.useState<boolean>(isLive);
 
-  const isSeekTypeControlVisible = React.useMemo(
+  const isPollingModeControlVisible = React.useMemo(
     () => selectedPartitions.length > 0,
     [selectedPartitions]
   );
 
   const isSubmitDisabled = React.useMemo(() => {
-    if (isSeekTypeControlVisible) {
+    if (isPollingModeControlVisible) {
       return (
-        (currentSeekType === SeekType.TIMESTAMP && !timestamp) || isTailing
+        ((pollingMode === PollingMode.FROM_TIMESTAMP ||
+          pollingMode === PollingMode.TO_TIMESTAMP) &&
+          !timestamp) ||
+        isTailing
       );
     }
 
     return false;
-  }, [isSeekTypeControlVisible, currentSeekType, timestamp, isTailing]);
-
-  const handleClearAllFilters = () => {
-    setCurrentSeekType(SeekType.OFFSET);
-    setOffset('');
-    setTimestamp(null);
-    setStringFilter('');
-    setPage(1);
-    changeSeekDirection(SeekDirection.FORWARD);
-    getSelectedPartitionsFromSeekToParam(searchParams, partitions);
-    setSelectedPartitions(
-      partitions.map((partition: Partition) => {
-        return {
-          value: partition.partition,
-          label: `Partition #${partition.partition.toString()}`,
-        };
-      })
-    );
-  };
-
-  const getPollingMode = (): PollingMode => {
-    if (seekDirection === SeekDirection.FORWARD) {
-      if (offset && currentSeekType === SeekType.OFFSET)
-        return PollingMode.FROM_OFFSET;
-      if (timestamp && currentSeekType === SeekType.TIMESTAMP)
-        return PollingMode.FROM_TIMESTAMP;
-      return PollingMode.EARLIEST;
-    }
-    if (seekDirection === SeekDirection.BACKWARD) {
-      if (offset && currentSeekType === SeekType.OFFSET)
-        return PollingMode.TO_OFFSET;
-      if (timestamp && currentSeekType === SeekType.TIMESTAMP)
-        return PollingMode.TO_TIMESTAMP;
-      return PollingMode.LATEST;
-    }
-    if (seekDirection === SeekDirection.TAILING) return PollingMode.TAILING;
-    return PollingMode.LATEST;
-  };
+  }, [isPollingModeControlVisible, pollingMode, timestamp, isTailing]);
 
   const getSmartFilterId = async (code: string) => {
     try {
@@ -253,7 +199,7 @@ const Filters: React.FC<FiltersProps> = ({
   const handleFiltersSubmit = async (cursor?: TopicMessageNextPageCursor) => {
     if (!keySerde || !valueSerde) return;
     const props: Query = {
-      mode: getPollingMode(),
+      mode: pollingMode,
       limit: PER_PAGE,
       stringFilter,
       offset,
@@ -262,8 +208,7 @@ const Filters: React.FC<FiltersProps> = ({
       valueSerde: valueSerde || searchParams.get('valueSerde') || '',
     };
 
-    if(props.mode === PollingMode.TAILING) 
-      setIsTailing(true);
+    if (props.mode === PollingMode.TAILING) setIsTailing(true);
 
     if (cursor?.id) props.cursor = cursor?.id;
 
@@ -361,6 +306,31 @@ const Filters: React.FC<FiltersProps> = ({
       editSavedFilter(filter);
     }
   };
+
+  const handlePollingModeSelect = (
+    pollingModeVal: PollingMode,
+    value?: string | Date | null
+  ) => {
+    changePollingMode(pollingModeVal);
+    if (
+      (pollingModeVal === PollingMode.FROM_OFFSET ||
+        pollingModeVal === PollingMode.TO_OFFSET) &&
+      value
+    ) {
+      setOffset(value as string);
+    }
+    if (
+      (pollingModeVal === PollingMode.FROM_TIMESTAMP ||
+        pollingModeVal === PollingMode.TO_TIMESTAMP) &&
+      value
+    ) {
+      setTimestamp(value as Date | null);
+    }
+    // setPage(1);
+    // resetAllMessages();
+    // handleFiltersSubmit();
+  };
+
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {
     if (location.search?.length !== 0) {
@@ -429,7 +399,7 @@ const Filters: React.FC<FiltersProps> = ({
   }, [
     clusterName,
     topicName,
-    seekDirection,
+    pollingMode,
     location,
     addMessage,
     resetMessages,
@@ -446,56 +416,112 @@ const Filters: React.FC<FiltersProps> = ({
       resetAllMessages();
       handleFiltersSubmit();
     }
-  }, [
-    seekDirection,
-    queryType,
-    activeFilter,
-    currentSeekType,
-    timestamp,
-    stringFilter,
-    location,
-  ]);
+  }, [queryType, activeFilter, pollingMode, timestamp, stringFilter, location]);
 
   React.useEffect(() => {
     setPage(1);
     resetAllMessages();
     handleFiltersSubmit();
-  }, [
-    seekDirection,
-    queryType,
-    currentSeekType,
-    seekDirection,
-    keySerde,
-    valueSerde,
-  ]);
+  }, [pollingMode, queryType, keySerde, valueSerde]);
 
   React.useEffect(() => {
     setPage(1);
     resetAllMessages();
-  }, [selectedPartitions, offset, timestamp, stringFilter, activeFilter]);
+  }, [selectedPartitions, stringFilter, activeFilter]);
 
   React.useEffect(() => {
     setIsTailing(isLive);
   }, [isLive]);
+
+  const formatElapsedTime = (elapsedTimeMs: number): string => {
+    let timeMs = elapsedTimeMs;
+    // Convert milliseconds to hours, minutes, and seconds
+    const hours = Math.floor(timeMs / 3600000);
+
+    // Format the time components into a string
+    if (hours > 0) {
+      return `${hours}h `;
+    }
+    timeMs %= 3600000;
+    const minutes = Math.floor(timeMs / 60000);
+    if (minutes > 0 || hours > 0) {
+      return `${minutes}m `;
+    }
+    timeMs %= 60000;
+    const seconds = Math.floor(timeMs / 1000);
+    if (seconds > 0 || minutes > 0 || hours > 0) {
+      return `${seconds}s `;
+    }
+    timeMs %= 1000;
+    return `${timeMs}ms`;
+  };
+
+  const pollingModeOptions: SelectOption[] = PollingModeOptions.map(
+    (option) => {
+      let subFormProps: SelectSubFormProps | undefined;
+      if (
+        option === PollingModeOptionsObj.TO_OFFSET ||
+        option === PollingModeOptionsObj.FROM_OFFSET
+      )
+        subFormProps = {
+          inputType: Input,
+          inputProps: {
+            id: 'offset',
+            type: 'text',
+            label: 'Offset',
+            inputSize: 'M',
+            placeholder: '',
+            integerOnly: true,
+            positiveOnly: true,
+          },
+        };
+      if (
+        option === PollingModeOptionsObj.TO_TIMESTAMP ||
+        option === PollingModeOptionsObj.FROM_TIMESTAMP
+      )
+        subFormProps = {
+          inputType: DatePicker,
+          inputProps: {
+            showTimeInput: true,
+            timeInputLabel: 'Time:',
+            dateFormat: 'MMM d, yyyy HH:mm',
+            placeholderText: 'Select timestamp',
+            inline: true,
+            maxDate: new Date(Date.now()),
+          },
+        };
+
+      return {
+        ...option,
+        subFormProps,
+      };
+    }
+  );
+
+  // const [pollingModeOptions, setPollingModeOptions] = React.useState<SelectOption[]>(getPollingModeOptions());
 
   return (
     <S.FiltersWrapper>
       <div>
         <S.FilterInputs>
           <div>
-            <InputLabel>Seek Type</InputLabel>
-            <S.SeekTypeSelectorWrapper>
-              <S.SeekTypeSelect
-                id="selectSeekType"
-                onChange={(option) => setCurrentSeekType(option as SeekType)}
-                value={currentSeekType}
+            <S.PollingModeSelectorWrapper>
+              <S.PollingModeSelect
+                id="selectPollingMode"
+                onChange={(option, value) =>
+                  handlePollingModeSelect(option as PollingMode, value)
+                }
+                value={pollingMode}
                 selectSize="M"
-                minWidth="100px"
-                options={SeekTypeOptions}
+                minWidth="128px"
+                optionsMaxHeight="400px"
+                options={pollingModeOptions}
                 disabled={isTailing}
+                isLive={isLive}
               />
 
-              {currentSeekType === SeekType.OFFSET ? (
+              {(pollingMode === PollingMode.FROM_OFFSET ||
+                pollingMode === PollingMode.TO_OFFSET) && (
                 <S.OffsetSelector
                   id="offset"
                   type="text"
@@ -505,7 +531,9 @@ const Filters: React.FC<FiltersProps> = ({
                   onChange={({ target: { value } }) => setOffset(value)}
                   disabled={isTailing}
                 />
-              ) : (
+              )}
+              {(pollingMode === PollingMode.FROM_TIMESTAMP ||
+                pollingMode === PollingMode.TO_TIMESTAMP) && (
                 <S.DatePickerInput
                   selected={timestamp}
                   onChange={(date: Date | null) => setTimestamp(date)}
@@ -516,10 +544,9 @@ const Filters: React.FC<FiltersProps> = ({
                   disabled={isTailing}
                 />
               )}
-            </S.SeekTypeSelectorWrapper>
+            </S.PollingModeSelectorWrapper>
           </div>
           <div>
-            <InputLabel>Partitions</InputLabel>
             <MultiSelect
               options={partitions.map((p) => ({
                 label: `Partition #${p.partition.toString()}`,
@@ -532,79 +559,84 @@ const Filters: React.FC<FiltersProps> = ({
               disabled={isTailing}
             />
           </div>
-          <div>
-            <InputLabel>Key Serde</InputLabel>
-            <Select
-              id="selectKeySerdeOptions"
-              aria-labelledby="selectKeySerdeOptions"
-              onChange={(option) => setKeySerde(option as string)}
-              minWidth="170px"
-              options={getSerdeOptions(serdes.key || [])}
-              value={searchParams.get('keySerde') as string}
-              selectSize="M"
-              disabled={isTailing}
-            />
-          </div>
-          <div>
-            <InputLabel>Value Serde</InputLabel>
-            <Select
-              id="selectValueSerdeOptions"
-              aria-labelledby="selectValueSerdeOptions"
-              onChange={(option) => setValueSerde(option as string)}
-              options={getSerdeOptions(serdes.value || [])}
-              value={searchParams.get('valueSerde') as string}
-              minWidth="170px"
-              selectSize="M"
-              disabled={isTailing}
-            />
-          </div>
-          <S.ClearAll onClick={handleClearAllFilters}>Clear all</S.ClearAll>
-          <Button
+          <S.RefreshIconContainer
             type="submit"
-            buttonType="secondary"
-            buttonSize="M"
             disabled={isSubmitDisabled}
             onClick={() => (isFetching ? handleSSECancel() : handleSubmit())}
-            style={{ fontWeight: 500 }}
           >
-            {isFetching ? 'Cancel' : 'Submit'}
-          </Button>
+            <RefreshIcon />
+          </S.RefreshIconContainer>
         </S.FilterInputs>
-        <Select
-          selectSize="M"
-          onChange={(option) => changeSeekDirection(option as string)}
-          value={seekDirection}
-          minWidth="120px"
-          options={SeekDirectionOptions}
-          isLive={isLive}
-        />
-      </div>
-      <S.ActiveSmartFilterWrapper>
         <Search
           placeholder="Search"
           disabled={isTailing}
           onChange={setStringFilter}
         />
-
-        <Button buttonType="secondary" buttonSize="M" onClick={toggle}>
-          <PlusIcon />
-          Add Filters
-        </Button>
-        {activeFilter.name && (
-          <S.ActiveSmartFilter data-testid="activeSmartFilter">
-            <S.SmartFilterName>{activeFilter.name}</S.SmartFilterName>
-            <S.EditSmartFilterIcon
-              data-testid="editActiveSmartFilterBtn"
-              onClick={toggleQuickEdit}
+      </div>
+      <div style={{ display: 'flex' }}>
+        <S.ActiveSmartFilterWrapper>
+          <Button buttonType="secondary" buttonSize="M" onClick={toggle}>
+            <PlusIcon />
+            Add Filters
+          </Button>
+          {activeFilter.name && (
+            <S.ActiveSmartFilter data-testid="activeSmartFilter">
+              <S.SmartFilterName>{activeFilter.name}</S.SmartFilterName>
+              <S.EditSmartFilterIcon
+                data-testid="editActiveSmartFilterBtn"
+                onClick={toggleQuickEdit}
+              >
+                <EditIcon />
+              </S.EditSmartFilterIcon>
+              <S.DeleteSmartFilterIcon onClick={deleteActiveFilter}>
+                <CloseIcon />
+              </S.DeleteSmartFilterIcon>
+            </S.ActiveSmartFilter>
+          )}
+        </S.ActiveSmartFilterWrapper>
+        <S.FiltersMetrics>
+          <S.Message>
+            {pollingMode !== PollingMode.TAILING && isFetching && phaseMessage}
+            {!isFetching && messageEventType}
+          </S.Message>
+          <S.MessageLoading isLive={isTailing}>
+            <S.MessageLoadingSpinner isFetching={isFetching} />
+            Loading
+            <S.StopLoading
+              onClick={() => {
+                handleSSECancel();
+                setIsTailing(false);
+              }}
             >
-              <EditIcon />
-            </S.EditSmartFilterIcon>
-            <S.DeleteSmartFilterIcon onClick={deleteActiveFilter}>
-              <CloseIcon />
-            </S.DeleteSmartFilterIcon>
-          </S.ActiveSmartFilter>
-        )}
-      </S.ActiveSmartFilterWrapper>
+              Stop
+            </S.StopLoading>
+          </S.MessageLoading>
+          <S.Metric title="Elapsed Time">
+            <S.MetricsIcon>
+              <ClockIcon />
+            </S.MetricsIcon>
+            <span>{formatElapsedTime(Math.max(elapsedMs || 0, 0))}</span>
+          </S.Metric>
+          <S.Metric title="Bytes Consumed">
+            <S.MetricsIcon>
+              <ArrowDownIcon />
+            </S.MetricsIcon>
+            <BytesFormatted value={bytesConsumed} />
+          </S.Metric>
+          <S.Metric title="Messages Consumed">
+            <S.MetricsIcon>
+              <FileIcon />
+            </S.MetricsIcon>
+            <span>{messagesConsumed} messages</span>
+          </S.Metric>
+          {!!filterApplyErrors && (
+            <S.Metric title="Errors">
+              <span>{filterApplyErrors} errors</span>
+            </S.Metric>
+          )}
+        </S.FiltersMetrics>
+      </div>
+
       {isQuickEditOpen && (
         <FilterModal
           quickEditMode
@@ -629,49 +661,6 @@ const Filters: React.FC<FiltersProps> = ({
           activeFilter={activeFilter}
         />
       )}
-      <S.FiltersMetrics>
-        <S.Message>
-          {seekDirection !== SeekDirection.TAILING &&
-            isFetching &&
-            phaseMessage}
-          {!isFetching && messageEventType}
-        </S.Message>
-        <S.MessageLoading isLive={isTailing}>
-          <S.MessageLoadingSpinner isFetching={isFetching} />
-          Loading messages.
-          <S.StopLoading
-            onClick={() => {
-              handleSSECancel();
-              setIsTailing(false);
-            }}
-          >
-            Stop loading
-          </S.StopLoading>
-        </S.MessageLoading>
-        <S.Metric title="Elapsed Time">
-          <S.MetricsIcon>
-            <ClockIcon />
-          </S.MetricsIcon>
-          <span>{Math.max(elapsedMs || 0, 0)} ms</span>
-        </S.Metric>
-        <S.Metric title="Bytes Consumed">
-          <S.MetricsIcon>
-            <ArrowDownIcon />
-          </S.MetricsIcon>
-          <BytesFormatted value={bytesConsumed} />
-        </S.Metric>
-        <S.Metric title="Messages Consumed">
-          <S.MetricsIcon>
-            <FileIcon />
-          </S.MetricsIcon>
-          <span>{messagesConsumed} messages consumed</span>
-        </S.Metric>
-        {!!filterApplyErrors && (
-          <S.Metric title="Errors">
-            <span>{filterApplyErrors} errors</span>
-          </S.Metric>
-        )}
-      </S.FiltersMetrics>
     </S.FiltersWrapper>
   );
 };

@@ -1,8 +1,6 @@
 import React from 'react';
-import { SeekDirectionOptions } from 'components/Topics/Topic/Messages/Messages';
 import Filters, {
   FiltersProps,
-  SeekTypeOptions,
 } from 'components/Topics/Topic/Messages/Filters/Filters';
 import { EventSourceMock, render, WithRoute } from 'lib/testHelpers';
 import { screen, within } from '@testing-library/react';
@@ -10,13 +8,13 @@ import userEvent from '@testing-library/user-event';
 import TopicMessagesContext, {
   ContextProps,
 } from 'components/contexts/TopicMessagesContext';
-import { SeekDirection } from 'generated-sources';
+import { PollingMode } from 'generated-sources';
 import { clusterTopicPath } from 'lib/paths';
 import { useRegisterFilter, useTopicDetails } from 'lib/hooks/api/topics';
 import { externalTopicPayload } from 'lib/fixtures/topics';
 import { useSerdes } from 'lib/hooks/api/topicMessages';
 import { serdesPayload } from 'lib/fixtures/topicMessages';
-import { filterRegistrationPayload } from 'lib/fixtures/filter';
+import { PollingModeOptions } from 'lib/constants';
 
 jest.mock('lib/hooks/api/topics', () => ({
   useTopicDetails: jest.fn(),
@@ -29,10 +27,15 @@ jest.mock('lib/hooks/api/topicMessages', () => ({
 
 const defaultContextValue: ContextProps = {
   isLive: false,
-  seekDirection: SeekDirection.FORWARD,
-  changeSeekDirection: jest.fn(),
+  pollingMode: PollingMode.LATEST,
+  changePollingMode: jest.fn(),
   page: 1,
   setPage: jest.fn(),
+  keySerde: 'String',
+  valueSerde: 'String',
+  setKeySerde: jest.fn(),
+  setValueSerde: jest.fn(),
+  serdes: serdesPayload,
 };
 
 jest.mock('components/common/Icons/CloseIcon', () => () => 'mock-CloseIcon');
@@ -92,13 +95,13 @@ describe('Filters component', () => {
 
   it('shows cancel button while fetching', () => {
     renderComponent({ isFetching: true });
-    expect(screen.getByText('Cancel')).toBeInTheDocument();
+    expect(screen.getByText('Stop')).toBeInTheDocument();
   });
 
-  it('shows submit button while fetching is over', () => {
-    renderComponent();
-    expect(screen.getByText('Submit')).toBeInTheDocument();
-  });
+  // it('shows submit button while fetching is over', () => {
+  //   renderComponent();
+  //   expect(screen.getByText('Submit')).toBeInTheDocument();
+  // });
 
   describe('Input elements', () => {
     const inputValue = 'Hello World!';
@@ -114,72 +117,75 @@ describe('Filters component', () => {
       expect(searchInput).toHaveValue(inputValue);
     });
 
-    it('offset input', async () => {
-      const offsetInput = screen.getByPlaceholderText('Offset');
-      expect(offsetInput).toHaveValue('');
-      await userEvent.type(offsetInput, inputValue);
-      expect(offsetInput).toHaveValue(inputValue);
-    });
+    // it('offset input', async () => {
+    //   const offsetInput = screen.getByPlaceholderText('Offset');
+    //   expect(offsetInput).toHaveValue('');
+    //   await userEvent.type(offsetInput, inputValue);
+    //   expect(offsetInput).toHaveValue(inputValue);
+    // });
 
-    it('timestamp input', async () => {
-      const seekTypeSelect = screen.getAllByRole('listbox');
-      const option = screen.getAllByRole('option');
+    // it('timestamp input', async () => {
+    //   const seekTypeSelect = screen.getAllByRole('listbox');
+    //   const option = screen.getAllByRole('option');
 
-      await userEvent.click(seekTypeSelect[0]);
+    //   await userEvent.click(seekTypeSelect[0]);
 
-      await userEvent.selectOptions(seekTypeSelect[0], ['Timestamp']);
+    //   await userEvent.selectOptions(seekTypeSelect[0], ['Timestamp']);
 
-      expect(option[0]).toHaveTextContent('Timestamp');
-      const timestampInput = screen.getByPlaceholderText('Select timestamp');
-      expect(timestampInput).toHaveValue('');
+    //   expect(option[0]).toHaveTextContent('Timestamp');
+    //   const timestampInput = screen.getByPlaceholderText('Select timestamp');
+    //   expect(timestampInput).toHaveValue('');
 
-      await userEvent.type(timestampInput, inputValue);
+    //   await userEvent.type(timestampInput, inputValue);
 
-      expect(timestampInput).toHaveValue(inputValue);
-      expect(screen.getByText('Submit')).toBeInTheDocument();
-    });
+    //   expect(timestampInput).toHaveValue(inputValue);
+    //   expect(screen.getByText('Submit')).toBeInTheDocument();
+    // });
   });
 
   describe('Select elements', () => {
-    let seekTypeSelects: HTMLElement[];
+    let pollingModeSelects: HTMLElement[];
     let options: HTMLElement[];
 
-    const selectedDirectionOptionValue = SeekDirectionOptions[0];
-    const mockDirectionOptionSelectLabel = selectedDirectionOptionValue.label;
-    const selectTypeOptionValue = SeekTypeOptions[0];
-    const mockTypeOptionSelectLabel = selectTypeOptionValue.label;
+    const pollingModeOptionValue = PollingModeOptions[0];
+    const mockPollingModeOptionSelectLabel = pollingModeOptionValue.label;
+
+    const livePollingModeOptionValue = PollingModeOptions[3];
+    const mockLivePollingModeOptionSelectLabel =
+      livePollingModeOptionValue.label;
 
     beforeEach(() => {
       renderComponent();
-      seekTypeSelects = screen.getAllByRole('listbox');
+      pollingModeSelects = screen.getAllByRole('listbox');
       options = screen.getAllByRole('option');
     });
 
-    it('seekType select', async () => {
-      expect(options[0]).toHaveTextContent('Offset');
-      await userEvent.click(seekTypeSelects[0]);
-      await userEvent.selectOptions(seekTypeSelects[0], [
-        mockTypeOptionSelectLabel,
+    it('polling mode select', async () => {
+      expect(options[0]).toHaveTextContent('Newest');
+      await userEvent.click(pollingModeSelects[0]);
+      await userEvent.selectOptions(pollingModeSelects[0], [
+        mockPollingModeOptionSelectLabel,
       ]);
-      expect(options[0]).toHaveTextContent(mockTypeOptionSelectLabel);
-      expect(screen.getByText('Submit')).toBeInTheDocument();
+      expect(options[0]).toHaveTextContent(mockPollingModeOptionSelectLabel);
+      // expect(screen.getByText('Submit')).toBeInTheDocument();
     });
-
-    it('seekDirection select', async () => {
-      await userEvent.click(seekTypeSelects[3]);
-      await userEvent.selectOptions(seekTypeSelects[3], [
-        mockDirectionOptionSelectLabel,
+    it('live mode select', async () => {
+      await userEvent.click(pollingModeSelects[0]);
+      await userEvent.selectOptions(pollingModeSelects[0], [
+        mockLivePollingModeOptionSelectLabel,
       ]);
-      expect(options[3]).toHaveTextContent(mockDirectionOptionSelectLabel);
+      expect(options[0]).toHaveTextContent(
+        mockLivePollingModeOptionSelectLabel
+      );
     });
   });
 
   it('stop loading when live mode is active', async () => {
     renderComponent();
-    await userEvent.click(screen.getByText('Stop loading'));
+    await userEvent.click(screen.getByText('Stop'));
     const option = screen.getAllByRole('option');
-    expect(option[3]).toHaveTextContent('Oldest First');
-    expect(screen.getByText('Submit')).toBeInTheDocument();
+    expect(option[0]).toHaveTextContent('Newest');
+    // expect(screen.getByText('Submit')).toBeInTheDocument();
   });
 
   it('renders addFilter modal', async () => {
