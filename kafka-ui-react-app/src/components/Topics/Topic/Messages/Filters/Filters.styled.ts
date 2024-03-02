@@ -1,9 +1,11 @@
 import Input from 'components/common/Input/Input';
 import Select from 'components/common/Select/Select';
 import styled, { css } from 'styled-components';
-import DatePicker from 'react-datepicker';
+// import DatePicker from 'react-datepicker';
 import EditIcon from 'components/common/Icons/EditIcon';
 import closeIcon from 'components/common/Icons/CloseIcon';
+import DatePicker from 'components/common/DatePicker/DatePicker';
+import ReactDatePicker from 'react-datepicker';
 
 interface SavedFilterProps {
   selected: boolean;
@@ -53,6 +55,34 @@ export const OffsetSelector = styled(Input)`
   border-radius: 0 4px 4px 0 !important;
   &::placeholder {
     color: ${({ theme }) => theme.input.color.normal};
+  }
+`;
+
+export const TestDatePickerInput = styled(ReactDatePicker)`
+  height: 32px;
+  border: 1px ${({ theme }) => theme.select.borderColor.normal} solid;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  background-color: ${({ theme }) => theme.input.backgroundColor.normal};
+  color: ${({ theme }) => theme.input.color.normal};
+  &::placeholder {
+    color: ${({ theme }) => theme.input.color.normal};
+  }
+
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: 96% !important;
+  background-position-y: 55% !important;
+  appearance: none !important;
+
+  &:hover {
+    cursor: pointer;
+  }
+  &:focus {
+    outline: none;
   }
 `;
 
@@ -242,7 +272,7 @@ export const ActiveSmartFilterWrapper = styled.div`
   gap: 10px;
   align-items: center;
   justify-content: flex-start;
-  width:90%;
+  width: 90%;
 `;
 
 export const DeleteSavedFilter = styled.div.attrs({ role: 'deleteIcon' })`
@@ -360,7 +390,7 @@ export const MessageLoading = styled.div.attrs({
   role: 'contentLoader',
 })<MessageLoadingProps>`
   color: ${({ theme }) => theme.heading.h3.color};
-  font-size: 12px;
+  font-size: ${({ theme }) => theme.heading.variants[5].fontSize};
   display: ${({ isLive }) => (isLive ? 'flex' : 'none')};
   justify-content: space-around;
   width: 150px;
@@ -368,7 +398,7 @@ export const MessageLoading = styled.div.attrs({
 
 export const StopLoading = styled.div`
   color: ${({ theme }) => theme.pageLoader.borderColor};
-  font-size: 12px;
+  font-size: ${({ theme }) => theme.heading.variants[5].fontSize};
   cursor: pointer;
 `;
 

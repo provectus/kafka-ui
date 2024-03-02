@@ -21,8 +21,4 @@ export const SerdeSelect = styled(Select)`
   text-align: right;
   background: ${({ theme }) => theme.table.th.backgroundColor.normal};
   color: ${({ theme }) => theme.table.th.previewColor.normal};
-  ul {
-    left: unset;
-    right: 0;
-  }
 `;

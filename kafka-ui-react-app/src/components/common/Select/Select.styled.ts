@@ -8,6 +8,11 @@ interface Props {
   isThemeMode?: boolean;
 }
 
+interface OptionListProps {
+  maxHeight?: string;
+  orientation?: 'L' | 'R';
+}
+
 interface OptionProps {
   disabled?: boolean;
 }
@@ -68,11 +73,14 @@ export const SelectedOptionWrapper = styled.div`
   text-overflow: ellipsis;
 `;
 
-export const OptionList = styled.ul`
+export const OptionListWrapper = styled.div<OptionListProps>`
+  display: flex;
   position: absolute;
   top: 100%;
-  left: 0;
-  max-height: 228px;
+  left: ${({ orientation }) => (orientation === 'R' ? 'unset' : '0')};
+  right: ${({ orientation }) => (orientation === 'R' ? '0' : 'unset')};
+  max-height: ${({ maxHeight }) => maxHeight || '228px'};
+  overflow-y: auto;
   margin-top: 4px;
   background-color: ${({ theme }) => theme.select.backgroundColor.normal};
   border: 1px ${({ theme }) => theme.select.borderColor.normal} solid;
@@ -80,11 +88,11 @@ export const OptionList = styled.ul`
   font-size: 14px;
   line-height: 18px;
   color: ${({ theme }) => theme.select.color.normal};
-  overflow-y: auto;
   z-index: 10;
-  max-width: 300px;
-  min-width: 100%;
-  align-items: center;
+  // max-width: 400px;
+  // min-width: 100%;
+  // align-items: center;
+
   & div {
     white-space: nowrap;
   }
@@ -102,6 +110,11 @@ export const OptionList = styled.ul`
   &::-webkit-scrollbar:horizontal {
     height: 7px;
   }
+`;
+
+export const OptionList = styled.ul`
+  align-items: center;
+  min-width: fit-content;
 `;
 
 export const Option = styled.li<OptionProps>`
@@ -123,6 +136,27 @@ export const Option = styled.li<OptionProps>`
   &:active {
     background-color: ${({ theme }) => theme.select.backgroundColor.active};
   }
+`;
+
+export const SubFormContainer = styled.div`
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  border-left: 1px solid ${({ theme }) => theme.dropdown.borderColor};
+`;
+
+export const SubFormWrapper = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 6px 16px;
+`;
+
+export const ApplyButtonWrapper = styled.div`
+  border-top: 1px solid ${({ theme }) => theme.dropdown.borderColor};
+  height: 64px;
+  padding: 16px;
 `;
 
 export const SelectedOption = styled.li<{ isThemeMode?: boolean }>`

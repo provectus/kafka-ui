@@ -2,13 +2,13 @@ import React, { useCallback, useMemo, useState } from 'react';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
 import { PollingMode, SerdeUsage } from 'generated-sources';
 import { useSearchParams } from 'react-router-dom';
-
-import MessagesTable from './MessagesTable';
-import FiltersContainer from './Filters/FiltersContainer';
 import { PollingModeOptions, PollingModeOptionsObj } from 'lib/constants';
 import { useSerdes } from 'lib/hooks/api/topicMessages';
 import useAppParams from 'lib/hooks/useAppParams';
 import { RouteParamsClusterTopic } from 'lib/paths';
+
+import FiltersContainer from './Filters/FiltersContainer';
+import MessagesTable from './MessagesTable';
 import { getDefaultSerdeName } from './Filters/getDefaultSerdeName';
 
 const Messages: React.FC = () => {
@@ -27,10 +27,9 @@ const Messages: React.FC = () => {
 
   const [page, setPage] = React.useState<number>(1);
 
-  const changePollingMode = useCallback((val: string) => {
-    var pollingMode = PollingMode[val as keyof typeof PollingMode];
-    setPollingMode(pollingMode);
-    setIsLive(PollingModeOptionsObj[pollingMode].isLive);
+  const changePollingMode = useCallback((val: PollingMode) => {
+    setPollingMode(val);
+    setIsLive(PollingModeOptionsObj[val].isLive);
   }, []);
 
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
@@ -59,10 +58,19 @@ const Messages: React.FC = () => {
       setKeySerde,
       valueSerde,
       setValueSerde,
-      serdes
+      serdes,
     }),
-    [pollingMode, changePollingMode, page, setPage, serdes, 
-      keySerde, setKeySerde, valueSerde, setValueSerde]
+    [
+      pollingMode,
+      changePollingMode,
+      page,
+      setPage,
+      serdes,
+      keySerde,
+      setKeySerde,
+      valueSerde,
+      setValueSerde,
+    ]
   );
 
   return (

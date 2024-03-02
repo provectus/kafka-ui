@@ -1,5 +1,9 @@
 import { SelectOption } from 'components/common/Select/Select';
-import { ConfigurationParameters, ConsumerGroupState, PollingMode } from 'generated-sources';
+import {
+  ConfigurationParameters,
+  ConsumerGroupState,
+  PollingMode,
+} from 'generated-sources';
 
 declare global {
   interface Window {
@@ -108,8 +112,7 @@ export const CONSUMER_GROUP_STATE_TOOLTIPS: Record<ConsumerGroupState, string> =
     UNKNOWN: '',
   } as const;
 
-
-  export const PollingModeOptionsObj = {
+export const PollingModeOptionsObj = {
   [PollingMode.LATEST]: {
     value: PollingMode.LATEST,
     label: 'Newest',
@@ -120,17 +123,17 @@ export const CONSUMER_GROUP_STATE_TOOLTIPS: Record<ConsumerGroupState, string> =
     label: 'Oldest',
     isLive: false,
   },
-    [PollingMode.TAILING]: {
+  [PollingMode.TAILING]: {
     value: PollingMode.TAILING,
     label: 'Live Mode',
     isLive: true,
   },
-    [PollingMode.FROM_OFFSET]: {
+  [PollingMode.FROM_OFFSET]: {
     value: PollingMode.FROM_OFFSET,
     label: 'From Offset',
     isLive: false,
   },
-    [PollingMode.TO_OFFSET]: {
+  [PollingMode.TO_OFFSET]: {
     value: PollingMode.TO_OFFSET,
     label: 'To Offset',
     isLive: false,
@@ -140,11 +143,11 @@ export const CONSUMER_GROUP_STATE_TOOLTIPS: Record<ConsumerGroupState, string> =
     label: 'From Time',
     isLive: false,
   },
-    [PollingMode.TO_TIMESTAMP]: {
+  [PollingMode.TO_TIMESTAMP]: {
     value: PollingMode.TO_TIMESTAMP,
     label: 'To Time',
     isLive: false,
   },
 };
 
-export const PollingModeOptions = Object.values(PollingModeOptionsObj)
+export const PollingModeOptions = Object.values(PollingModeOptionsObj);

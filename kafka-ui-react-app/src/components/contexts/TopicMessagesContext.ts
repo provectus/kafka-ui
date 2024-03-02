@@ -7,10 +7,10 @@ export interface ContextProps {
   page: number;
   setPage(page: number): void;
   isLive: boolean;
-  keySerde:string;
-  setKeySerde(val:string):void;
-  valueSerde:string;
-  setValueSerde(val:string):void;
+  keySerde: string;
+  setKeySerde(val: string): void;
+  valueSerde: string;
+  setValueSerde(val: string): void;
   serdes: TopicSerdeSuggestion;
 }
 

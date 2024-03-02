@@ -13,11 +13,11 @@ import { Button } from 'components/common/Button/Button';
 import { useSearchParams } from 'react-router-dom';
 import { MESSAGES_PER_PAGE } from 'lib/constants';
 import * as S from 'components/common/NewTable/Table.styled';
-import * as SE from './MessagesTable.styled';
+import { getSerdeOptions } from 'components/Topics/Topic/SendMessage/utils';
 
+import * as SE from './MessagesTable.styled';
 import PreviewModal from './PreviewModal';
 import Message, { PreviewFilter } from './Message';
-import { getSerdeOptions } from '../SendMessage/utils';
 
 const MessagesTable: React.FC = () => {
   const [previewFor, setPreviewFor] = useState<string | null>(null);
@@ -26,8 +26,16 @@ const MessagesTable: React.FC = () => {
   const [contentFilters, setContentFilters] = useState<PreviewFilter[]>([]);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const { isLive, page, setPage, serdes, 
-    keySerde, setKeySerde, valueSerde, setValueSerde } = useContext(TopicMessagesContext);
+  const {
+    isLive,
+    page,
+    setPage,
+    serdes,
+    keySerde,
+    setKeySerde,
+    valueSerde,
+    setValueSerde,
+  } = useContext(TopicMessagesContext);
 
   const messages = useAppSelector(getTopicMessges);
   const isFetching = useAppSelector(getIsTopicMessagesFetching);
@@ -38,7 +46,7 @@ const MessagesTable: React.FC = () => {
 
   const isNextPageButtonDisabled =
     isPaginationDisabled || messages.length < Number(MESSAGES_PER_PAGE);
-  const isPrevPageButtonDisabled = isPaginationDisabled || (page === 1);
+  const isPrevPageButtonDisabled = isPaginationDisabled || page === 1;
 
   const handleNextPage = () => {
     setPage(Number(page || 1) + 1);
@@ -66,17 +74,17 @@ const MessagesTable: React.FC = () => {
       <Table isFullwidth>
         <thead>
           <tr>
-            <TableHeaderCell style={{width:'50px'}}> </TableHeaderCell>
-            <TableHeaderCell title="Offset" style={{width:'110px'}}/>
-            <TableHeaderCell title="Partition" style={{width:'80px'}}/>
-            <TableHeaderCell title="Timestamp" style={{width:'180px'}}/>
+            <TableHeaderCell style={{ width: '50px' }}> </TableHeaderCell>
+            <TableHeaderCell title="Offset" style={{ width: '110px' }} />
+            <TableHeaderCell title="Partition" style={{ width: '80px' }} />
+            <TableHeaderCell title="Timestamp" style={{ width: '180px' }} />
             <TableHeaderCell
               title="Key"
               previewText={`Preview ${
                 keyFilters.length ? `(${keyFilters.length} selected)` : ''
               }`}
               onPreview={() => setPreviewFor('key')}
-              style={{width:'300px'}}
+              style={{ width: '300px' }}
             >
               <SE.SerdeSelectWrapper>
                 <SE.SerdeSelect
@@ -87,6 +95,7 @@ const MessagesTable: React.FC = () => {
                   value={keySerde}
                   selectSize="M"
                   disabled={isLive}
+                  optionsOrientation="R"
                 />
               </SE.SerdeSelectWrapper>
             </TableHeaderCell>
@@ -108,6 +117,7 @@ const MessagesTable: React.FC = () => {
                   value={valueSerde}
                   selectSize="M"
                   disabled={isLive}
+                  optionsOrientation="R"
                 />
               </SE.SerdeSelectWrapper>
             </TableHeaderCell>

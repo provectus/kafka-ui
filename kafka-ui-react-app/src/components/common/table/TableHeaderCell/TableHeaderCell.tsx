@@ -67,7 +67,6 @@ const TableHeaderCell: React.FC<PropsWithChildren<TableHeaderCellProps>> = (
         </S.Preview>
       )}
       {children}
-
     </S.TableHeaderCell>
   );
 };

@@ -3,7 +3,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 import MessagesTable from 'components/Topics/Topic/Messages/MessagesTable';
-import { SeekDirection, SeekType, TopicMessage } from 'generated-sources';
+import { PollingMode, TopicMessage } from 'generated-sources';
 import TopicMessagesContext, {
   ContextProps,
 } from 'components/contexts/TopicMessagesContext';
@@ -11,6 +11,7 @@ import {
   topicMessagePayload,
   topicMessagesMetaPayload,
 } from 'redux/reducers/topicMessages/__test__/fixtures';
+import { serdesPayload } from 'lib/fixtures/topicMessages';
 
 const mockTopicsMessages: TopicMessage[] = [{ ...topicMessagePayload }];
 
@@ -25,14 +26,20 @@ describe('MessagesTable', () => {
     filterQueryType: 'STRING_CONTAINS',
     attempt: '0',
     limit: '100',
-    seekDirection: SeekDirection.FORWARD,
-    seekType: SeekType.OFFSET,
+    pollingMode: PollingMode.LATEST,
     seekTo: '0::9',
   });
   const contextValue: ContextProps = {
     isLive: false,
-    seekDirection: SeekDirection.FORWARD,
-    changeSeekDirection: jest.fn(),
+    pollingMode: PollingMode.LATEST,
+    changePollingMode: jest.fn(),
+    page: 1,
+    setPage: jest.fn(),
+    keySerde: 'String',
+    valueSerde: 'String',
+    setKeySerde: jest.fn(),
+    setValueSerde: jest.fn(),
+    serdes: serdesPayload,
   };
 
   const renderComponent = (
@@ -52,10 +59,13 @@ describe('MessagesTable', () => {
         preloadedState: {
           topicMessages: {
             messages,
+            allMessages: messages,
             meta: {
               ...topicMessagesMetaPayload,
             },
             isFetching: !!isFetching,
+            lastLoadedPage: 1,
+            currentPage: 1,
           },
         },
       }
