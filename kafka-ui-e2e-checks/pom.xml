@@ -14,25 +14,17 @@
     <properties>
         <maven.surefire-plugin.version>3.0.0-M8</maven.surefire-plugin.version>
         <kafka-ui-contract>${project.version}</kafka-ui-contract>
-        <testcontainers.version>1.17.6</testcontainers.version>
-        <httpcomponents.version>5.2.1</httpcomponents.version>
         <selenium.version>4.8.1</selenium.version>
         <selenide.version>6.12.3</selenide.version>
         <testng.version>7.7.1</testng.version>
         <allure.version>2.23.0</allure.version>
         <qase.io.version>3.0.5</qase.io.version>
-        <aspectj.version>1.9.9.1</aspectj.version>
-        <assertj.version>3.24.2</assertj.version>
-        <hamcrest.version>2.2</hamcrest.version>
-        <slf4j.version>2.0.7</slf4j.version>
-        <kafka.version>3.3.1</kafka.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.13</artifactId>
-            <version>${kafka.version}</version>
             <exclusions> <!-- could be removed when kafka version will contain zookeeper with netty 4.1.69 -->
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -114,37 +106,30 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-            <version>${testcontainers.version}</version>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>selenium</artifactId>
-            <version>${testcontainers.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${org.projectlombok.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents.core5</groupId>
             <artifactId>httpcore5</artifactId>
-            <version>${httpcomponents.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
-            <version>${httpcomponents.version}</version>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-http-jdk-client</artifactId>
-            <version>${selenium.version}</version>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-http</artifactId>
-            <version>${selenium.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codeborne</groupId>
@@ -179,22 +164,18 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-            <version>${hamcrest.version}</version>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>${assertj.version}</version>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
-            <version>${aspectj.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>com.provectus</groupId>
