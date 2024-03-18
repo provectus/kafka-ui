@@ -9,7 +9,7 @@ import Table, { TagCell } from 'components/common/NewTable';
 import ActionsCellTasks from './ActionsCellTasks';
 
 const ExpandedTaskRow: React.FC<{ row: Row<Task> }> = ({ row }) => {
-  return <div>{row.original.status.trace}</div>;
+  return <pre>{row.original.status.trace}</pre>;
 };
 
 const MAX_LENGTH = 100;
