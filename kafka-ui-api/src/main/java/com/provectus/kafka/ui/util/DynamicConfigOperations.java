@@ -45,6 +45,7 @@ import reactor.core.publisher.Mono;
 public class DynamicConfigOperations {
 
   static final String DYNAMIC_CONFIG_ENABLED_ENV_PROPERTY = "dynamic.config.enabled";
+  static final String FILTERING_GROOVY_ENABLED_PROPERTY = "filtering.groovy.enabled";
   static final String DYNAMIC_CONFIG_PATH_ENV_PROPERTY = "dynamic.config.path";
   static final String DYNAMIC_CONFIG_PATH_ENV_PROPERTY_DEFAULT = "/etc/kafkaui/dynamic_config.yaml";
 
@@ -62,6 +63,10 @@ public class DynamicConfigOperations {
 
   public boolean dynamicConfigEnabled() {
     return "true".equalsIgnoreCase(ctx.getEnvironment().getProperty(DYNAMIC_CONFIG_ENABLED_ENV_PROPERTY));
+  }
+
+  public boolean filteringGroovyEnabled() {
+    return "true".equalsIgnoreCase(ctx.getEnvironment().getProperty(FILTERING_GROOVY_ENABLED_PROPERTY));
   }
 
   private Path dynamicConfigFilePath() {
@@ -145,6 +150,14 @@ public class DynamicConfigOperations {
         .thenReturn(targetFilePath)
         .doOnError(th -> log.error("Error uploading file {}", targetFilePath, th))
         .onErrorMap(th -> new FileUploadException(targetFilePath, th));
+  }
+
+  public void checkIfFilteringGroovyEnabled() {
+    if (!filteringGroovyEnabled()) {
+      throw new ValidationException(
+              "Groovy filters is not allowed. "
+                      + "Set filtering.groovy.enabled property to 'true' to enabled it.");
+    }
   }
 
   private void checkIfDynamicConfigEnabled() {
