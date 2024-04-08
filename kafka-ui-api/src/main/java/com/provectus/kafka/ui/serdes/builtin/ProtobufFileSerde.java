@@ -364,7 +364,8 @@ public class ProtobufFileSerde implements BuiltInSerde {
           loadKnownProtoFile("google/protobuf/struct.proto", StructProto.getDescriptor()),
           loadKnownProtoFile("google/protobuf/timestamp.proto", TimestampProto.getDescriptor()),
           loadKnownProtoFile("google/protobuf/type.proto", TypeProto.getDescriptor()),
-          loadKnownProtoFile("google/protobuf/wrappers.proto", WrappersProto.getDescriptor())
+          loadKnownProtoFile("google/protobuf/wrappers.proto", WrappersProto.getDescriptor()),
+          loadKnownProtoFile("wire/extensions.proto")
       ).collect(Collectors.toMap(p -> p.getLocation().getPath(), p -> p));
     }
 
@@ -380,6 +381,11 @@ public class ProtobufFileSerde implements BuiltInSerde {
       }
       return ProtoFile.Companion.get(ProtoParser.Companion.parse(Location.get(path), protoFileString));
     }
+
+    private ProtoFile loadKnownProtoFile(String path) {
+      return ProtoFile.Companion.get(ProtoFileElement.empty(path));
+    }
+
 
     private Loader createFilesLoader(Map<String, ProtoFile> files) {
       return new Loader() {

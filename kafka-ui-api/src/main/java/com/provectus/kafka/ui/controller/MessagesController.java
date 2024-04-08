@@ -24,6 +24,7 @@ import com.provectus.kafka.ui.model.rbac.permission.AuditAction;
 import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import com.provectus.kafka.ui.service.DeserializationService;
 import com.provectus.kafka.ui.service.MessagesService;
+import com.provectus.kafka.ui.util.DynamicConfigOperations;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import javax.annotation.Nullable;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +49,7 @@ public class MessagesController extends AbstractController implements MessagesAp
 
   private final MessagesService messagesService;
   private final DeserializationService deserializationService;
+  private final DynamicConfigOperations dynamicConfigOperations;
 
   @Override
   public Mono<ResponseEntity<Void>> deleteTopicMessages(
@@ -93,6 +96,10 @@ public class MessagesController extends AbstractController implements MessagesAp
         .topic(topicName)
         .topicActions(MESSAGES_READ)
         .operationName("getTopicMessages");
+
+    if (StringUtils.isNoneEmpty(q) && MessageFilterTypeDTO.GROOVY_SCRIPT == filterQueryType) {
+      dynamicConfigOperations.checkIfFilteringGroovyEnabled();
+    }
 
     if (auditService.isAuditTopic(getCluster(clusterName), topicName)) {
       contextBuilder.auditActions(AuditAction.VIEW);
