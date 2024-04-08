@@ -260,10 +260,6 @@
             <version>${groovy.version}</version>
         </dependency>
         <dependency>
-            <groupId>dev.cel</groupId>
-            <artifactId>cel</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.datasketches</groupId>
             <artifactId>datasketches-java</artifactId>
             <version>${datasketches-java.version}</version>
@@ -274,26 +270,6 @@
             <optional>true</optional>
         </dependency>
 
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.4.12</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>1.4.12</version>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>logging-interceptor</artifactId>
-            <version>4.12.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <version>1.26.0</version>
-        </dependency>
     </dependencies>
 
     <build>
