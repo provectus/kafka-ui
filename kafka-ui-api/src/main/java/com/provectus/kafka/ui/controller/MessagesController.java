@@ -88,6 +88,7 @@ public class MessagesController extends AbstractController implements MessagesAp
                                                                            String keySerde,
                                                                            String valueSerde,
                                                                            ServerWebExchange exchange) {
+    System.out.println("TEST");
     var contextBuilder = AccessContext.builder()
         .cluster(clusterName)
         .topic(topicName)
