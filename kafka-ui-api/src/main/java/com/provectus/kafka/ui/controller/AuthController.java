@@ -15,16 +15,25 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class AuthController {
 
+  @GetMapping(value = "/login", produces = {"text/html"})
+  public Mono<byte[]> getLogin(ServerWebExchange exchange) {
+    Mono<CsrfToken> token = exchange.getAttributeOrDefault(CsrfToken.class.getName(), Mono.empty());
+    return token
+        .map(AuthController::csrfToken)
+        .defaultIfEmpty("")
+        .map(csrfTokenHtmlInput -> createPage(exchange, csrfTokenHtmlInput, "login"));
+  }
+
   @GetMapping(value = "/auth", produces = {"text/html"})
   public Mono<byte[]> getAuth(ServerWebExchange exchange) {
     Mono<CsrfToken> token = exchange.getAttributeOrDefault(CsrfToken.class.getName(), Mono.empty());
     return token
         .map(AuthController::csrfToken)
         .defaultIfEmpty("")
-        .map(csrfTokenHtmlInput -> createPage(exchange, csrfTokenHtmlInput));
+        .map(csrfTokenHtmlInput -> createPage(exchange, csrfTokenHtmlInput, "auth"));
   }
 
-  private byte[] createPage(ServerWebExchange exchange, String csrfTokenHtmlInput) {
+  private byte[] createPage(ServerWebExchange exchange, String csrfTokenHtmlInput, String path) {
     MultiValueMap<String, String> queryParams = exchange.getRequest()
         .getQueryParams();
     String contextPath = exchange.getRequest().getPath().contextPath().value();
@@ -44,7 +53,7 @@ public class AuthController {
         + "  </head>\n"
         + "  <body>\n"
         + "     <div class=\"container\">\n"
-        + formLogin(queryParams, contextPath, csrfTokenHtmlInput)
+        + formLogin(queryParams, contextPath, csrfTokenHtmlInput, path)
         + "    </div>\n"
         + "  </body>\n"
         + "</html>";
@@ -54,12 +63,13 @@ public class AuthController {
 
   private String formLogin(
       MultiValueMap<String, String> queryParams,
-      String contextPath, String csrfTokenHtmlInput) {
+      String contextPath, String csrfTokenHtmlInput,
+      String path) {
 
     boolean isError = queryParams.containsKey("error");
     boolean isLogoutSuccess = queryParams.containsKey("logout");
     return
-        "      <form class=\"form-signin\" method=\"post\" action=\"" + contextPath + "/auth\">\n"
+        "      <form class=\"form-signin\" method=\"post\" action=\"" + contextPath + "/" + path +"\">\n"
         + "        <h2 class=\"form-signin-heading\">Please sign in</h2>\n"
         + createError(isError)
         + createLogoutSuccess(isLogoutSuccess)
