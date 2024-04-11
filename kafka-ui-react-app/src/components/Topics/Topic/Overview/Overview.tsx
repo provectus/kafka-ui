@@ -142,6 +142,12 @@ const Overview: React.FC = () => {
           <Metrics.Indicator label="Message Count">
             {messageCount}
           </Metrics.Indicator>
+          <Metrics.Indicator label="Production">
+            <BytesFormatted value={data?.bytesInPerSec} />
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Consumption">
+            <BytesFormatted value={data?.bytesOutPerSec} />
+          </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>
       <Table

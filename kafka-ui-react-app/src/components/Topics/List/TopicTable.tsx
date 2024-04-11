@@ -12,6 +12,7 @@ import { PER_PAGE } from 'lib/constants';
 import { TopicTitleCell } from './TopicTitleCell';
 import ActionsCell from './ActionsCell';
 import BatchActionsbar from './BatchActionsBar';
+import { ThroughputCell } from './ThroughputCell';
 
 const TopicTable: React.FC = () => {
   const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
@@ -84,6 +85,11 @@ const TopicTable: React.FC = () => {
         header: 'Size',
         accessorKey: 'segmentSize',
         cell: SizeCell,
+      },
+      {
+        header: 'Speed',
+        enableSorting: false,
+        cell: ThroughputCell,
       },
       {
         id: 'actions',

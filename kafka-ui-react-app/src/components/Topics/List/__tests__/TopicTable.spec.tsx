@@ -98,21 +98,47 @@ describe('TopicTable Components', () => {
         screen.getByRole('link', { name: '__internal.topic' })
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('row', { name: '__internal.topic 1 0 1 0 0 Bytes' })
+        screen.getByRole('row', {
+          name: /__internal.topic 1 0 1 0 0 Bytes* N\/A/,
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('link', { name: '__internal.topic2' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('row', {
+          name: /__internal.topic2 1 0 1 0* 0 Bytes* 0 Bytes/,
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('link', { name: '__internal.topic3' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('row', {
+          name: /__internal.topic3 1 0 1 0* 0 Bytes* 0 Bytes/,
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('link', { name: '__internal.topic4' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('row', {
+          name: /__internal.topic4 1 0 1 0 0 Bytes* 0 Bytes* 0 Bytes/,
+        })
       ).toBeInTheDocument();
       expect(
         screen.getByRole('link', { name: 'external.topic' })
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('row', { name: 'external.topic 1 0 1 0 1 KB' })
+        screen.getByRole('row', { name: /external.topic 1 0 1 0 1 KB* N\/A / })
       ).toBeInTheDocument();
 
-      expect(screen.getAllByRole('checkbox').length).toEqual(3);
+      expect(screen.getAllByRole('checkbox').length).toEqual(6);
     });
     describe('Selectable rows', () => {
       it('renders selectable rows', () => {
         renderComponent({ topics: topicsPayload, pageCount: 1 });
-        expect(screen.getAllByRole('checkbox').length).toEqual(3);
+        expect(screen.getAllByRole('checkbox').length).toEqual(6);
         // Disable checkbox for internal topic
         expect(screen.getAllByRole('checkbox')[1]).toBeDisabled();
         // Disable checkbox for external topic
@@ -214,10 +240,10 @@ describe('TopicTable Components', () => {
         await renderComponent({ topics: topicsPayload, pageCount: 1 });
         expect(
           screen.getAllByRole('button', { name: 'Dropdown Toggle' }).length
-        ).toEqual(2);
+        ).toEqual(5);
         // Internal topic action buttons are disabled
         const internalTopicRow = screen.getByRole('row', {
-          name: '__internal.topic 1 0 1 0 0 Bytes',
+          name: /__internal.topic 1 0 1 0 0 Bytes* N\/A/,
         });
         expect(internalTopicRow).toBeInTheDocument();
         expect(
@@ -227,7 +253,7 @@ describe('TopicTable Components', () => {
         ).toBeDisabled();
         // External topic action buttons are enabled
         const externalTopicRow = screen.getByRole('row', {
-          name: 'external.topic 1 0 1 0 1 KB',
+          name: /external.topic 1 0 1 0 1 KB* N\/A/,
         });
         expect(externalTopicRow).toBeInTheDocument();
         const extBtn = within(externalTopicRow).getByRole('button', {
