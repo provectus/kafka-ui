@@ -30,7 +30,8 @@ class KafkaConfigSanitizer {
       .add(
           "basic.auth.user.info",  /* For Schema Registry credentials */
           "password", "secret", "token", "key", ".*credentials.*",   /* General credential patterns */
-          "aws.access.*", "aws.secret.*", "aws.session.*"   /* AWS-related credential patterns */
+          "aws.access.*", "aws.secret.*", "aws.session.*",   /* AWS-related credential patterns */
+          "connection.uri" /* mongo credential patterns */
       )
       .build();
 
