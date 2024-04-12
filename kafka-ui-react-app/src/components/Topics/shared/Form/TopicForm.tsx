@@ -253,7 +253,7 @@ const TopicForm: React.FC<Props> = ({
           <Button
             type="button"
             buttonType="secondary"
-            buttonSize="L"
+            buttonSize="M"
             onClick={onCancel}
           >
             Cancel
@@ -261,7 +261,7 @@ const TopicForm: React.FC<Props> = ({
           <Button
             type="submit"
             buttonType="primary"
-            buttonSize="L"
+            buttonSize="M"
             disabled={!isValid || isSubmitting || !isDirty}
           >
             {isEditing ? 'Update topic' : 'Create topic'}
