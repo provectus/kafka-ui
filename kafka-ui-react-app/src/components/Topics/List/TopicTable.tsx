@@ -11,7 +11,7 @@ import { PER_PAGE } from 'lib/constants';
 
 import { TopicTitleCell } from './TopicTitleCell';
 import ActionsCell from './ActionsCell';
-import BatchActionsbar from './BatchActionsBar';
+import BatchActionsBar from './BatchActionsBar';
 
 const TopicTable: React.FC = () => {
   const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
@@ -101,7 +101,7 @@ const TopicTable: React.FC = () => {
       columns={columns}
       enableSorting
       serverSideProcessing
-      batchActionsBar={BatchActionsbar}
+      batchActionsBar={BatchActionsBar}
       enableRowSelection={
         !isReadOnly ? (row) => !row.original.internal : undefined
       }

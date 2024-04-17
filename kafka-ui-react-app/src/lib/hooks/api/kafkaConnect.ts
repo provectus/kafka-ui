@@ -1,8 +1,8 @@
 import {
   Connect,
   Connector,
-  ConnectorAction,
   NewConnector,
+  UpdateConnectorStateRequest,
 } from 'generated-sources';
 import { kafkaConnectApiClient as api } from 'lib/api';
 import sortBy from 'lodash/sortBy';
@@ -74,7 +74,7 @@ export function useConnectorTasks(props: UseConnectorProps) {
 export function useUpdateConnectorState(props: UseConnectorProps) {
   const client = useQueryClient();
   return useMutation(
-    (action: ConnectorAction) => api.updateConnectorState({ ...props, action }),
+    (message: UpdateConnectorStateRequest) => api.updateConnectorState(message),
     {
       onSuccess: () =>
         client.invalidateQueries(['clusters', props.clusterName, 'connectors']),
@@ -136,7 +136,10 @@ export function useCreateConnector(clusterName: ClusterName) {
 export function useDeleteConnector(props: UseConnectorProps) {
   const client = useQueryClient();
 
-  return useMutation(() => api.deleteConnector(props), {
-    onSuccess: () => client.invalidateQueries(connectorsKey(props.clusterName)),
-  });
+  return useMutation(
+    (message: UseConnectorProps) => api.deleteConnector(message),
+    {
+      onSuccess: () => client.invalidateQueries(connectorKey(props)),
+    }
+  );
 }

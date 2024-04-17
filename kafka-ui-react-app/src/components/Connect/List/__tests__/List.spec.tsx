@@ -17,6 +17,7 @@ import {
 
 const mockedUsedNavigate = jest.fn();
 const mockDelete = jest.fn();
+const mockUpdate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -61,20 +62,149 @@ describe('Connectors List', () => {
 
     it('opens broker when row clicked', async () => {
       renderComponent();
-      await userEvent.click(
-        screen.getByRole('row', {
-          name: 'hdfs-source-connector first SOURCE FileStreamSource a b c RUNNING 2 of 2',
-        })
-      );
-      await waitFor(() =>
+
+      const link = await screen.findByRole('cell', {
+        name: 'hdfs-source-connector',
+      });
+
+      await userEvent.click(link);
+      await waitFor(() => {
         expect(mockedUsedNavigate).toBeCalledWith(
           clusterConnectConnectorPath(
             clusterName,
             'first',
             'hdfs-source-connector'
           )
-        )
-      );
+        );
+      });
+    });
+
+    describe('Selectable rows', () => {
+      it('renders selectable rows', () => {
+        renderComponent();
+        expect(screen.getAllByRole('checkbox').length).toEqual(3);
+      });
+    });
+
+    describe('Batch actions bar', () => {
+      const getButtonByName = (name: string) =>
+        screen.getByRole('button', { name });
+
+      beforeEach(async () => {
+        (useDeleteConnector as jest.Mock).mockImplementation(() => ({
+          mutateAsync: mockDelete,
+        }));
+        (useUpdateConnectorState as jest.Mock).mockImplementation(() => ({
+          mutateAsync: mockUpdate,
+        }));
+
+        renderComponent();
+        await userEvent.click(screen.getAllByRole('checkbox')[1]);
+      });
+      it('renders batch actions bar', () => {
+        expect(getButtonByName('Pause')).toBeInTheDocument();
+        expect(getButtonByName('Resume')).toBeInTheDocument();
+        expect(getButtonByName('Restart Connector')).toBeInTheDocument();
+        expect(getButtonByName('Restart All Tasks')).toBeInTheDocument();
+        expect(getButtonByName('Restart Failed Tasks')).toBeInTheDocument();
+        expect(getButtonByName('Delete')).toBeInTheDocument();
+      });
+
+      it('handles delete button click', async () => {
+        const button = getButtonByName('Delete');
+        await userEvent.click(button);
+        expect(
+          screen.getByText(
+            'Are you sure you want to remove selected connectors?'
+          )
+        ).toBeInTheDocument();
+        const confirmBtn = getButtonByName('Confirm');
+        expect(mockDelete).not.toHaveBeenCalled();
+        await userEvent.click(confirmBtn);
+        expect(mockDelete).toHaveBeenCalledTimes(1);
+        expect(screen.getAllByRole('checkbox')[1]).not.toBeChecked();
+        expect(screen.getAllByRole('checkbox')[2]).not.toBeChecked();
+      });
+
+      it('handles pause button click', async () => {
+        const button = getButtonByName('Pause');
+        await userEvent.click(button);
+        expect(
+          screen.getByText(
+            'Are you sure you want to pause selected connectors?'
+          )
+        ).toBeInTheDocument();
+        const confirmBtn = getButtonByName('Confirm');
+        expect(mockUpdate).not.toHaveBeenCalled();
+        await userEvent.click(confirmBtn);
+        expect(mockUpdate).toHaveBeenCalledTimes(1);
+        expect(screen.getAllByRole('checkbox')[1]).not.toBeChecked();
+        expect(screen.getAllByRole('checkbox')[2]).not.toBeChecked();
+      });
+
+      it('handles resume button click', async () => {
+        const button = getButtonByName('Resume');
+        await userEvent.click(button);
+        expect(
+          screen.getByText(
+            'Are you sure you want to resume selected connectors?'
+          )
+        ).toBeInTheDocument();
+        const confirmBtn = getButtonByName('Confirm');
+        expect(mockUpdate).not.toHaveBeenCalled();
+        await userEvent.click(confirmBtn);
+        expect(mockUpdate).toHaveBeenCalledTimes(1);
+        expect(screen.getAllByRole('checkbox')[1]).not.toBeChecked();
+        expect(screen.getAllByRole('checkbox')[2]).not.toBeChecked();
+      });
+
+      it('handles restart connector button click', async () => {
+        const button = getButtonByName('Restart Connector');
+        await userEvent.click(button);
+        expect(
+          screen.getByText(
+            'Are you sure you want to restart selected connectors?'
+          )
+        ).toBeInTheDocument();
+        const confirmBtn = getButtonByName('Confirm');
+        expect(mockUpdate).not.toHaveBeenCalled();
+        await userEvent.click(confirmBtn);
+        expect(mockUpdate).toHaveBeenCalledTimes(1);
+        expect(screen.getAllByRole('checkbox')[1]).not.toBeChecked();
+        expect(screen.getAllByRole('checkbox')[2]).not.toBeChecked();
+      });
+
+      it('handles restart all tasks button click', async () => {
+        const button = getButtonByName('Restart All Tasks');
+        await userEvent.click(button);
+        expect(
+          screen.getByText(
+            'Are you sure you want to restart all tasks in selected connectors?'
+          )
+        ).toBeInTheDocument();
+        const confirmBtn = getButtonByName('Confirm');
+        expect(mockUpdate).not.toHaveBeenCalled();
+        await userEvent.click(confirmBtn);
+        expect(mockUpdate).toHaveBeenCalledTimes(1);
+        expect(screen.getAllByRole('checkbox')[1]).not.toBeChecked();
+        expect(screen.getAllByRole('checkbox')[2]).not.toBeChecked();
+      });
+
+      it('handles restart failed tasks button click', async () => {
+        const button = getButtonByName('Restart Failed Tasks');
+        await userEvent.click(button);
+        expect(
+          screen.getByText(
+            'Are you sure you want to restart failed tasks in selected connectors?'
+          )
+        ).toBeInTheDocument();
+        const confirmBtn = getButtonByName('Confirm');
+        expect(mockUpdate).not.toHaveBeenCalled();
+        await userEvent.click(confirmBtn);
+        expect(mockUpdate).toHaveBeenCalledTimes(1);
+        expect(screen.getAllByRole('checkbox')[1]).not.toBeChecked();
+        expect(screen.getAllByRole('checkbox')[2]).not.toBeChecked();
+      });
     });
   });
 
