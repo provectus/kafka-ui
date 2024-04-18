@@ -4,6 +4,8 @@ import {
   clusterTopicConsumerGroupsRelativePath,
   clusterTopicEditRelativePath,
   clusterTopicMessagesRelativePath,
+  clusterTopicSchemaValueRelativePath,
+  clusterTopicSchemaKeyRelativePath,
   clusterTopicSettingsRelativePath,
   clusterTopicsPath,
   clusterTopicStatisticsRelativePath,
@@ -33,6 +35,7 @@ import SlidingSidebar from 'components/common/SlidingSidebar';
 import useBoolean from 'lib/hooks/useBoolean';
 
 import Messages from './Messages/Messages';
+import { Schema, SchemaType } from './Schema/Schema';
 import Overview from './Overview/Overview';
 import Settings from './Settings/Settings';
 import TopicConsumerGroups from './ConsumerGroups/TopicConsumerGroups';
@@ -54,7 +57,7 @@ const Topic: React.FC = () => {
   const recreateTopic = useRecreateTopic({ clusterName, topicName });
   const { data } = useTopicDetails({ clusterName, topicName });
 
-  const { isReadOnly, isTopicDeletionAllowed } =
+  const { isReadOnly, isTopicDeletionAllowed, hasSchemaRegistryConfigured } =
     React.useContext(ClusterContext);
 
   const deleteTopicHandler = async () => {
@@ -189,6 +192,21 @@ const Topic: React.FC = () => {
         >
           Messages
         </ActionNavLink>
+        { hasSchemaRegistryConfigured ?
+        <>
+          <NavLink
+            to={clusterTopicSchemaValueRelativePath}
+            className={({ isActive }) => (isActive ? 'is-active' : '')}
+          >
+            Schema (Value)
+          </NavLink>
+          <NavLink
+            to={clusterTopicSchemaKeyRelativePath}
+            className={({ isActive }) => (isActive ? 'is-active' : '')}
+          >
+            Schema (Key)
+          </NavLink>
+        </> : null }
         <NavLink
           to={clusterTopicConsumerGroupsRelativePath}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
@@ -215,6 +233,18 @@ const Topic: React.FC = () => {
             path={clusterTopicMessagesRelativePath}
             element={<Messages />}
           />
+          { hasSchemaRegistryConfigured ?
+          <>
+            <Route
+              path={clusterTopicSchemaValueRelativePath}
+              element={<Schema type={SchemaType.Value} />}
+            />
+            <Route
+              path={clusterTopicSchemaKeyRelativePath}
+              element={<Schema type={SchemaType.Key} />}
+            />
+          </>
+          : null }
           <Route
             path={clusterTopicSettingsRelativePath}
             element={<Settings />}
