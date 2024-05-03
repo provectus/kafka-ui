@@ -108,7 +108,7 @@ services:
       - ~/kui/config.yml:/etc/kafkaui/dynamic_config.yaml
 ```
 
-Please refer to our [configuration](https://docs.kafka-ui.provectus.io/configuration/quick-start) page to proceed with further app configuration.
+Please refer to our [configuration](https://docs.kafka-ui.provectus.io/configuration/configuration-wizard) page to proceed with further app configuration.
 
 ## Some useful configuration related links
 
