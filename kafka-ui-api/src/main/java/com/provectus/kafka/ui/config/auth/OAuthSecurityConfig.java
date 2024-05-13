@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.config.auth;
 
-import com.provectus.kafka.ui.config.auth.logout.OAuthLogoutSuccessHandler;
+import com.provectus.kafka.ui.config.auth.logout.OAuth2ServerLogoutSuccessHandler;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import com.provectus.kafka.ui.service.rbac.extractor.ProviderAuthorityExtractor;
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
   private final OAuthProperties properties;
 
   @Bean
-  public SecurityWebFilterChain configure(ServerHttpSecurity http, OAuthLogoutSuccessHandler logoutHandler) {
+  public SecurityWebFilterChain configure(ServerHttpSecurity http, OAuth2ServerLogoutSuccessHandler logoutHandler) {
     log.info("Configuring OAUTH2 authentication.");
 
     return http.authorizeExchange(spec -> spec
