@@ -6,10 +6,16 @@ import {
   errorPage,
   getNonExactPath,
   clusterNewConfigPath,
+  accountsPath,
+  accountsNewRelativePath,
+  accountEditRelativePath,
 } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
 import ClusterPage from 'components/ClusterPage/ClusterPage';
+import Accounts from 'components/Accounts/Accounts';
+import AccountNew from 'components/Accounts/New/New';
+import AccountEdit from 'components/Accounts/Edit/Edit';
 import { ThemeProvider } from 'styled-components';
 import { theme, darkTheme } from 'theme/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -67,6 +73,15 @@ const App: React.FC = () => {
                       <Route
                         path={getNonExactPath(clusterNewConfigPath)}
                         element={<ClusterConfigForm />}
+                      />
+                      <Route path={accountsPath} element={<Accounts />} />
+                      <Route
+                        path={`${accountsPath}/${accountsNewRelativePath}`}
+                        element={<AccountNew />}
+                      />
+                      <Route
+                        path={`${accountsPath}/${accountEditRelativePath}`}
+                        element={<AccountEdit />}
                       />
                       <Route
                         path={getNonExactPath(clusterPath())}

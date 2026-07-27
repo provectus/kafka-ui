@@ -1,5 +1,8 @@
 auth:
   type: DISABLED
+  login-form:
+    user-management:
+      enabled: false
 
 management:
   endpoint:

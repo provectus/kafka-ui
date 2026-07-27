@@ -5,6 +5,7 @@ import static com.provectus.kafka.ui.model.rbac.Resource.APPLICATIONCONFIG;
 import static com.provectus.kafka.ui.model.rbac.Resource.AUDIT;
 import static com.provectus.kafka.ui.model.rbac.Resource.CLUSTERCONFIG;
 import static com.provectus.kafka.ui.model.rbac.Resource.KSQL;
+import static com.provectus.kafka.ui.model.rbac.Resource.USERS;
 
 import com.provectus.kafka.ui.model.rbac.permission.AclAction;
 import com.provectus.kafka.ui.model.rbac.permission.ApplicationConfigAction;
@@ -15,6 +16,7 @@ import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
 import com.provectus.kafka.ui.model.rbac.permission.KsqlAction;
 import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
 import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
+import com.provectus.kafka.ui.model.rbac.permission.UsersAction;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +34,7 @@ import org.springframework.util.Assert;
 public class Permission {
 
   private static final List<Resource> RBAC_ACTION_EXEMPT_LIST =
-      List.of(KSQL, CLUSTERCONFIG, APPLICATIONCONFIG, ACL, AUDIT);
+      List.of(KSQL, CLUSTERCONFIG, APPLICATIONCONFIG, ACL, AUDIT, USERS);
 
   Resource resource;
   List<String> actions;
@@ -88,6 +90,7 @@ public class Permission {
       case KSQL -> Arrays.stream(KsqlAction.values()).map(Enum::toString).toList();
       case ACL -> Arrays.stream(AclAction.values()).map(Enum::toString).toList();
       case AUDIT -> Arrays.stream(AuditAction.values()).map(Enum::toString).toList();
+      case USERS -> Arrays.stream(UsersAction.values()).map(Enum::toString).toList();
     };
   }
 
