@@ -14,3 +14,4 @@
 12. [oauth-cognito.yaml](./oauth-cognito.yaml) - OAuth2 with Cognito
 13. [kafka-ui-with-jmx-exporter.yaml](./kafka-ui-with-jmx-exporter.yaml) - A configuration with 2 kafka clusters with enabled prometheus jmx exporters instead of jmx.
 14. [kafka-with-zookeeper.yaml](./kafka-with-zookeeper.yaml) - An example for using kafka with zookeeper
+15. [kafka-ui-mariadb-auth.yaml](./kafka-ui-mariadb-auth.yaml) - LOGIN_FORM authentication with DB-backed multi-user account management, using MariaDB as the account store.
