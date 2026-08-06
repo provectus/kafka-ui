@@ -1,4 +1,5 @@
 import React from 'react';
+import { IAceEditorProps } from 'react-ace';
 import Editor from 'components/common/Editor/Editor';
 import { SchemaType } from 'generated-sources';
 import { parse, stringify } from 'lossless-json';
@@ -9,6 +10,10 @@ export interface EditorViewerProps {
   data: string;
   schemaType?: string;
   maxLines?: number;
+  // Gives the caller access to the underlying Ace instance, e.g. to drive
+  // search. Not called when the data fails to parse and the plain text
+  // fallback below is rendered instead.
+  onLoad?: IAceEditorProps['onLoad'];
 }
 const getSchemaValue = (data: string, schemaType?: string) => {
   if (schemaType === SchemaType.JSON || schemaType === SchemaType.AVRO) {
@@ -20,6 +25,7 @@ const EditorViewer: React.FC<EditorViewerProps> = ({
   data,
   schemaType,
   maxLines,
+  onLoad,
 }) => {
   try {
     return (
@@ -34,6 +40,7 @@ const EditorViewer: React.FC<EditorViewerProps> = ({
             maxLines,
             showGutter: false,
           }}
+          onLoad={onLoad}
           readOnly
         />
       </S.Wrapper>

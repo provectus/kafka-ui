@@ -19,6 +19,43 @@ export const Section = styled.div`
   display: flex;
   gap: 1px;
   align-items: stretch;
+
+  /* Focused programmatically so Ctrl/Cmd+F reaches the panel; the ring would
+     only be noise since the panel itself is not an interactive control. */
+  &:focus {
+    outline: none;
+  }
+
+  /* Ace paints search results in its marker layer, underneath the text.
+     theme-tomorrow styles ace_selected-word as a faint 1px border, which is
+     invisible against the dark theme, so both states are set explicitly. */
+  ${SEditorViewer.Wrapper} .ace_marker-layer .ace_selected-word {
+    background-color: ${({ theme }) =>
+      theme.messageSearch.match.backgroundColor};
+    border: none;
+  }
+
+  /* The current match is Ace's selection. Scoped to an active search so that
+     ordinary text selection (for copying) keeps its normal colour. */
+  &[data-search-active='true']
+    ${SEditorViewer.Wrapper}
+    .ace_marker-layer
+    .ace_selection {
+    background-color: ${({ theme }) =>
+      theme.messageSearch.match.currentBackgroundColor};
+  }
+`;
+
+/**
+ * Holds the tabs and the find bar on one row. Wraps rather than shrinking the
+ * bar on narrow panels.
+ */
+export const Toolbar = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
 `;
 
 export const ContentBox = styled.div`
@@ -28,7 +65,7 @@ export const ContentBox = styled.div`
   flex-grow: 3;
   display: flex;
   flex-direction: column;
-  & nav {
+  ${Toolbar} {
     padding-bottom: 16px;
   }
   ${SEditorViewer.Wrapper} {

@@ -694,6 +694,15 @@ export const theme = {
       color: Colors.red[50],
     },
   },
+  messageSearch: {
+    color: Colors.neutral[50],
+    // Ace paints these behind the text, so they have to stay readable under
+    // the editor's own foreground colour in both themes.
+    match: {
+      backgroundColor: 'rgba(255, 221, 87, 0.45)',
+      currentBackgroundColor: 'rgba(255, 221, 87, 0.9)',
+    },
+  },
   viewer: {
     wrapper: {
       backgroundColor: Colors.neutral[3],
@@ -1135,6 +1144,13 @@ export const darkTheme: ThemeType = {
     },
     outOfSync: {
       color: Colors.red[50],
+    },
+  },
+  messageSearch: {
+    color: Colors.neutral[40],
+    match: {
+      backgroundColor: 'rgba(255, 221, 87, 0.25)',
+      currentBackgroundColor: 'rgba(255, 221, 87, 0.5)',
     },
   },
   viewer: {
