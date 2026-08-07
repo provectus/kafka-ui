@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service.rbac;
 
 import static com.provectus.kafka.ui.model.rbac.Resource.APPLICATIONCONFIG;
+import static com.provectus.kafka.ui.model.rbac.Resource.USERS;
 
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
 import com.provectus.kafka.ui.config.auth.RbacUser;
@@ -111,6 +112,17 @@ public class AccessControlService {
           }).then();
     }
 
+    if (CollectionUtils.isNotEmpty(context.getUsersActions())) {
+      return getUser()
+          .doOnNext(user -> {
+            boolean accessGranted = isUsersAccessible(context, user);
+
+            if (!accessGranted) {
+              throw new AccessDeniedException(ACCESS_DENIED);
+            }
+          }).then();
+    }
+
     return getUser()
         .doOnNext(user -> {
           boolean accessGranted =
@@ -124,7 +136,8 @@ public class AccessControlService {
                   && isSchemaAccessible(context, user)
                   && isKsqlAccessible(context, user)
                   && isAclAccessible(context, user)
-                  && isAuditAccessible(context, user);
+                  && isAuditAccessible(context, user)
+                  && isUsersAccessible(context, user);
 
           if (!accessGranted) {
             throw new AccessDeniedException(ACCESS_DENIED);
@@ -418,6 +431,22 @@ public class AccessControlService {
     return isAccessible(Resource.AUDIT, null, user, context, requiredActions);
   }
 
+  public boolean isUsersAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
+    if (CollectionUtils.isEmpty(context.getUsersActions())) {
+      return true;
+    }
+    Set<String> requiredActions = context.getUsersActions()
+        .stream()
+        .map(a -> a.toString().toUpperCase())
+        .collect(Collectors.toSet());
+
+    return isAccessible(USERS, null, user, context, requiredActions);
+  }
+
   public Set<ProviderAuthorityExtractor> getOauthExtractors() {
     return oauthExtractors;
   }
@@ -456,7 +485,7 @@ public class AccessControlService {
   }
 
   private Predicate<Role> filterCluster(Resource resource, String cluster) {
-    if (resource == APPLICATIONCONFIG) {
+    if (resource == APPLICATIONCONFIG || resource == USERS) {
       return role -> true;
     }
     return filterCluster(cluster);

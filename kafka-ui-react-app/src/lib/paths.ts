@@ -22,6 +22,14 @@ export const getNonExactPath = (path: string) => `${path}/*`;
 export const errorPage = '/404';
 export const accessErrorPage = '/403';
 
+// Accounts (global, cluster-independent)
+export const accountsPath = '/ui/accounts';
+export const accountsNewRelativePath = 'create-new';
+export const accountsNewPath = `${accountsPath}/${accountsNewRelativePath}`;
+export const accountEditRelativePath = ':id/edit';
+export const accountEditPath = (id: number | string = ':id') =>
+  `${accountsPath}/${id}/edit`;
+
 export const clusterPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `/ui/clusters/${clusterName}`;

@@ -10,6 +10,7 @@ const ResourceExemptList: ResourceType[] = [
   ResourceType.APPLICATIONCONFIG,
   ResourceType.ACL,
   ResourceType.AUDIT,
+  ResourceType.USERS,
 ];
 
 export function modifyRolesData(

@@ -9,6 +9,7 @@ import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
 import com.provectus.kafka.ui.model.rbac.permission.KsqlAction;
 import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
 import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
+import com.provectus.kafka.ui.model.rbac.permission.UsersAction;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -44,6 +45,8 @@ public class AccessContext {
 
   Collection<AuditAction> auditAction;
 
+  Collection<UsersAction> usersActions;
+
   String operationName;
   Object operationParams;
 
@@ -69,6 +72,7 @@ public class AccessContext {
     private Collection<KsqlAction> ksqlActions = Collections.emptySet();
     private Collection<AclAction> aclActions = Collections.emptySet();
     private Collection<AuditAction> auditActions = Collections.emptySet();
+    private Collection<UsersAction> usersActions = Collections.emptySet();
 
     private String operationName;
     private Object operationParams;
@@ -160,6 +164,12 @@ public class AccessContext {
       return this;
     }
 
+    public AccessContextBuilder usersActions(UsersAction... actions) {
+      Assert.isTrue(actions.length > 0, ACTIONS_NOT_PRESENT);
+      this.usersActions = List.of(actions);
+      return this;
+    }
+
     public AccessContextBuilder operationName(String operationName) {
       this.operationName = operationName;
       return this;
@@ -184,7 +194,7 @@ public class AccessContext {
           connect, connectActions,
           connector,
           schema, schemaActions,
-          ksqlActions, aclActions, auditActions,
+          ksqlActions, aclActions, auditActions, usersActions,
           operationName, operationParams);
     }
   }

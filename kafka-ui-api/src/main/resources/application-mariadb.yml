@@ -1,0 +1,14 @@
+spring:
+  r2dbc:
+    url: r2dbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:kafkaui}
+    username: ${DB_USER:kafkaui}
+    password: ${DB_PASSWORD:}
+  flyway:
+    url: jdbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:kafkaui}
+    user: ${DB_USER:kafkaui}
+    password: ${DB_PASSWORD:}
+
+auth:
+  login-form:
+    user-management:
+      enabled: true
