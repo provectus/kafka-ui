@@ -147,3 +147,4 @@ rbac:
 
         - resource: audit
           actions: all
+

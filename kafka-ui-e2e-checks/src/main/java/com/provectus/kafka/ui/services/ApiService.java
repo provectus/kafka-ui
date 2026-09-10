@@ -191,7 +191,7 @@ public class ApiService extends BaseSource {
     try {
       messageApi().sendTopicMessages(clusterName, topic.getName(), createMessage).block();
     } catch (WebClientResponseException ex) {
-      ex.getRawStatusCode();
+      ex.getStatusCode();
     }
   }
 
