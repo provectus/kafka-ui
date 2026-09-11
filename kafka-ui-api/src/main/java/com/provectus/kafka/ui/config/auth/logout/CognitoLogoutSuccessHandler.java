@@ -40,7 +40,7 @@ public class CognitoLogoutSuccessHandler implements LogoutSuccessHandler {
         requestUri.getPath(), requestUri.getQuery());
 
     final UriComponents baseUrl = UriComponentsBuilder
-        .fromHttpUrl(fullUrl)
+        .fromUriString(fullUrl)
         .replacePath("/")
         .replaceQuery(null)
         .fragment(null)

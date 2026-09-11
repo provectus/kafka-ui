@@ -178,7 +178,7 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
   }
 
   @Override
-  public Flux<String> getConnectors(String search) throws WebClientResponseException {
+  public Mono<List<String>> getConnectors(String search) throws WebClientResponseException {
     return withRetryOnConflict(super.getConnectors(search));
   }
 

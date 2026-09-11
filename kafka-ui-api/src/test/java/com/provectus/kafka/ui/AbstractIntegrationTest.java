@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -27,7 +26,7 @@ import org.testcontainers.utility.DockerImageName;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@AutoConfigureWebTestClient(timeout = "60000")
+@org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient(timeout = "60000")
 @ContextConfiguration(initializers = {AbstractIntegrationTest.Initializer.class})
 public abstract class AbstractIntegrationTest {
   public static final String LOCAL = "local";
