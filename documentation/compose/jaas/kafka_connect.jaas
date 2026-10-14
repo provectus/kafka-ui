@@ -2,3 +2,6 @@ KafkaConnect {
   org.apache.kafka.connect.rest.basic.auth.extension.PropertyFileLoginModule required
   file="/conf/kafka_connect.password";
 };
+
+
+
