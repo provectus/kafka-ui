@@ -19,3 +19,8 @@ logging:
     reactor.netty.http.server.AccessLog: INFO
     org.hibernate.validator: WARN
 
+# Spring Boot 4 migration: retain Jackson 2 compatibility while application code migrates.
+spring:
+  http:
+    codecs:
+      preferred-json-mapper: jackson2

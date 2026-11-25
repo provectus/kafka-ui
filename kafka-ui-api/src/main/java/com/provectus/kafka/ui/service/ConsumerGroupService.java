@@ -146,9 +146,11 @@ public class ConsumerGroupService {
               case STABLE -> 0;
               case COMPLETING_REBALANCE -> 1;
               case PREPARING_REBALANCE -> 2;
-              case EMPTY -> 3;
-              case DEAD -> 4;
-              case UNKNOWN -> 5;
+              case ASSIGNING -> 3;
+              case RECONCILING -> 4;
+              case EMPTY -> 5;
+              case DEAD -> 6;
+              case UNKNOWN -> 7;
             };
         var comparator = Comparator.comparingInt(statesPriorities);
         yield loadDescriptionsByListings(ac, groups, comparator, pageNum, perPage, sortOrderDto);

@@ -45,6 +45,8 @@ import org.apache.kafka.common.resource.ResourcePattern;
 import org.apache.kafka.common.resource.ResourceType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ValueMapping;
 
 @Mapper(componentModel = "spring")
 public interface ClusterMapper {
@@ -73,6 +75,14 @@ public interface ClusterMapper {
   @Mapping(target = "isSensitive", source = "sensitive")
   @Mapping(target = "isReadOnly", source = "readOnly")
   BrokerConfigDTO toBrokerConfig(InternalBrokerConfig config);
+
+  /**
+   * Kafka 3.9 introduced DYNAMIC_CLIENT_METRICS_CONFIG. The public API DTO
+   * does not expose that Kafka-internal source yet, so preserve compatibility
+   * by mapping any currently unknown Kafka config source to UNKNOWN.
+   */
+  @ValueMapping(source = MappingConstants.ANY_REMAINING, target = "UNKNOWN")
+  ConfigSourceDTO toConfigSource(ConfigEntry.ConfigSource source);
 
   default ConfigSynonymDTO toConfigSynonym(ConfigEntry.ConfigSynonym config) {
     if (config == null) {

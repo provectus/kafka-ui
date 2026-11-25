@@ -92,16 +92,16 @@ public class ApplicationConfigController extends AbstractController implements A
   }
 
   @Override
-  public Mono<ResponseEntity<UploadedFileInfoDTO>> uploadConfigRelatedFile(Flux<Part> fileFlux,
+  public Mono<ResponseEntity<UploadedFileInfoDTO>> uploadConfigRelatedFile(Part file,
                                                                            ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .applicationConfigActions(EDIT)
         .operationName("uploadConfigRelatedFile")
         .build();
     return validateAccess(context)
-        .then(fileFlux.single())
-        .flatMap(file ->
-            dynamicConfigOperations.uploadConfigRelatedFile((FilePart) file)
+        .then(Mono.just(file))
+        .flatMap(part ->
+            dynamicConfigOperations.uploadConfigRelatedFile((FilePart) part)
                 .map(path -> new UploadedFileInfoDTO().location(path.toString()))
                 .map(ResponseEntity::ok))
         .doOnEach(sig -> audit(context, sig));
