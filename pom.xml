@@ -29,7 +29,9 @@
         <confluent.version>7.4.0</confluent.version>
         <datasketches-java.version>3.1.0</datasketches-java.version>
         <groovy.version>3.0.13</groovy.version>
-        <!-- Jackson is managed by Spring Boot 4 -->
+        <!-- Jackson security overrides for Spring Boot 4's Jackson 2 and 3 BOMs -->
+        <jackson-2-bom.version>2.21.7</jackson-2-bom.version>
+        <jackson-bom.version>3.1.7</jackson-bom.version>
         <kafka-clients.version>3.9.1</kafka-clients.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.38</org.projectlombok.version>
@@ -37,14 +39,14 @@
         <scala-lang.library.version>2.13.9</scala-lang.library.version>
         <snakeyaml.version>2.0</snakeyaml.version>
         <spring-boot.version>4.0.8</spring-boot.version>
-        <!-- Security overrides managed by Spring Boot 3.5 BOM -->
+        <!-- Security overrides for dependencies managed by Spring Boot 4 -->
         <spring-framework.version>7.0.9</spring-framework.version>
         <spring-security.version>7.0.7</spring-security.version>
         <netty.version>4.2.17.Final</netty.version>
         <kafka-ui-serde-api.version>1.0.0</kafka-ui-serde-api.version>
         <odd-oddrn-generator.version>0.1.17</odd-oddrn-generator.version>
         <odd-oddrn-client.version>0.1.26</odd-oddrn-client.version>
-        <org.json.version>20231013</org.json.version>
+        <org.json.version>20260719</org.json.version>
 
         <!-- Test dependency versions -->
         <junit.version>5.9.1</junit.version>
@@ -104,6 +106,21 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Import fixed Jackson BOMs before Spring Boot so these managed versions take precedence. -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson-2-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -125,7 +142,12 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>32.0.1-jre</version>
+                <version>33.7.2-jre</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xerial.snappy</groupId>
+                <artifactId>snappy-java</artifactId>
+                <version>1.1.10.9</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
